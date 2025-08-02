@@ -1,36 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>项目启动成功</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>系统启动成功</title>
+    <!-- Bootstrap 5.0.0 CSS -->
     <link href="/bootstrap-5.0.0-beta1-dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="/bootstrap-5.0.0-beta1-dist/font/bootstrap-icons.css">
     <style>
-        .nav{
-            position: absolute;
-            display: flex;
-            top: 0;
-            left: 0;
-            right: 0;
-        }
-        .hero-section {
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
+        body {
+            font-family: 'Avenir', Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             color: white;
-            padding: 5rem 0;
             height: 100vh;
+            position: relative;
         }
-        .center{
+        .container{
+            width: 100%;
+            max-width: 1200px;
+        }
+        .success-card {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            z-index: 1000;
+            min-width: 600px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
-        footer {
+
+        .success-header {
+            background-color: #198754;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .success-body {
+            padding: 30px;
+            background-color: white;
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            color: #198754;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .info-value {
+            color: #198754;
+        }
+
+        .particles {
             position: absolute;
-            display: flex;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        footer{
+            position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
@@ -38,54 +82,58 @@
     </style>
 </head>
 <body>
-<!-- 导航栏 -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark nav">
-    <div class="container">
-        <a class="navbar-brand" href="#">
-            <i class="bi bi-rocket me-2"></i>博览旅行
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link active" href="/details.html"><i class="bi bi-house-door me-1"></i>首页</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="bi bi-info-circle me-1"></i>关于</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="bi bi-envelope me-1"></i>联系</a>
-                </li>
-            </ul>
+<div class="container">
+    <div class="success-card">
+        <div class="success-header">
+            <h1><i class="bi bi-check-circle-fill"></i> 系统启动成功</h1>
         </div>
-    </div>
-</nav>
+        <div class="success-body text-center">
+            <div class="success-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor"
+                     class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                    <path
+                            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                </svg>
+            </div>
 
-<!-- 主要内容 -->
-<main>
-    <!-- 英雄区域 -->
-    <section class="hero-section text-center">
-        <div class="container center">
-            <h1 class="display-4 fw-bold mb-4">
-                <i class="bi bi-check-circle-fill me-2"></i>项目启动成功!
-            </h1>
-            <p class="lead mb-4">您的应用程序已成功部署并正在运行</p>
-            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                <button type="button" class="btn btn-light btn-lg px-4 gap-3">
-                    <i class="bi bi-book me-1"></i>查看文档
-                </button>
-                <button type="button" class="btn btn-outline-light btn-lg px-4">
-                    <i class="bi bi-github me-1"></i>GitHub
-                </button>
+            <div class="info-item text-start">
+                <div class="row">
+                    <div class="col-md-4 info-label">启动时间:</div>
+                    <div class="col-md-8 info-value" id="startup-time"></div>
+                </div>
+            </div>
+
+            <div class="info-item text-start">
+                <div class="row">
+                    <div class="col-md-4 info-label">运行端口:</div>
+                    <div class="col-md-8 info-value" id="port-number">8080</div>
+                </div>
+            </div>
+
+            <div class="info-item text-start">
+                <div class="row">
+                    <div class="col-md-4 info-label">系统状态:</div>
+                    <div class="col-md-8 info-value">
+                        <span class="badge bg-success">运行正常</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="/details.html" class="btn btn-primary me-2">
+                    <i class="bi bi-house-door"></i> 访问首页
+                </a>
+                <a href="/itemform.html" class="btn btn-outline-secondary">
+                    <i class="bi bi-gear"></i> 开发文档
+                </a>
             </div>
         </div>
-    </section>
-</main>
-
+    </div>
+</div>
+<!-- 粒子背景 -->
+<canvas class="particles" id="particles-canvas"></canvas>
 <!-- 页脚 -->
-<footer class="bg-dark text-white py-4">
+<footer class="bg-dark text-white py-4 footer">
     <div class="container">
         <div class="row">
             <div class="col-md-6">
@@ -101,8 +149,153 @@
         </div>
     </div>
 </footer>
-
-<!-- Bootstrap 5 JS 包 -->
+<!-- Bootstrap 5.0.0 JS Bundle with Popper -->
 <script src="/bootstrap-5.0.0-beta1-dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // 显示当前时间作为启动时间
+    document.addEventListener('DOMContentLoaded', function() {
+        const now = new Date();
+        const formattedTime = now.toLocaleString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        }).replace(/\//g, '-');
+
+        document.getElementById('startup-time').textContent = formattedTime;
+
+        // 如果是通过后端渲染，可以从服务器获取端口号
+        // 这里假设端口号已经通过后端注入到页面中
+        // 或者可以通过 window.location.port 获取当前端口
+        const currentPort = window.location.port || '80';
+        if (currentPort !== '80') {
+            document.getElementById('port-number').textContent = currentPort;
+        }
+    });
+</script>
+<script>
+    // 粒子系统
+    class Particle {
+        constructor(canvas) {
+            this.canvas = canvas
+            this.ctx = canvas.getContext('2d')
+            this.x = Math.random() * canvas.width
+            this.y = Math.random() * canvas.height
+            this.size = Math.random() * 3 + 1
+            this.speedX = Math.random() * 2 - 1
+            this.speedY = Math.random() * 2 - 1
+            this.color = `hsl(${Math.random() * 60 + 180}, 80%, 60%)`
+            this.alpha = Math.random() * 0.5 + 0.1
+        }
+
+        update() {
+            this.x += this.speedX
+            this.y += this.speedY
+
+            if (this.x > this.canvas.width || this.x < 0) {
+                this.speedX = -this.speedX
+            }
+
+            if (this.y > this.canvas.height || this.y < 0) {
+                this.speedY = -this.speedY
+            }
+        }
+
+        draw() {
+            this.ctx.globalAlpha = this.alpha
+            this.ctx.fillStyle = this.color
+            this.ctx.beginPath()
+            this.ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
+            this.ctx.fill()
+        }
+    }
+
+    // 主程序
+    document.addEventListener('DOMContentLoaded', () => {
+        const canvas = document.getElementById('particles-canvas')
+        let particles = []
+        let animationId = null
+
+        // 初始化粒子
+        const initParticles = () => {
+            const particleCount = Math.floor(window.innerWidth / 10)
+            particles = []
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle(canvas))
+            }
+        }
+
+        // 绘制连接线
+        const drawConnections = () => {
+            const ctx = canvas.getContext('2d')
+            const maxDistance = 100
+
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x
+                    const dy = particles[i].y - particles[j].y
+                    const distance = Math.sqrt(dx * dx + dy * dy)
+
+                    if (distance < maxDistance) {
+                        const opacity = 1 - distance / maxDistance
+                        ctx.strokeStyle = `rgba(150, 200, 255, ${opacity * 0.3})`
+                        ctx.lineWidth = 1
+                        ctx.beginPath()
+                        ctx.moveTo(particles[i].x, particles[i].y)
+                        ctx.lineTo(particles[j].x, particles[j].y)
+                        ctx.stroke()
+                    }
+                }
+            }
+        }
+
+        // 动画循环
+        const animate = () => {
+            const ctx = canvas.getContext('2d')
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+            // 绘制连接线
+            drawConnections()
+
+            // 更新并绘制粒子
+            particles.forEach(particle => {
+                particle.update()
+                particle.draw()
+            })
+
+            animationId = requestAnimationFrame(animate)
+        }
+
+        // 调整画布大小
+        const resizeCanvas = () => {
+            canvas.width = window.innerWidth
+            canvas.height = window.innerHeight
+            initParticles()
+        }
+
+        // 初始化
+        resizeCanvas()
+        window.addEventListener('resize', resizeCanvas)
+        animate()
+
+        // 为盒子添加悬停效果
+        const boxes = document.querySelectorAll('.animated-box')
+        boxes.forEach(box => {
+            box.addEventListener('mouseenter', () => {
+                const hue = box.style.getPropertyValue('--hue')
+                box.style.background = `rgba(${hue}, 100, 150, 0.2)`
+            })
+
+            box.addEventListener('mouseleave', () => {
+                box.style.background = 'rgba(255, 255, 255, 0.1)'
+            })
+        })
+    })
+</script>
 </body>
 </html>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.travel.dao.TravelWorldcharacteristicsDao">
+
+    <resultMap id="TravelWorldcharacteristicsMapper" type="com.example.travel.entity.TravelWorldcharacteristics">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="country" property="country"/>
+        <result column="image" property="image"/>
+        <result column="description" property="description"/>
+        <result column="features" property="features"/>
+        <result column="history" property="history"/>
+        <result column="culture" property="culture"/>
+        <result column="tags" property="tags" typeHandler="com.example.travel.handler.TypeHandler"/>
+        <result column="category" property="category"/>
+        <result column="color" property="color"/>
+    </resultMap>
+
+    <select id="findBySearchAndCategory" resultMap="TravelWorldcharacteristicsMapper">
+        SELECT * FROM travel_worldcharacteristics
+        <where>
+            <if test="searchQuery != null and searchQuery != ''">
+                (name LIKE CONCAT('%', #{searchQuery}, '%')
+                OR country LIKE CONCAT('%', #{searchQuery}, '%'))
+            </if>
+            <if test="category != null and category != '全部'">
+                AND category = #{category}
+            </if>
+        </where>
+        LIMIT #{offset}, #{pageSize}
+    </select>
+    <!--  根据id查询  -->
+    <select id="findById" resultMap="TravelWorldcharacteristicsMapper">
+        SELECT * FROM travel_worldcharacteristics WHERE id = #{id}
+    </select>
+    <!--  查询总条数  -->
+    <select id="countBySearchAndCategory" resultType="int">
+        SELECT COUNT(*) FROM travel_worldcharacteristics
+        <where>
+            <if test="searchQuery != null and searchQuery != ''">
+                (name LIKE CONCAT('%', #{searchQuery}, '%')
+                OR country LIKE CONCAT('%', #{searchQuery}, '%'))
+            </if>
+            <if test="category != null and category != '全部'">
+                AND category = #{category}
+            </if>
+        </where>
+    </select>
+    <!-- 新增 -->
+    <insert id="insert" parameterType="com.example.travel.entity.TravelWorldcharacteristics">
+        INSERT INTO travel_worldcharacteristics (name, country, image, description, features, history, culture, tags, category, color)
+        VALUES (
+                   #{name},
+                   #{country},
+                   #{image},
+                   #{description},
+                   #{features},
+                   #{history},
+                   #{culture},
+                   #{tags, typeHandler=com.example.travel.handler.TypeHandler},
+                   #{category},
+                   #{color}
+               )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update" parameterType="com.example.travel.entity.TravelWorldcharacteristics">
+        UPDATE travel_worldcharacteristics
+        SET
+            name = #{name},
+            country = #{country},
+            image = #{image},
+            description = #{description},
+            features = #{features},
+            history = #{history},
+            culture = #{culture},
+            tags = #{tags, typeHandler=com.example.travel.handler.TypeHandler},
+            category = #{category},
+            color = #{color}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <select id="exists" resultType="boolean">
+        SELECT COUNT(1)
+        FROM travel_worldcharacteristics
+        WHERE id = #{id}
+    </select>
+    <delete id="delete" parameterType="long">
+        DELETE FROM travel_worldcharacteristics WHERE id = #{id}
+    </delete>
+
+</mapper>

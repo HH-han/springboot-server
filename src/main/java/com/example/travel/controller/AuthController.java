@@ -8,6 +8,8 @@ import com.example.travel.utils.EmailUtils;
 import com.example.travel.utils.JwtUtils;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.example.travel.utils.RedisUtils;
 import org.springframework.web.bind.annotation.*;
@@ -48,8 +50,10 @@ public class AuthController {
      */
     @PostMapping("/send-code")
     public Result sendVerificationCode(@RequestBody Map<String, String> params) {
+        Logger logger = LoggerFactory.getLogger(AuthController.class);
         String email = params.get("email");
         if (email == null || email.isEmpty()) {
+            logger.warn("邮箱参数不能为空");
             return Result.error("邮箱参数不能为空");
         }
 
@@ -61,7 +65,7 @@ public class AuthController {
 
         // 通过接口调用发送邮件
         emailService.sendVerificationCode(email, code);
-
+        logger.info("验证码已发送至邮箱: {}", email);
         return Result.success("验证码已发送");
     }
 
@@ -72,6 +76,7 @@ public class AuthController {
      */
     @PostMapping("/Emaillogin")
     public Result loginWithCode(@RequestBody Map<String, String> params) {
+        Logger logger = LoggerFactory.getLogger(AuthController.class);
         String email = params.get("email");
         String code = params.get("code");
 
@@ -92,10 +97,12 @@ public class AuthController {
         String storedCode = redisUtils.getString("verification_code:" + email);
 
         if (storedCode == null) {
+            logger.warn("验证码已过期: {}", email);
             return Result.error("验证码已过期");
         }
 
         if (!storedCode.equals(code)) {
+            logger.warn("验证码错误: {}", email);
             return Result.error("验证码错误");
         }
 
@@ -118,6 +125,7 @@ public class AuthController {
         data.put("user", user);
         data.put("token", token);
         // 返回完整数据
+        logger.info("登录成功: {}", email);
         return Result.success(data);
     }
 }

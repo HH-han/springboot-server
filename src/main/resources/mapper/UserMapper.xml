@@ -4,41 +4,71 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.travel.dao.UserDao">
+
+    <resultMap id="userResultMap" type="com.example.travel.entity.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="email" property="email"/>
+        <result column="password" property="password"/>
+        <result column="phone" property="phone"/>
+        <result column="nickname" property="nickname"/>
+        <result column="image" property="image"/>
+        <result column="signature" property="signature"/>
+        <result column="travelmage" property="travelmage"/>
+        <result column="experience" property="experience"/>
+        <result column="userId" property="userId"/>
+        <result column="permissions" property="permissions"/>
+        <result column="status" property="status"/>
+        <result column="createTime" property="createTime"/>
+        <result column="updateTime" property="updateTime"/>
+    </resultMap>
+
     <!-- 登录 -->
     <!-- 根据用户名查询用户 -->
-    <select id="findByUsername" resultType="com.example.travel.entity.User">
+    <select id="findByUsername" resultMap="userResultMap">
         SELECT * FROM users WHERE username = #{username} LIMIT 1
     </select>
+
+    <!-- 查询所有用户 -->
+    <select id="findAll" resultMap="userResultMap">
+        SELECT * FROM users
+    </select>
+
     <!--  根据id查询  -->
-    <select id="findById" resultType="com.example.travel.entity.User">
+    <select id="findById" resultMap="userResultMap">
         SELECT * FROM users WHERE id = #{id}
     </select>
+
     <!-- 分页查询 -->
-    <select id="findAllUsers" resultType="com.example.travel.entity.User">
+    <select id="findAllUsers" resultMap="userResultMap">
         SELECT * FROM users
         <where>
             <if test="keyword != null and keyword != ''">
-                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+                AND (username LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
             </if>
         </where>
-        LIMIT #{offset},#{pageSize}
+        LIMIT #{offset}, #{pageSize}
     </select>
+
     <!-- 查询总数（用于分页） -->
     <select id="countUser" resultType="int">
-        select COUNT(*) from users
+        SELECT COUNT(*) FROM users
         <where>
             <if test="keyword != null and keyword != ''">
-                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+                AND (username LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
             </if>
         </where>
     </select>
-    <select id="userimage" resultType="com.example.travel.entity.User">
-        select id,username,image from users where uesername = #{username}
+
+    <select id="userimage" resultMap="userResultMap">
+        SELECT id, username, image FROM users WHERE username = #{username}
     </select>
+
     <!-- 删除 -->
     <delete id="deleteUser" parameterType="java.lang.Long">
         DELETE FROM users WHERE id = #{id}
     </delete>
+
     <!-- 修改 -->
     <update id="updateUser" parameterType="com.example.travel.entity.User">
         UPDATE users
@@ -50,23 +80,68 @@
             image = #{image},
             signature = #{signature},
             travelmage = #{travelmage},
-            experience = #{experience}
+            experience = #{experience},
+            userId = #{userId},
+            createTime = #{createTime},
+            updateTime = #{updateTime}
         WHERE id = #{id}
     </update>
+    <!-- 修改权限 -->
+    <update id="updatePermissions">
+        UPDATE users
+        SET permissions = #{permissions}
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+    <!-- 修改状态 -->
+    <update id="updateStatus">
+        UPDATE users
+        SET status = #{status}
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
     <!-- 新增 -->
-    <insert id="insertUser" parameterType="com.example.travel.entity.User">
+    <insert id="insertUser" parameterType="com.example.travel.entity.User" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO users
-            (image, username, email, password, phone, nickname, createTime)
+        (username, email, password, phone, nickname, image, signature,
+         travelmage, experience, userId, permissions, status, createTime)
         VALUES
-            (#{image}, #{username}, #{email}, #{password}, #{phone}, #{nickname}, #{createTime})
+            (#{username}, #{email}, #{password}, #{phone}, #{nickname}, #{image},
+             #{signature}, #{travelmage}, #{experience}, #{userId}, #{permissions},
+             #{status}, #{createTime})
     </insert>
 
     <!-- 新增查询方法 -->
-    <select id="findByEmail" resultType="com.example.travel.entity.User">
+    <select id="findByEmail" resultMap="userResultMap">
         SELECT * FROM users WHERE email = #{email}
     </select>
 
-    <select id="findByPhone" resultType="com.example.travel.entity.User">
+    <select id="findByPhone" resultMap="userResultMap">
         SELECT * FROM users WHERE phone = #{phone}
     </select>
+    
+    <!-- 多条件搜索用户 -->
+    <select id="searchUsers" resultMap="userResultMap">
+        SELECT * FROM users
+        <where>
+            <if test="id != null">
+                AND id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                AND username LIKE CONCAT('%', #{username}, '%')
+            </if>
+            <if test="nickname != null and nickname != ''">
+                AND nickname LIKE CONCAT('%', #{nickname}, '%')
+            </if>
+            <if test="email != null and email != ''">
+                AND email LIKE CONCAT('%', #{email}, '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                AND phone LIKE CONCAT('%', #{phone}, '%')
+            </if>
+            <if test="userID != null">
+                AND userId = #{userID}
+            </if>
+        </where>
+    </select>
+
+
 </mapper>

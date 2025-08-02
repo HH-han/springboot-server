@@ -2,6 +2,7 @@ package com.example.travel.controller;
 
 import com.example.travel.common.Result;
 import com.example.travel.entity.User;
+import com.example.travel.listener.UserDataListener;
 import com.example.travel.service.UserService;
 import com.example.travel.utils.ImageUtils;
 import com.example.travel.utils.JwtUtils;
@@ -10,15 +11,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.time.LocalDateTime;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
+import io.swagger.annotations.ApiOperation;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -86,14 +94,17 @@ public class UserController {
             logger.warn("登录失败: 密码为空");
             return Result.error("密码不能为空");
         }
-
         // 查询用户
         User user = userService.findByUsername(username);
         if (user == null) {
             logger.warn("登录失败: 用户不存在 - {}", username);
             return Result.error("用户名或密码错误");
         }
-
+        //查询用户状态
+        if(user.getStatus() == 0){
+            logger.warn("登录失败: 用户被禁用 - {}", username);
+            return Result.error("用户被禁用");
+        }
         // 密码比对
         if (!password.equals(user.getPassword())) {
             logger.warn("登录失败: 密码错误 - {}", username);
@@ -184,6 +195,10 @@ public class UserController {
             }
 
             // 更新用户信息
+            if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
+                throw new IllegalArgumentException("用户名不能为空");
+            }
+            currentUser.setUsername(user.getUsername());
             currentUser.setNickname(user.getNickname());
             currentUser.setEmail(user.getEmail());
             currentUser.setPhone(user.getPhone());
@@ -210,17 +225,70 @@ public class UserController {
         this.userService = userService;
         this.jwtUtils = jwtUtils;
     }
+
+    /**
+     *修改权限
+     */
+    @PutMapping("/updateRole")
+    public Result updateRole(@RequestBody Map<String, Object> params) {
+        Logger logger = LoggerFactory.getLogger(UserController.class);
+        try {
+            Long id = Long.parseLong(params.get("id").toString());
+            int permissions = Integer.parseInt(params.get("permissions").toString());
+            String username = params.get("username").toString();
+            
+            int result = userService.updatePermissions(id, permissions);
+            if (result > 0) {
+                logger.info("用户权限修改成功，用户名: {}", username);
+                return Result.success("更新成功");
+            } else {
+                logger.error("用户权限修改失败，用户名: {}", username);
+                return Result.error("更新失败");
+            }
+        } catch (Exception e) {
+            logger.error("修改权限时发生异常: {}", e.getMessage(), e);
+            return Result.error("服务器内部错误");
+        }
+    }
+    /**
+     *修改状态
+     */
+    @PutMapping("/updateStatus")
+    public Result updateStatus(@RequestBody Map<String, Object> params) {
+        Logger logger = LoggerFactory.getLogger(UserController.class);
+        try {
+            Long id = Long.parseLong(params.get("id").toString());
+            int status = Integer.parseInt(params.get("status").toString());
+            String username = params.get("username").toString();
+
+            int result = userService.updateStatus(id, status);
+            if (result > 0) {
+                logger.info("用户状态修改成功，用户名: {}", username);
+                return Result.success("更新成功");
+            } else {
+                logger.error("用户状态修改失败，用户名: {}", username);
+                return Result.error("更新失败");
+            }
+        } catch (Exception e) {
+            logger.error("修改状态时发生异常: {}", e.getMessage(), e);
+            return Result.error("服务器内部错误");
+        }
+    }
     //分页查询
     @GetMapping
     public Result findAllUsers(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) String keyword){
+        Logger logger = LoggerFactory.getLogger(UserController.class);
         List<User> users=userService.getAllUsers(page,pageSize,keyword);
         int total =userService.countUser(keyword);
         Map<String, Object> result = new HashMap<>();
         result.put("list",users);
         result.put("total",total);
+        for (User user : users) {
+            logger.info("查询用户: {}", user.getUsername());
+        }
         return Result.success(result);
     }
     //新增
@@ -269,6 +337,7 @@ public class UserController {
     //修改
     @PutMapping("/{id}")
     public Result updateUser(@PathVariable Long id, @RequestBody User user) {
+        Logger logger = LoggerFactory.getLogger(UserController.class);
         try {
             // 获取原有用户信息
             User existingUser = userService.getById(id);
@@ -315,7 +384,6 @@ public class UserController {
             int result = userService.updateUser(user);
             return result > 0 ? Result.success("更新成功") : Result.error("更新失败");
         } catch (Exception e) {
-            Logger logger = LoggerFactory.getLogger(UserController.class);
             logger.error("更新用户时发生异常，用户ID: {}", id, e);
             return Result.error("服务器内部错误");
         }
@@ -349,12 +417,44 @@ public class UserController {
         }
     }
 
+    //查询
+    /**
+     * @param id ID
+     * @param username 用户名
+     * @param nickname 昵称
+     * @param email 邮箱
+     * @param phone 手机号
+     * @param userID 用户ID
+     */
+    @GetMapping("/search")
+    public Result searchUsers(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String nickname,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String phone,
+            @RequestParam(required = false) Long userID) {
+        Logger logger = LoggerFactory.getLogger(UserController.class);
+        if (id != null) {
+            User user = userService.getById(id);
+            if (user != null) {
+                logger.info("用户查询成功，ID: {}", id);
+                return Result.success(user);
+            } else {
+                logger.warn("用户不存在，ID: {}", id);
+                return Result.error("用户不存在");
+            }
+        }
+        List<User> users = userService.searchUsers(id, username, nickname, email, phone, userID);
+        return Result.success(users);
+    }
 
     /**
      * 新用户注册
      * **/
     @PostMapping("/register")
     public Result registerUser(@RequestBody Map<String, String> registerData) {
+        Logger logger = LoggerFactory.getLogger(UserController.class);
         // 获取参数
         String username = registerData.get("username");
         String nickname = registerData.get("nickname");
@@ -366,16 +466,20 @@ public class UserController {
 
         // 密码校验
         if (!password.equals(confirmPassword)) {
+            logger.warn("密码不一致");
             return Result.error("两次密码不一致");
         }
         // 检查用户唯一性
         if (userService.findByUsername(username) != null) {
+            logger.warn("用户名已存在");
             return Result.error("用户名已存在");
         }
         if (userService.findByEmail(email) != null) {
+            logger.warn("邮箱已注册");
            return Result.error("邮箱已注册");
         }
         if (userService.findByPhone(phone) != null) {
+            logger.warn("手机号已注册");
             return Result.error("手机号已注册");
         }
 
@@ -415,7 +519,40 @@ public class UserController {
 
         // 保存用户
         int result = userService.addUser(user);
-        return result > 0 ? Result.success("注册成功") : Result.error("注册失败");
+        if (result > 0) {
+            logger.info("用户注册成功，用户名: {}", username);
+            return Result.success("注册成功");
+        } else {
+            logger.error("用户注册失败，用户名: {}", username);
+            return Result.error("注册失败");
+        }
+    }
+    // 用户列表导出
+    @GetMapping("/export")
+    @ApiOperation("导出用户列表")
+    public void exportUserList(HttpServletResponse response) throws IOException {
+        Logger logger = LoggerFactory.getLogger(UserController.class);
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setCharacterEncoding("utf-8");
+        String fileName = URLEncoder.encode("用户列表", StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+        response.setHeader("Content-disposition", "attachment;filename*=" + fileName + ".xlsx");
+
+        List<User> list = userService.list();
+        logger.info("用户列表导出成功，共导出 {} 条数据", list.size());
+        EasyExcel.write(response.getOutputStream(), User.class)
+                .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                .sheet("用户数据")
+                .doWrite(list);
     }
 
+    @PostMapping("/import")
+    @ApiOperation("导入用户数据")
+    public Result importUserList(MultipartFile file) throws IOException {
+        Logger logger = LoggerFactory.getLogger(UserController.class);
+        EasyExcel.read(file.getInputStream(), User.class, new UserDataListener(userService))
+                .sheet()
+                .doRead();
+        logger.info("用户数据导入成功");
+        return Result.success();
+    }
 }

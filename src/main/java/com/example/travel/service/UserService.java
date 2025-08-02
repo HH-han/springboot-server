@@ -1,11 +1,21 @@
 package com.example.travel.service;
 
-import com.example.travel.dao.UserDao;
-import com.example.travel.dto.LoginRequest;
 import com.example.travel.entity.User;
 import java.util.List;
 
 public interface UserService {
+    /**
+     * 批量保存用户
+     * @param users 用户列表
+     */
+    void saveBatch(List<User> users);
+    
+    /**
+     * 获取所有用户列表
+     * @return 用户列表
+     */
+    List<User> list();
+    
     /**
      * 根据用户名查找用户
      * @param username 用户名
@@ -38,6 +48,23 @@ public interface UserService {
      * @return 是否更新成功
      */
     int updateUser(User user);
+    //权限修改
+    /**
+     * 修改用户权限
+     *
+     * @param id
+     * @param permissions 权限
+     * @return 是否修改成功
+     */
+    int updatePermissions(Long id, int permissions);
+    //修改状态
+    /**
+     * 修改用户状态
+     * @param id 用户ID
+     * @param status 状态
+     * @return 是否修改成功
+     */
+    int updateStatus(Long id, int status);
     //删除
     /**
      * 根据ID删除用户
@@ -72,4 +99,6 @@ public interface UserService {
     boolean matchesPassword(String rawPassword, String encodedPassword);
 
     User getById(Long id);
+
+    List<User> searchUsers(Long id, String username, String nickname, String email, String phone, Long userID);
 }

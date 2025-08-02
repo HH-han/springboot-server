@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -18,6 +19,11 @@ public class UserServiceImpl implements UserService {
         this.userDao = userDao;
     }
 
+    @Override
+    public List<User> list() {
+        return userDao.findAll();
+    }
+    
     @Override
     public User findByUsername(String username) {
         return userDao.findByUsername(username);
@@ -41,6 +47,11 @@ public class UserServiceImpl implements UserService {
     //新增
     @Override
     public int addUser(User user) {
+        // 生成18位用户ID
+        long userId = Long.parseLong(String.format("%05d%013d",
+                Math.abs(System.currentTimeMillis() % 100000),
+                Math.abs(new Random().nextInt(999999999))));
+        user.setUserId(userId);
         return userDao.insertUser(user);
     }
     //修改
@@ -48,6 +59,17 @@ public class UserServiceImpl implements UserService {
     public int updateUser(User user) {
         return userDao.updateUser(user);
     }
+
+    @Override
+    public int updatePermissions(Long id, int permissions) {
+        return userDao.updatePermissions(id, permissions);
+    }
+
+    @Override
+    public int updateStatus(Long id, int status) {
+        return userDao.updateStatus(id, status);
+    }
+
     //删除
     @Override
     public int deleteUser(Long id) {
@@ -86,6 +108,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getById(Long id) {
         return userDao.findById(id);
+    }
+
+    //搜索
+    @Override
+    public List<User> searchUsers(Long id, String username, String nickname, String email, String phone, Long userID) {
+        return userDao.searchUsers(id, username, nickname, email, phone, userID);
+    }
+
+    @Override
+    public void saveBatch(List<User> users) {
+        for (User user : users) {
+            userDao.insertUser(user);
+        }
     }
 
 

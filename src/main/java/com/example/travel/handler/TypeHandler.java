@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CitiesTypeHandler extends BaseTypeHandler<List<String>> {
+public class TypeHandler extends BaseTypeHandler<List<String>> {
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, List<String> parameter, JdbcType jdbcType) throws SQLException {
         ps.setString(i, String.join(",", parameter));

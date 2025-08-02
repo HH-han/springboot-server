@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.travel.dao.TravelCarouselDao">
+    <!-- 查询所有 -->
+    <select id="findAllCarousel" resultType="com.example.travel.entity.TravelCarousel">
+        SELECT * FROM travel_carousel
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+        LIMIT #{offset}, #{pageSize}
+    </select>
+    <!-- 查询总数（用于分页） -->
+    <select id="countCarousel" resultType="int">
+        SELECT COUNT(*) FROM travel_carousel
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+    </select>
+    <!-- 根据ID查询 -->
+    <select id="findById" parameterType="long" resultType="com.example.travel.entity.TravelCarousel">
+        SELECT * FROM travel_carousel WHERE id = #{id}
+    </select>
+    <!-- 修改 -->
+    <update id="updateCarousel" parameterType="com.example.travel.entity.TravelCarousel">
+        UPDATE travel_carousel
+        SET image = #{image},
+            title = #{title},
+            location = #{location},
+            description = #{description},
+            created_at = #{createdAt},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+    <!-- 新增 -->
+    <insert id="insertCarousel" parameterType="com.example.travel.entity.TravelCarousel">
+        INSERT INTO travel_carousel (image, title, location, description, created_at, updated_at)
+        VALUES (#{image}, #{title}, #{location}, #{description},#{createdAt},#{updatedAt})</insert>
+
+    <select id="exists" resultType="boolean">
+        SELECT COUNT(1)
+        FROM travel_carousel
+        WHERE id = #{id}
+    </select>
+    <!--删除-->
+    <delete id="deleteById">
+        DELETE FROM `travel_carousel` WHERE id = #{id}
+    </delete>
+</mapper>

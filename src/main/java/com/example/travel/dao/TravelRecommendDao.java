@@ -7,9 +7,9 @@ import java.util.List;
 
 @Mapper
 public interface TravelRecommendDao {
-    //查询所有酒店
+    //查询所有
     List<TravelRecommend> findAllRecommend(@Param("offset") int offset, @Param("pageSize") int pageSize, @Param("keyword") String keyword);
-    //查询酒店总数
+    //查询总数
     int countRecommend(@Param("keyword") String keyword);
     //新增
     int insertRecommend(TravelRecommend travelRecommend);

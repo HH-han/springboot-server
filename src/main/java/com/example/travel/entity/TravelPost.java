@@ -2,12 +2,9 @@ package com.example.travel.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "travel_posts")

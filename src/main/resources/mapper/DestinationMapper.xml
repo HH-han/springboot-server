@@ -8,8 +8,9 @@
         <result column="category" property="category"/>
         <result column="image" property="image"/>
         <result column="price" property="price"/>
+        <result column="description" property="description"/>
         <result column="created_at" property="created_at"></result>
-        <result column="cities" property="cities" typeHandler="com.example.travel.handler.CitiesTypeHandler"/>
+        <result column="cities" property="cities" typeHandler="com.example.travel.handler.TypeHandler"/>
     </resultMap>
 
     <select id="findBySearchAndCategory" resultMap="destinationResultMap">
@@ -44,13 +45,14 @@
     </select>
     <!-- 新增 -->
     <insert id="insertDestination" parameterType="com.example.travel.entity.Destination">
-        INSERT INTO destination (name, category, image, price, cities)
+        INSERT INTO destination (name, category, image, price, cities, description)
         VALUES (
-                   #{name},
-                   #{category},
-                   #{image},
-                   #{price},
-                   #{cities, typeHandler=com.example.travel.handler.CitiesTypeHandler}
+                    #{name},
+                    #{category},
+                    #{image},
+                    #{price},
+                    #{cities, typeHandler=com.example.travel.handler.TypeHandler},
+                    #{description}
                )
     </insert>
 
@@ -62,7 +64,8 @@
             category = #{category},
             image = #{image},
             price = #{price,jdbcType=DECIMAL},
-            cities = #{cities, typeHandler=com.example.travel.handler.CitiesTypeHandler}
+            cities = #{cities, typeHandler=com.example.travel.handler.TypeHandler},
+            description = #{description}
         WHERE id = #{id}
     </update>
 

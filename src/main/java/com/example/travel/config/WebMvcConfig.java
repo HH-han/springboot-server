@@ -1,11 +1,17 @@
 package com.example.travel.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
+@Slf4j
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
@@ -19,11 +25,30 @@ public class WebMvcConfig implements WebMvcConfigurer {
             // 检查D盘是否存在
             File dDrive = new File("D:/");
             if (dDrive.exists()) {
+                Path imagePath = Paths.get("D:/Image/");
+                if (!Files.exists(imagePath)) {
+                    try {
+                        Files.createDirectories(imagePath);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 registry.addResourceHandler("/upload/**")
                         .addResourceLocations("file:D:/Image/");
+                log.info("使用目录: {}", imagePath);
             } else {
                 // 如果D盘不存在，使用用户主目录下的images文件夹
                 String userHome = System.getProperty("user.home");
+                Path userImagePath = Paths.get(userHome + "/images/");
+                if (!Files.exists(userImagePath)) {
+                    try {
+                        Files.createDirectories(userImagePath);
+                        log.info("创建的目录: {}", userImagePath);
+                    } catch (IOException e) {
+                        log.error("创建目录失败: {}", userImagePath, e);
+                        throw new RuntimeException(e);
+                    }
+                }
                 registry.addResourceHandler("/upload/**")
                         .addResourceLocations("file:" + userHome + "/images/");
             }
@@ -41,6 +66,18 @@ public class WebMvcConfig implements WebMvcConfigurer {
             for (String path : linuxPaths) {
                 File dir = new File(path);
                 if (dir.exists() && dir.isDirectory()) {
+                    registry.addResourceHandler("/upload/**")
+                            .addResourceLocations("file:" + path);
+                    log.info("使用目录: {}", path);
+                    break;
+                } else {
+                    try {
+                        Files.createDirectories(dir.toPath());
+                        log.info("创建的目录: {}", dir.getAbsolutePath());
+                    } catch (IOException e) {
+                        log.error("创建目录失败: {}", dir.getAbsolutePath(), e);
+                        throw new RuntimeException(e);
+                    }
                     registry.addResourceHandler("/upload/**")
                             .addResourceLocations("file:" + path);
                     break;

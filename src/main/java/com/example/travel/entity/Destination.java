@@ -1,8 +1,6 @@
 package com.example.travel.entity;
 
-import com.example.travel.handler.CitiesTypeHandler;
 import lombok.Data;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -12,6 +10,7 @@ public class Destination {
     private String name;
     private String category;
     private List<String> cities;
+    private String description;
     private String image;
     private int price;
     private LocalDateTime created_at;
@@ -70,5 +69,13 @@ public class Destination {
 
     public void setCreated_at(LocalDateTime created_at) {
         this.created_at = created_at;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

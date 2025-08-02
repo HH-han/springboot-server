@@ -3,31 +3,31 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.travel.dao.TravelRecommendDao">
-    <!-- 查询所有酒店 -->
+    <!-- 查询所有 -->
     <select id="findAllRecommend" resultType="com.example.travel.entity.TravelRecommend">
         SELECT * FROM travel_recommend
         <where>
             <if test="keyword != null and keyword != ''">
-                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+                AND (name LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
             </if>
         </where>
         LIMIT #{offset}, #{pageSize}
     </select>
-    <!-- 查询酒店总数（用于分页） -->
+    <!-- 查询总数（用于分页） -->
     <select id="countRecommend" resultType="int">
         SELECT COUNT(*) FROM travel_recommend
         <where>
             <if test="keyword != null and keyword != ''">
-                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+                AND (name LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
             </if>
         </where>
     </select>
-    <!-- 根据ID查询酒店 -->
-    <select id="findById" parameterType="long" resultType="com.example.travel.entity.Hotel">
+    <!-- 根据ID查询 -->
+    <select id="findById" parameterType="long" resultType="com.example.travel.entity.TravelRecommend">
         SELECT * FROM travel_recommend WHERE id = #{id}
     </select>
     <!-- 修改 -->
-    <update id="updateRecommend" parameterType="com.example.travel.entity.Hotel">
+    <update id="updateRecommend" parameterType="com.example.travel.entity.TravelRecommend">
         UPDATE travel_recommend
         SET image = #{image},
             name = #{name},
@@ -36,7 +36,7 @@
         WHERE id = #{id}
     </update>
     <!-- 新增 -->
-    <insert id="insertRecommend" parameterType="com.example.travel.entity.Hotel">
+    <insert id="insertRecommend" parameterType="com.example.travel.entity.TravelRecommend">
         INSERT INTO travel_recommend (image, name, description, details)
         VALUES (#{image}, #{name}, #{description}, #{details})</insert>
 
