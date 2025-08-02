@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.travel.dao.SafetyTipsDao">
+
+    <!-- 基本结果映射 -->
+    <resultMap id="BaseResultMap" type="com.example.travel.entity.SafetyTips">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <!-- 分页查询SQL配置 -->
+    <select id="selectByPage" resultMap="BaseResultMap" parameterType="com.example.travel.entity.SafetyTips">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM safety_tips
+        ORDER BY create_time DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 带条件的分页查询 -->
+    <select id="selectByConditionWithPage" resultMap="BaseResultMap" parameterType="map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM safety_tips
+        <where>
+            <if test="title != null and title != ''">
+                AND title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY ${orderBy} ${orderType}
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <!-- 基本列名 -->
+    <sql id="Base_Column_List">
+        id, title, description, image_url, create_time, update_time
+    </sql>
+    <!-- 根据ID查询 -->
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM safety_tips
+        WHERE id = #{id}
+    </select>
+
+    <!-- 新增 -->
+    <insert id="insert" parameterType="com.example.travel.entity.SafetyTips" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO safety_tips
+            (title, description, image_url, create_time, update_time)
+        VALUES
+            (#{title}, #{description}, #{imageUrl}, NOW(), NOW())
+    </insert>
+
+    <!-- 批量新增 -->
+    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO safety_tips
+        (title, description, image_url, create_time, update_time)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.title}, #{item.description}, #{item.imageUrl}, NOW(), NOW())
+        </foreach>
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="com.example.travel.entity.SafetyTips">
+        UPDATE safety_tips
+        SET
+            title = #{title},
+            description = #{description},
+            image_url = #{imageUrl},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 批量更新 -->
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE safety_tips
+            SET
+            title = #{item.title},
+            description = #{item.description},
+            image_url = #{item.imageUrl},
+            update_time = NOW()
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM safety_tips WHERE id = #{id}
+    </delete>
+
+    <!-- 批量删除 -->
+    <delete id="batchDelete" parameterType="java.util.List">
+        DELETE FROM safety_tips WHERE id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 条件查询 -->
+    <select id="selectByCondition" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM safety_tips
+        <where>
+            <if test="title != null and title != ''">
+                AND title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="startTime != null">
+                AND create_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND create_time &lt;= #{endTime}
+            </if>
+        </where>
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ORDER BY ${orderBy} ${orderType}
+            </when>
+            <otherwise>
+                ORDER BY create_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 统计总数 -->
+    <select id="count" resultType="java.lang.Long" parameterType="com.example.travel.entity.SafetyTips">
+        SELECT COUNT(*) FROM safety_tips
+    </select>
+
+    <!-- 条件统计 -->
+    <select id="countByCondition" resultType="java.lang.Long" parameterType="java.util.Map">
+        SELECT COUNT(*) FROM safety_tips
+        <where>
+            <if test="title != null and title != ''">
+                AND title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="startTime != null">
+                AND create_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND create_time &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+    <!-- 分页 -->
+    <select id="findAllSafetyTips" resultType="com.example.travel.entity.SafetyTips">
+        SELECT * FROM safety_tips
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+        LIMIT #{offset},#{pageSize}
+    </select>
+    <!-- 查询总数（用于分页） -->
+    <select id="countSafety" resultType="int">
+        select COUNT(*) from safety_tips
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+    </select>
+</mapper>

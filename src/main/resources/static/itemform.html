@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目开发文档 | 博览 3.01</title>
+    <link href="/bootstrap-5.0.0-beta1-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/bootstrap-5.0.0-beta1-dist/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --accent-color: #6610f2;
+            --light-bg: #f8f9fa;
+            --dark-bg: #212529;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fb;
+            color: #333;
+            padding-top: 4rem;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 4rem;
+            left: 0;
+            height: calc(100vh - 4rem);
+            overflow-y: auto;
+            background-color: white;
+            border-right: 1px solid #dee2e6;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.05);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .main-content {
+            padding: 2rem;
+            margin-left: 280px;
+            transition: margin 0.3s ease;
+        }
+
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+            background-color: white;
+        }
+
+        .nav-logo {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .sidebar-sticky {
+            padding-top: 1rem;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,.03);
+            border: none;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .section-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            border-radius: 5px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .highlight {
+            background-color: rgba(13, 110, 253, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(13, 110, 253, 0.1);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .doc-section {
+            padding-top: 4rem;
+            margin-top: -4rem;
+        }
+
+        .sidebar-link {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            color: #495057;
+            text-decoration: none;
+            display: block;
+            transition: all 0.2s;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            background-color: rgba(13, 110, 253, 0.1);
+            color: var(--primary-color);
+        }
+
+        .sidebar-heading {
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            color: var(--dark-bg);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-download {
+            background: var(--accent-color);
+            border: none;
+            padding: 0.5rem 1.5rem;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 250px;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar-toggle {
+                display: block !important;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .sidebar {
+                width: 280px;
+            }
+        }
+
+        .footer {
+            background: var(--dark-bg);
+            color: rgba(255,255,255,0.7);
+            padding: 3rem 0;
+            margin-top: 3rem;
+        }
+
+        .tag {
+            background: rgba(13, 110, 253, 0.1);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-container {
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            margin: 1.5rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary-color);
+            border-radius: 3px;
+            width: 75%;
+        }
+    </style>
+</head>
+<body>
+<!-- 顶部导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <i class="bi bi-file-earmark-code-fill me-2 text-primary"></i>
+            <span class="nav-logo">DevDocs</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/details.html"><i class="bi bi-house-door me-1"></i> 首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="bi bi-book me-1"></i> 文档</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="bi bi-code-slash me-1"></i> 示例</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="bi bi-question-circle me-1"></i> 帮助</a>
+                </li>
+            </ul>
+
+            <div class="d-flex">
+                <button class="btn btn-sm btn-outline-primary me-2">
+                    <i class="bi bi-github me-1"></i> GitHub
+                </button>
+                <button class="btn btn-sm btn-download text-white">
+                    <i class="bi bi-download me-1"></i> 下载
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- 侧边栏 -->
+<div class="sidebar">
+    <div class="sidebar-sticky pt-3">
+        <div class="sidebar-heading">文档目录</div>
+
+        <a href="#introduction" class="sidebar-link active">
+            <i class="bi bi-info-circle me-2"></i> 项目介绍
+        </a>
+        <a href="#getting-started" class="sidebar-link">
+            <i class="bi bi-play-circle me-2"></i> 快速开始
+        </a>
+        <a href="#configuration" class="sidebar-link">
+            <i class="bi bi-gear me-2"></i> 配置指南
+        </a>
+        <a href="#components" class="sidebar-link">
+            <i class="bi bi-puzzle me-2"></i> 组件文档
+        </a>
+        <a href="#api" class="sidebar-link">
+            <i class="bi bi-cpu me-2"></i> API 参考
+        </a>
+
+        <div class="sidebar-heading mt-4">开发指南</div>
+
+        <a href="#customization" class="sidebar-link">
+            <i class="bi bi-brush me-2"></i> 自定义主题
+        </a>
+        <a href="#deployment" class="sidebar-link">
+            <i class="bi bi-cloud-upload me-2"></i> 部署指南
+        </a>
+        <a href="#troubleshooting" class="sidebar-link">
+            <i class="bi bi-bug me-2"></i> 故障排除
+        </a>
+        <a href="#faq" class="sidebar-link">
+            <i class="bi bi-question-circle me-2"></i> 常见问题
+        </a>
+
+        <div class="sidebar-heading mt-4">其他资源</div>
+
+        <a href="#changelog" class="sidebar-link">
+            <i class="bi bi-journal-code me-2"></i> 更新日志
+        </a>
+        <a href="#contributing" class="sidebar-link">
+            <i class="bi bi-people me-2"></i> 贡献指南
+        </a>
+        <a href="#license" class="sidebar-link">
+            <i class="bi bi-shield-check me-2"></i> 许可证
+        </a>
+    </div>
+</div>
+
+<!-- 主内容区域 -->
+<div class="main-content">
+    <div class="container-fluid">
+        <!-- 项目介绍 -->
+        <section id="introduction" class="doc-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="display-5 fw-bold">项目开发文档</h1>
+                <div>
+                    <span class="badge bg-primary me-1">Bootstrap 5.1.3</span>
+                    <span class="badge bg-success me-1">v2.4.0</span>
+                    <span class="badge bg-success me-1">spring-Boot 3.4.3</span>
+                    <span class="badge bg-success me-1">vue3</span>
+                    <span class="badge bg-success me-1">vite 6.3.5</span>
+                    <span class="badge bg-info">稳定版</span>
+                </div>
+            </div>
+
+            <div class="alert alert-primary d-flex align-items-center" role="alert">
+                <i class="bi bi-info-circle-fill me-2 fs-4"></i>
+                <div>
+                    此文档包含项目开发所需的所有技术细节、配置指南和API参考。请确保使用最新版本以获得最佳体验。
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-md-8">
+                    <div class="section-card">
+                        <div class="card-header">项目概述</div>
+                        <div class="card-body">
+                            <p>这是一个基于Bootstrap 5的现代化Web应用开发框架，旨在帮助开发人员快速构建响应式、移动优先的网站和Web应用程序。</p>
+
+                            <h5 class="mt-4">主要特性：</h5>
+                            <ul class="mt-3">
+                                <li>完全响应式设计，适配所有设备尺寸</li>
+                                <li>基于Bootstrap 5的现代化UI组件</li>
+                                <li>模块化结构，易于定制和扩展</li>
+                                <li>详细的文档和示例代码</li>
+                                <li>内置主题系统，支持深色/浅色模式</li>
+                                <li>优化的性能和加载速度</li>
+                            </ul>
+
+                            <div class="progress-container mt-4">
+                                <div class="progress-bar"></div>
+                            </div>
+                            <div class="d-flex justify-content-between text-muted small">
+                                <span>当前开发进度</span>
+                                <span>75% 完成</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="section-card">
+                        <div class="card-header">技术栈</div>
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="feature-icon">
+                                    <i class="bi bi-bootstrap-fill fs-4"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h5 class="mb-0">Bootstrap 5</h5>
+                                    <p class="text-muted mb-0">文档框架</p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="feature-icon">
+                                    <i class="bi bi-filetype-js fs-4"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h5 class="mb-0">JavaScript</h5>
+                                    <p class="text-muted mb-0">交互功能</p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="feature-icon">
+                                    <i class="bi bi-sass fs-4"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h5 class="mb-0">Sass</h5>
+                                    <p class="text-muted mb-0">样式预处理器</p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center">
+                                <div class="feature-icon">
+                                    <i class="bi bi-tools fs-4"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h5 class="mb-0">Webpack</h5>
+                                    <p class="text-muted mb-0">构建工具</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="section-card">
+                        <div class="card-header">前端技术栈</div>
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="feature-icon">
+                                    <i class="bi bi-bootstrap-fill fs-4"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h5 class="mb-0">vue 3</h5>
+                                    <p class="text-muted mb-0">前端框架</p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="feature-icon">
+                                    <i class="bi bi-filetype-js fs-4"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h5 class="mb-0">vue.js</h5>
+                                    <p class="text-muted mb-0">交互功能</p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="feature-icon">
+                                    <i class="bi bi-sass fs-4"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h5 class="mb-0">组件库</h5>
+                                    <p class="text-muted mb-0">element puls</p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center">
+                                <div class="feature-icon">
+                                    <i class="bi bi-tools fs-4"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h5 class="mb-0">vite</h5>
+                                    <p class="text-muted mb-0">构建工具</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 快速开始 -->
+        <section id="getting-started" class="doc-section mt-5">
+            <h2 class="mt-5 mb-4 border-bottom pb-2">快速开始</h2>
+
+            <div class="section-card">
+                <div class="card-header">安装指南</div>
+                <div class="card-body">
+                    <h5>通过npm安装</h5>
+                    <p>推荐使用npm进行安装，以便管理依赖关系：</p>
+
+                    <div class="code-block">
+                        <span class="text-info">$</span> npm install my-project --save
+                    </div>
+
+                    <h5 class="mt-4">通过CDN引入</h5>
+                    <p>直接在HTML文件中引入CDN链接：</p>
+
+                    <div class="code-block">
+                        <span class="text-warning">&lt;!-- CSS --&gt;</span><br>
+                        <span class="text-success">&lt;link</span> <span class="text-info">href=</span><span class="text-danger">"https://cdn.example.com/my-project.min.css"</span> <span class="text-info">rel=</span><span class="text-danger">"stylesheet"</span><span class="text-success">&gt;</span><br>
+                        <br>
+                        <span class="text-warning">&lt;!-- JavaScript --&gt;</span><br>
+                        <span class="text-success">&lt;script</span> <span class="text-info">src=</span><span class="text-danger">"https://cdn.example.com/my-project.min.js"</span><span class="text-success">&gt;&lt;/script&gt;</span>
+                    </div>
+
+                    <h5 class="mt-4">基本模板</h5>
+                    <p>使用以下HTML模板开始您的项目：</p>
+
+                    <div class="code-block">
+                        <span class="text-success">&lt;!DOCTYPE html&gt;</span><br>
+                        <span class="text-success">&lt;html</span> <span class="text-info">lang=</span><span class="text-danger">"zh-CN"</span><span class="text-success">&gt;</span><br>
+                        <span class="text-success">&lt;head&gt;</span><br>
+                        &nbsp;&nbsp;<span class="text-success">&lt;meta</span> <span class="text-info">charset=</span><span class="text-danger">"UTF-8"</span><span class="text-success">&gt;</span><br>
+                        &nbsp;&nbsp;<span class="text-success">&lt;meta</span> <span class="text-info">name=</span><span class="text-danger">"viewport"</span> <span class="text-info">content=</span><span class="text-danger">"width=device-width, initial-scale=1.0"</span><span class="text-success">&gt;</span><br>
+                        &nbsp;&nbsp;<span class="text-success">&lt;title&gt;</span>我的项目<span class="text-success">&lt;/title&gt;</span><br>
+                        &nbsp;&nbsp;<span class="text-success">&lt;link</span> <span class="text-info">href=</span><span class="text-danger">"my-project.min.css"</span> <span class="text-info">rel=</span><span class="text-danger">"stylesheet"</span><span class="text-success">&gt;</span><br>
+                        <span class="text-success">&lt;/head&gt;</span><br>
+                        <span class="text-success">&lt;body&gt;</span><br>
+                        &nbsp;&nbsp;<span class="text-warning">&lt;!-- 页面内容 --&gt;</span><br>
+                        &nbsp;&nbsp;<span class="text-success">&lt;script</span> <span class="text-info">src=</span><span class="text-danger">"my-project.min.js"</span><span class="text-success">&gt;&lt;/script&gt;</span><br>
+                        <span class="text-success">&lt;/body&gt;</span><br>
+                        <span class="text-success">&lt;/html&gt;</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 配置指南 -->
+        <!-- 配置指南 -->
+        <section id="configuration" class="doc-section mt-5">
+            <h2 class="mt-5 mb-4 border-bottom pb-2">配置指南</h2>
+
+            <div class="alert alert-primary d-flex align-items-center">
+                <i class="bi bi-gear-fill me-2 fs-4"></i>
+                <div>
+                    本部分包含系统所有可配置选项的详细说明。配置文件通常位于项目根目录下的 <code>config/</code> 文件夹中。
+                </div>
+            </div>
+
+            <!-- 基础配置 -->
+            <div class="section-card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-wrench me-2"></i> 基础配置
+                </div>
+                <div class="card-body">
+                    <h4 class="mb-4">config/app.js</h4>
+
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                            <tr>
+                                <th width="25%">配置项</th>
+                                <th width="20%">类型</th>
+                                <th width="15%">默认值</th>
+                                <th>描述</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>name</td>
+                                <td>string</td>
+                                <td>'MyApp'</td>
+                                <td>应用程序名称</td>
+                            </tr>
+                            <tr>
+                                <td>env</td>
+                                <td>string</td>
+                                <td>'production'</td>
+                                <td>应用环境 (production, development, testing)</td>
+                            </tr>
+                            <tr>
+                                <td>debug</td>
+                                <td>boolean</td>
+                                <td>false</td>
+                                <td>是否启用调试模式</td>
+                            </tr>
+                            <tr>
+                                <td>url</td>
+                                <td>string</td>
+                                <td>'http://localhost'</td>
+                                <td>应用程序URL</td>
+                            </tr>
+                            <tr>
+                                <td>timezone</td>
+                                <td>string</td>
+                                <td>'UTC'</td>
+                                <td>默认时区</td>
+                            </tr>
+                            <tr>
+                                <td>locale</td>
+                                <td>string</td>
+                                <td>'en'</td>
+                                <td>默认语言</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h5 class="mt-4">配置示例</h5>
+                    <div class="code-block">
+                        <span class="text-success">module</span>.<span class="text-info">exports</span> = {<br>
+                        &nbsp;&nbsp;<span class="text-info">name</span>: <span class="text-danger">'My Application'</span>,<br>
+                        &nbsp;&nbsp;<span class="text-info">env</span>: process.<span class="text-info">env</span>.<span class="text-info">NODE_ENV</span> || <span class="text-danger">'development'</span>,<br>
+                        &nbsp;&nbsp;<span class="text-info">debug</span>: process.<span class="text-info">env</span>.<span class="text-info">NODE_ENV</span> === <span class="text-danger">'development'</span>,<br>
+                        &nbsp;&nbsp;<span class="text-info">url</span>: process.<span class="text-info">env</span>.<span class="text-info">APP_URL</span> || <span class="text-danger">'http://localhost:3000'</span>,<br>
+                        &nbsp;&nbsp;<span class="text-info">timezone</span>: <span class="text-danger">'Asia/Shanghai'</span>,<br>
+                        &nbsp;&nbsp;<span class="text-info">locale</span>: <span class="text-danger">'zh-CN'</span><br>
+                        };
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据库配置 -->
+            <div class="section-card mb-4">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-database me-2"></i> 数据库配置
+                </div>
+                <div class="card-body">
+                    <h4 class="mb-4">config/database.js</h4>
+
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                            <tr>
+                                <th width="25%">配置项</th>
+                                <th width="20%">类型</th>
+                                <th width="15%">默认值</th>
+                                <th>描述</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>default</td>
+                                <td>string</td>
+                                <td>'mysql'</td>
+                                <td>默认数据库连接</td>
+                            </tr>
+                            <tr>
+                                <td>connections.mysql.host</td>
+                                <td>string</td>
+                                <td>'127.0.0.1'</td>
+                                <td>MySQL服务器地址</td>
+                            </tr>
+                            <tr>
+                                <td>connections.mysql.port</td>
+                                <td>number</td>
+                                <td>3306</td>
+                                <td>MySQL服务器端口</td>
+                            </tr>
+                            <tr>
+                                <td>connections.mysql.database</td>
+                                <td>string</td>
+                                <td>'forge'</td>
+                                <td>数据库名称</td>
+                            </tr>
+                            <tr>
+                                <td>connections.mysql.username</td>
+                                <td>string</td>
+                                <td>'forge'</td>
+                                <td>数据库用户名</td>
+                            </tr>
+                            <tr>
+                                <td>connections.mysql.password</td>
+                                <td>string</td>
+                                <td>''</td>
+                                <td>数据库密码</td>
+                            </tr>
+                            <tr>
+                                <td>connections.mysql.charset</td>
+                                <td>string</td>
+                                <td>'utf8mb4'</td>
+                                <td>数据库字符集</td>
+                            </tr>
+                            <tr>
+                                <td>connections.sqlite.database</td>
+                                <td>string</td>
+                                <td>'storage/database.sqlite'</td>
+                                <td>SQLite数据库文件路径</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h5 class="mt-4">配置示例</h5>
+                    <div class="code-block">
+                        <span class="text-success">module</span>.<span class="text-info">exports</span> = {<br>
+                        &nbsp;&nbsp;<span class="text-info">default</span>: <span class="text-danger">'mysql'</span>,<br>
+                        <br>
+                        &nbsp;&nbsp;<span class="text-info">connections</span>: {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">mysql</span>: {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">host</span>: process.<span class="text-info">env</span>.<span class="text-info">DB_HOST</span> || <span class="text-danger">'127.0.0.1'</span>,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">port</span>: process.<span class="text-info">env</span>.<span class="text-info">DB_PORT</span> || <span class="text-danger">3306</span>,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">database</span>: process.<span class="text-info">env</span>.<span class="text-info">DB_DATABASE</span> || <span class="text-danger">'myapp'</span>,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">username</span>: process.<span class="text-info">env</span>.<span class="text-info">DB_USERNAME</span> || <span class="text-danger">'root'</span>,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">password</span>: process.<span class="text-info">env</span>.<span class="text-info">DB_PASSWORD</span> || <span class="text-danger">''</span>,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">charset</span>: <span class="text-danger">'utf8mb4'</span>,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">timezone</span>: <span class="text-danger">'+08:00'</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;},<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">sqlite</span>: {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">database</span>: <span class="text-danger">'storage/database.sqlite'</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;}<br>
+                        };
+                    </div>
+
+                    <div class="alert alert-warning mt-4">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>安全提示：</strong> 生产环境中请勿在配置文件中直接写入敏感信息，应使用环境变量。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 缓存配置 -->
+            <div class="section-card mb-4">
+                <div class="card-header bg-info text-white">
+                    <i class="bi bi-speedometer2 me-2"></i> 缓存配置
+                </div>
+                <div class="card-body">
+                    <h4 class="mb-4">config/cache.js</h4>
+
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                            <tr>
+                                <th width="25%">配置项</th>
+                                <th width="20%">类型</th>
+                                <th width="15%">默认值</th>
+                                <th>描述</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>default</td>
+                                <td>string</td>
+                                <td>'file'</td>
+                                <td>默认缓存驱动</td>
+                            </tr>
+                            <tr>
+                                <td>stores.file.location</td>
+                                <td>string</td>
+                                <td>'storage/cache'</td>
+                                <td>文件缓存存储路径</td>
+                            </tr>
+                            <tr>
+                                <td>stores.redis.connection</td>
+                                <td>string</td>
+                                <td>'default'</td>
+                                <td>Redis连接名称</td>
+                            </tr>
+                            <tr>
+                                <td>prefix</td>
+                                <td>string</td>
+                                <td>'myapp_cache'</td>
+                                <td>缓存键前缀</td>
+                            </tr>
+                            <tr>
+                                <td>ttl</td>
+                                <td>number</td>
+                                <td>3600</td>
+                                <td>默认缓存时间(秒)</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h5 class="mt-4">支持的缓存驱动</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-group mb-3">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    file
+                                    <span class="badge bg-primary">默认</span>
+                                </li>
+                                <li class="list-group-item">redis</li>
+                                <li class="list-group-item">memcached</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-group">
+                                <li class="list-group-item">database</li>
+                                <li class="list-group-item">array</li>
+                                <li class="list-group-item">null (禁用缓存)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 邮件配置 -->
+            <div class="section-card mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <i class="bi bi-envelope me-2"></i> 邮件配置
+                </div>
+                <div class="card-body">
+                    <h4 class="mb-4">config/mail.js</h4>
+
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                            <tr>
+                                <th width="25%">配置项</th>
+                                <th width="20%">类型</th>
+                                <th width="15%">默认值</th>
+                                <th>描述</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>default</td>
+                                <td>string</td>
+                                <td>'smtp'</td>
+                                <td>默认邮件驱动</td>
+                            </tr>
+                            <tr>
+                                <td>mailers.smtp.host</td>
+                                <td>string</td>
+                                <td>'smtp.mailgun.org'</td>
+                                <td>SMTP服务器地址</td>
+                            </tr>
+                            <tr>
+                                <td>mailers.smtp.port</td>
+                                <td>number</td>
+                                <td>587</td>
+                                <td>SMTP服务器端口</td>
+                            </tr>
+                            <tr>
+                                <td>mailers.smtp.username</td>
+                                <td>string</td>
+                                <td>null</td>
+                                <td>SMTP用户名</td>
+                            </tr>
+                            <tr>
+                                <td>mailers.smtp.password</td>
+                                <td>string</td>
+                                <td>null</td>
+                                <td>SMTP密码</td>
+                            </tr>
+                            <tr>
+                                <td>mailers.smtp.encryption</td>
+                                <td>string</td>
+                                <td>'tls'</td>
+                                <td>加密方式 (tls, ssl)</td>
+                            </tr>
+                            <tr>
+                                <td>from.address</td>
+                                <td>string</td>
+                                <td>'hello@example.com'</td>
+                                <td>默认发件人邮箱</td>
+                            </tr>
+                            <tr>
+                                <td>from.name</td>
+                                <td>string</td>
+                                <td>'Example'</td>
+                                <td>默认发件人名称</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h5 class="mt-4">常用邮件服务配置</h5>
+
+                    <div class="accordion mb-4" id="mailConfigAccordion">
+                        <!-- Gmail配置 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="gmailHeading">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gmailConfig">
+                                    <i class="bi bi-google me-2"></i> Gmail 配置
+                                </button>
+                            </h2>
+                            <div id="gmailConfig" class="accordion-collapse collapse" aria-labelledby="gmailHeading" data-bs-parent="#mailConfigAccordion">
+                                <div class="accordion-body">
+                                    <div class="code-block">
+                                        <span class="text-info">mailers</span>: {<br>
+                                        &nbsp;&nbsp;<span class="text-info">smtp</span>: {<br>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">host</span>: <span class="text-danger">'smtp.gmail.com'</span>,<br>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">port</span>: <span class="text-danger">587</span>,<br>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">username</span>: <span class="text-danger">'your@gmail.com'</span>,<br>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">password</span>: <span class="text-danger">'your-app-password'</span>, <span class="text-secondary">// 使用应用专用密码</span><br>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">encryption</span>: <span class="text-danger">'tls'</span><br>
+                                        &nbsp;&nbsp;}<br>
+                                        }
+                                    </div>
+                                    <div class="alert alert-warning mt-3">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                        使用Gmail需要启用"安全性较低的应用"或创建应用专用密码。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mailgun配置 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="mailgunHeading">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#mailgunConfig">
+                                    <i class="bi bi-envelope-check me-2"></i> Mailgun 配置
+                                </button>
+                            </h2>
+                            <div id="mailgunConfig" class="accordion-collapse collapse" aria-labelledby="mailgunHeading" data-bs-parent="#mailConfigAccordion">
+                                <div class="accordion-body">
+                                    <div class="code-block">
+                                        <span class="text-info">mailers</span>: {<br>
+                                        &nbsp;&nbsp;<span class="text-info">mailgun</span>: {<br>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">domain</span>: <span class="text-danger">'your-domain.com'</span>,<br>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">secret</span>: <span class="text-danger">'your-mailgun-key'</span>,<br>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info">endpoint</span>: <span class="text-danger">'api.mailgun.net'</span> <span class="text-secondary">// 欧盟区域使用 'api.eu.mailgun.net'</span><br>
+                                        &nbsp;&nbsp;}<br>
+                                        },<br>
+                                        <span class="text-info">default</span>: <span class="text-danger">'mailgun'</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 环境变量配置 -->
+            <div class="section-card">
+                <div class="card-header bg-dark text-white">
+                    <i class="bi bi-file-earmark-text me-2"></i> .env 环境变量
+                </div>
+                <div class="card-body">
+                    <p>以下是最常用的环境变量配置，应存储在项目根目录的 <code>.env</code> 文件中：</p>
+
+                    <div class="code-block">
+                        <span class="text-secondary"># 应用配置</span><br>
+                        APP_NAME=MyApp<br>
+                        APP_ENV=production<br>
+                        APP_KEY=base64:your-random-app-key<br>
+                        APP_DEBUG=false<br>
+                        APP_URL=http://localhost<br>
+                        <br>
+                        <span class="text-secondary"># 数据库配置</span><br>
+                        DB_CONNECTION=mysql<br>
+                        DB_HOST=127.0.0.1<br>
+                        DB_PORT=3306<br>
+                        DB_DATABASE=myapp<br>
+                        DB_USERNAME=root<br>
+                        DB_PASSWORD=<br>
+                        <br>
+                        <span class="text-secondary"># 邮件配置</span><br>
+                        MAIL_MAILER=smtp<br>
+                        MAIL_HOST=smtp.mailtrap.io<br>
+                        MAIL_PORT=2525<br>
+                        MAIL_USERNAME=null<br>
+                        MAIL_PASSWORD=null<br>
+                        MAIL_ENCRYPTION=tls<br>
+                        MAIL_FROM_ADDRESS=hello@example.com<br>
+                        MAIL_FROM_NAME="${APP_NAME}"<br>
+                        <br>
+                        <span class="text-secondary"># Redis配置</span><br>
+                        REDIS_HOST=127.0.0.1<br>
+                        REDIS_PASSWORD=null<br>
+                        REDIS_PORT=6379<br>
+                        <br>
+                        <span class="text-secondary"># 第三方服务</span><br>
+                        GOOGLE_CLIENT_ID=<br>
+                        GOOGLE_CLIENT_SECRET=<br>
+                        FACEBOOK_CLIENT_ID=<br>
+                        FACEBOOK_CLIENT_SECRET=
+                    </div>
+
+                    <div class="alert alert-info mt-4">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        <strong>提示：</strong> 在开发环境中，可以复制 <code>.env.example</code> 文件并重命名为 <code>.env</code>，然后修改相应配置。
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 组件文档 -->
+        <section id="components" class="doc-section mt-5">
+            <h2 class="mt-5 mb-4 border-bottom pb-2">组件文档</h2>
+
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="section-card h-100">
+                        <div class="card-header">导航组件</div>
+                        <div class="card-body">
+                            <h5>Navbar</h5>
+                            <p>响应式导航栏组件，支持移动设备折叠菜单。</p>
+
+                            <h5 class="mt-4">侧边栏</h5>
+                            <p>固定式侧边栏，用于文档导航和菜单展示。</p>
+
+                            <h5 class="mt-4">标签页</h5>
+                            <p>选项卡组件，用于内容分类和组织。</p>
+
+                            <div class="mt-3">
+                                <span class="tag">响应式</span>
+                                <span class="tag">可折叠</span>
+                                <span class="tag">深色模式</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <div class="section-card h-100">
+                        <div class="card-header">内容展示</div>
+                        <div class="card-body">
+                            <h5>卡片组件</h5>
+                            <p>灵活的内容容器，支持标题、图像和操作按钮。</p>
+
+                            <h5 class="mt-4">表格</h5>
+                            <p>数据表格，支持排序、筛选和分页功能。</p>
+
+                            <h5 class="mt-4">进度条</h5>
+                            <p>直观的任务进度展示组件。</p>
+
+                            <div class="mt-3">
+                                <span class="tag">可定制</span>
+                                <span class="tag">动画效果</span>
+                                <span class="tag">响应式</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <div class="section-card h-100">
+                        <div class="card-header">表单元素</div>
+                        <div class="card-body">
+                            <h5>输入控件</h5>
+                            <p>文本输入、选择框、单选按钮和复选框等。</p>
+
+                            <h5 class="mt-4">表单验证</h5>
+                            <p>客户端表单验证功能。</p>
+
+                            <h5 class="mt-4">日期选择器</h5>
+                            <p>日期和时间选择组件。</p>
+
+                            <div class="mt-3">
+                                <span class="tag">验证</span>
+                                <span class="tag">交互</span>
+                                <span class="tag">无障碍</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <div class="section-card h-100">
+                        <div class="card-header">通知与反馈</div>
+                        <div class="card-body">
+                            <h5>警告框</h5>
+                            <p>操作反馈和状态通知组件。</p>
+
+                            <h5 class="mt-4">模态框</h5>
+                            <p>对话框和弹出窗口组件。</p>
+
+                            <h5 class="mt-4">提示工具</h5>
+                            <p>信息提示和工具提示组件。</p>
+
+                            <div class="mt-3">
+                                <span class="tag">动画</span>
+                                <span class="tag">位置控制</span>
+                                <span class="tag">可关闭</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- API参考 -->
+        <section id="api" class="doc-section mt-5">
+            <h2 class="mt-5 mb-4 border-bottom pb-2">API 参考</h2>
+
+            <div class="alert alert-info d-flex align-items-center">
+                <i class="bi bi-info-circle-fill me-2 fs-4"></i>
+                <div>
+                    <strong>API 基础 URL:</strong> <code>http:///api/public/</code><br>
+                    所有API请求都需要在请求头中包含 <code>Authorization: Bearer &lt;your_token&gt;</code>
+                </div>
+            </div>
+
+            <!-- 认证API -->
+            <div class="section-card mb-4">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-shield-lock me-2"></i> 认证 API
+                </div>
+                <div class="card-body">
+                    <!-- 登录API -->
+                    <div class="api-endpoint mb-5">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="mb-0">
+                                <span class="badge bg-success me-2">POST</span>
+                                /auth/login
+                            </h4>
+                            <span class="badge bg-primary">需要验证</span>
+                        </div>
+
+                        <p>用户登录接口，成功登录后返回访问令牌。</p>
+
+                        <h5 class="mt-4">请求参数</h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                <tr>
+                                    <th width="15%">参数</th>
+                                    <th width="15%">类型</th>
+                                    <th width="10%">必填</th>
+                                    <th>描述</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>username</td>
+                                    <td>string</td>
+                                    <td>是</td>
+                                    <td>用户名或邮箱</td>
+                                </tr>
+                                <tr>
+                                    <td>password</td>
+                                    <td>string</td>
+                                    <td>是</td>
+                                    <td>用户密码</td>
+                                </tr>
+                                <tr>
+                                    <td>remember</td>
+                                    <td>boolean</td>
+                                    <td>否</td>
+                                    <td>是否记住登录状态</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h5 class="mt-4">请求示例</h5>
+                        <div class="code-block">
+                            <span class="text-secondary">// cURL 示例</span><br>
+                            curl -X POST \<br>
+                            &nbsp;&nbsp;https://api.example.com/v1/auth/login \<br>
+                            &nbsp;&nbsp;-H 'Content-Type: application/json' \<br>
+                            &nbsp;&nbsp;-d '{<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"username": "admin@example.com",<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"password": "yourpassword",<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"remember": true<br>
+                            &nbsp;&nbsp;}'
+                        </div>
+
+                        <h5 class="mt-4">响应示例</h5>
+                        <div class="code-block">
+                            <span class="text-secondary">// 成功响应 (200 OK)</span><br>
+                            {<br>
+                            &nbsp;&nbsp;"success": true,<br>
+                            &nbsp;&nbsp;"data": {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"expires_in": 3600,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"user": {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": 123,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name": "Admin User",<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"email": "admin@example.com",<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"roles": ["admin"]<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                            &nbsp;&nbsp;}<br>
+                            }<br>
+                            <br>
+                            <span class="text-secondary">// 错误响应 (401 Unauthorized)</span><br>
+                            {<br>
+                            &nbsp;&nbsp;"success": false,<br>
+                            &nbsp;&nbsp;"error": {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"code": "AUTH_FAILED",<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"message": "用户名或密码错误"<br>
+                            &nbsp;&nbsp;}<br>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- 刷新令牌API -->
+                    <div class="api-endpoint">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="mb-0">
+                                <span class="badge bg-primary me-2">POST</span>
+                                /auth/refresh
+                            </h4>
+                            <span class="badge bg-primary">需要验证</span>
+                        </div>
+
+                        <p>使用刷新令牌获取新的访问令牌。</p>
+
+                        <h5 class="mt-4">请求示例</h5>
+                        <div class="code-block">
+                            curl -X POST \<br>
+                            &nbsp;&nbsp;https://api.example.com/v1/auth/refresh \<br>
+                            &nbsp;&nbsp;-H 'Authorization: Bearer &lt;refresh_token&gt;'
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 用户管理API -->
+            <div class="section-card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-people me-2"></i> 用户管理 API
+                </div>
+                <div class="card-body">
+                    <!-- 获取用户列表 -->
+                    <div class="api-endpoint mb-5">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="mb-0">
+                                <span class="badge bg-info me-2">GET</span>
+                                /users
+                            </h4>
+                            <span class="badge bg-warning text-dark">管理员权限</span>
+                        </div>
+
+                        <p>获取用户列表，支持分页和筛选。</p>
+
+                        <h5 class="mt-4">查询参数</h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                <tr>
+                                    <th width="15%">参数</th>
+                                    <th width="15%">类型</th>
+                                    <th width="10%">必填</th>
+                                    <th>描述</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>page</td>
+                                    <td>integer</td>
+                                    <td>否</td>
+                                    <td>页码，默认为1</td>
+                                </tr>
+                                <tr>
+                                    <td>per_page</td>
+                                    <td>integer</td>
+                                    <td>否</td>
+                                    <td>每页数量，默认为15</td>
+                                </tr>
+                                <tr>
+                                    <td>search</td>
+                                    <td>string</td>
+                                    <td>否</td>
+                                    <td>搜索关键词（用户名或邮箱）</td>
+                                </tr>
+                                <tr>
+                                    <td>status</td>
+                                    <td>string</td>
+                                    <td>否</td>
+                                    <td>用户状态（active, suspended, pending）</td>
+                                </tr>
+                                <tr>
+                                    <td>sort</td>
+                                    <td>string</td>
+                                    <td>否</td>
+                                    <td>排序字段（id, name, created_at等）</td>
+                                </tr>
+                                <tr>
+                                    <td>order</td>
+                                    <td>string</td>
+                                    <td>否</td>
+                                    <td>排序方向（asc, desc）</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h5 class="mt-4">请求示例</h5>
+                        <div class="code-block">
+                            curl -X GET \<br>
+                            &nbsp;&nbsp;"https://api.example.com/v1/users?page=1&per_page=10&search=admin&status=active" \<br>
+                            &nbsp;&nbsp;-H 'Authorization: Bearer &lt;your_token&gt;'
+                        </div>
+
+                        <h5 class="mt-4">响应示例</h5>
+                        <div class="code-block">
+                            {<br>
+                            &nbsp;&nbsp;"success": true,<br>
+                            &nbsp;&nbsp;"data": {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"current_page": 1,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"data": [<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": 1,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name": "Admin User",<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"email": "admin@example.com",<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"status": "active",<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"created_at": "2023-01-15T08:30:00Z"<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-secondary">// 更多用户数据...</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;],<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"total": 42,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"per_page": 10,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"last_page": 5<br>
+                            &nbsp;&nbsp;}<br>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- 创建用户 -->
+                    <div class="api-endpoint mb-5">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="mb-0">
+                                <span class="badge bg-success me-2">POST</span>
+                                /users
+                            </h4>
+                            <span class="badge bg-warning text-dark">管理员权限</span>
+                        </div>
+
+                        <p>创建新用户账户。</p>
+
+                        <h5 class="mt-4">请求参数</h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                <tr>
+                                    <th width="15%">参数</th>
+                                    <th width="15%">类型</th>
+                                    <th width="10%">必填</th>
+                                    <th>描述</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>name</td>
+                                    <td>string</td>
+                                    <td>是</td>
+                                    <td>用户全名</td>
+                                </tr>
+                                <tr>
+                                    <td>email</td>
+                                    <td>string</td>
+                                    <td>是</td>
+                                    <td>用户邮箱</td>
+                                </tr>
+                                <tr>
+                                    <td>password</td>
+                                    <td>string</td>
+                                    <td>是</td>
+                                    <td>用户密码（至少8个字符）</td>
+                                </tr>
+                                <tr>
+                                    <td>roles</td>
+                                    <td>array</td>
+                                    <td>否</td>
+                                    <td>用户角色数组</td>
+                                </tr>
+                                <tr>
+                                    <td>status</td>
+                                    <td>string</td>
+                                    <td>否</td>
+                                    <td>用户状态（默认为active）</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h5 class="mt-4">请求示例</h5>
+                        <div class="code-block">
+                            curl -X POST \<br>
+                            &nbsp;&nbsp;https://api.example.com/v1/users \<br>
+                            &nbsp;&nbsp;-H 'Authorization: Bearer &lt;your_token&gt;' \<br>
+                            &nbsp;&nbsp;-H 'Content-Type: application/json' \<br>
+                            &nbsp;&nbsp;-d '{<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"name": "New User",<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"email": "new.user@example.com",<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"password": "securepassword123",<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"roles": ["editor"],<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"status": "active"<br>
+                            &nbsp;&nbsp;}'
+                        </div>
+                    </div>
+
+                    <!-- 获取单个用户 -->
+                    <div class="api-endpoint mb-5">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="mb-0">
+                                <span class="badge bg-info me-2">GET</span>
+                                /users/{id}
+                            </h4>
+                            <span class="badge bg-primary">需要验证</span>
+                        </div>
+
+                        <p>获取单个用户的详细信息。</p>
+
+                        <h5 class="mt-4">路径参数</h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                <tr>
+                                    <th width="15%">参数</th>
+                                    <th width="15%">类型</th>
+                                    <th>描述</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>id</td>
+                                    <td>integer</td>
+                                    <td>用户ID</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 更新用户 -->
+                    <div class="api-endpoint">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="mb-0">
+                                <span class="badge bg-warning me-2 text-dark">PUT</span>
+                                /users/{id}
+                            </h4>
+                            <span class="badge bg-primary">需要验证</span>
+                        </div>
+
+                        <p>更新用户信息。</p>
+
+                        <div class="alert alert-warning mt-3">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            普通用户只能更新自己的信息，管理员可以更新所有用户信息。
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 错误代码 -->
+            <div class="section-card">
+                <div class="card-header bg-danger text-white">
+                    <i class="bi bi-exclamation-octagon me-2"></i> 错误代码
+                </div>
+                <div class="card-body">
+                    <p>以下是API可能返回的错误代码及其含义：</p>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                            <tr>
+                                <th width="10%">HTTP 状态码</th>
+                                <th width="15%">错误代码</th>
+                                <th>描述</th>
+                                <th width="20%">可能原因</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>400</td>
+                                <td>BAD_REQUEST</td>
+                                <td>请求参数无效</td>
+                                <td>缺少必要参数或参数格式错误</td>
+                            </tr>
+                            <tr>
+                                <td>401</td>
+                                <td>UNAUTHORIZED</td>
+                                <td>未授权访问</td>
+                                <td>未提供token或token无效</td>
+                            </tr>
+                            <tr>
+                                <td>403</td>
+                                <td>FORBIDDEN</td>
+                                <td>禁止访问</td>
+                                <td>权限不足</td>
+                            </tr>
+                            <tr>
+                                <td>404</td>
+                                <td>NOT_FOUND</td>
+                                <td>资源不存在</td>
+                                <td>请求的API端点或资源不存在</td>
+                            </tr>
+                            <tr>
+                                <td>429</td>
+                                <td>TOO_MANY_REQUESTS</td>
+                                <td>请求过于频繁</td>
+                                <td>超出API调用频率限制</td>
+                            </tr>
+                            <tr>
+                                <td>500</td>
+                                <td>INTERNAL_ERROR</td>
+                                <td>服务器内部错误</td>
+                                <td>服务器端处理请求时发生错误</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h5 class="mt-4">错误响应格式</h5>
+                    <div class="code-block">
+                        {<br>
+                        &nbsp;&nbsp;"success": false,<br>
+                        &nbsp;&nbsp;"error": {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"code": "ERROR_CODE",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"message": "错误描述信息",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"details": {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-secondary">// 可选，包含额外的错误详情</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 页脚 -->
+        <footer class="footer mt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 mb-4 mb-lg-0">
+                        <h5 class="text-white mb-4">DevDocs</h5>
+                        <p class="mb-4">专业的项目开发文档解决方案，帮助团队高效协作并保持文档一致性。</p>
+                        <div>
+                            <a href="#" class="text-white me-3"><i class="bi bi-github fs-5"></i></a>
+                            <a href="#" class="text-white me-3"><i class="bi bi-twitter fs-5"></i></a>
+                            <a href="#" class="text-white"><i class="bi bi-slack fs-5"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                        <h6 class="text-white mb-4">资源</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">文档</a></li>
+                            <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">教程</a></li>
+                            <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">博客</a></li>
+                            <li><a href="#" class="text-white-50 text-decoration-none">示例</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                        <h6 class="text-white mb-4">支持</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">帮助中心</a></li>
+                            <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">社区</a></li>
+                            <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">API状态</a></li>
+                            <li><a href="#" class="text-white-50 text-decoration-none">联系我们</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-4 col-md-4">
+                        <h6 class="text-white mb-4">订阅更新</h6>
+                        <p class="text-white-50 mb-3">获取最新功能和更新通知</p>
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="您的邮箱地址">
+                            <button class="btn btn-primary">订阅</button>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-4 bg-secondary">
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-start">
+                        <p class="text-white-50 mb-0">&copy; 2023 DevDocs. 保留所有权利。</p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item"><a href="#" class="text-white-50 text-decoration-none">隐私政策</a></li>
+                            <li class="list-inline-item"><a href="#" class="text-white-50 text-decoration-none">服务条款</a></li>
+                            <li class="list-inline-item"><a href="#" class="text-white-50 text-decoration-none">许可协议</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<script src="/bootstrap-5.0.0-beta1-dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 简单的滚动监听效果
+    document.addEventListener('DOMContentLoaded', function() {
+        // 侧边栏链接点击事件
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                // 移除所有活动类
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                // 添加当前活动类
+                this.classList.add('active');
+            });
+        });
+
+        // 模拟进度条加载
+        const progressBar = document.querySelector('.progress-bar');
+        setTimeout(() => {
+            progressBar.style.width = '85%';
+        }, 1000);
+    });
+</script>
+</body>
+</html>

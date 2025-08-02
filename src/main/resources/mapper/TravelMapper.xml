@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.travel.dao.TravelDao">
+
+    <!-- ResultMap定义 -->
+    <resultMap id="TravelResultMap" type="com.example.travel.entity.Travel">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="destination" column="destination"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="budget" column="budget"/>
+        <result property="description" column="description"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <!-- 查询所有旅行记录 -->
+    <select id="selectAllTravels" resultMap="TravelResultMap">
+        SELECT id, user_id, destination, start_date, end_date, budget, description, created_at, updated_at
+        FROM travel
+    </select>
+
+    <!-- 根据ID查询旅行记录 -->
+    <select id="selectTravelById" parameterType="int" resultMap="TravelResultMap">
+        SELECT id, user_id, destination, start_date, end_date, budget, description, created_at, updated_at
+        FROM travel
+        WHERE id = #{id}
+    </select>
+
+    <!-- 根据用户ID查询旅行记录 -->
+    <select id="selectTravelsByUserId" parameterType="int" resultMap="TravelResultMap">
+        SELECT id, user_id, destination, start_date, end_date, budget, description, created_at, updated_at
+        FROM travel
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 插入新的旅行记录 -->
+    <insert id="insertTravel" parameterType="com.example.travel.entity.Travel">
+        INSERT INTO travel (user_id, destination, start_date, end_date, budget, description, created_at, updated_at)
+        VALUES (#{userId}, #{destination}, #{startDate}, #{endDate}, #{budget}, #{description}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <!-- 更新旅行记录 -->
+    <update id="updateTravel" parameterType="com.example.travel.entity.Travel">
+        UPDATE travel
+        SET user_id = #{userId},
+            destination = #{destination},
+            start_date = #{startDate},
+            end_date = #{endDate},
+            budget = #{budget},
+            description = #{description},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除旅行记录 -->
+    <delete id="deleteTravelById" parameterType="int">
+        DELETE FROM travel
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目首页</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: rgba(106, 73, 255, 0.8);
+            --secondary-color: rgba(0, 170, 255, 0.8);
+            --accent-color: rgba(255, 51, 204, 0.8);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+            --text-light: rgba(255, 255, 255, 0.9);
+            --text-gray: rgba(255, 255, 255, 0.7);
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 2rem;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 背景装饰元素 */
+        .bg-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.3;
+        }
+
+        .shape-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--primary-color);
+            top: -100px;
+            left: -100px;
+        }
+
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--secondary-color);
+            bottom: -100px;
+            right: -100px;
+        }
+
+        .shape-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-color);
+            top: 30%;
+            right: 20%;
+        }
+
+        /* 头部样式 */
+        header {
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: var(--glass-shadow);
+        }
+        nav a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        /* 主标题区域 */
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto 4rem;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            color: white;
+            box-shadow: 0 4px 20px rgba(106, 73, 255, 0.4);
+        }
+        .btn-primary a{
+            text-decoration: none;
+            color: rgba(255, 255, 255, 1);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 项目卡片区域 */
+        .projects {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 2px;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--glass-shadow);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 15px 35px rgba(31, 38, 135, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+
+        .card-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .card p {
+            color: var(--text-gray);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .view-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn:hover {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            transform: translateX(5px);
+        }
+
+        /* 统计部分 */
+        .stats {
+            max-width: 1200px;
+            margin: 5rem auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--glass-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+            background: rgba(106, 73, 255, 0.15);
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .stat-label {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+        }
+
+        /* 页脚 */
+        footer {
+            max-width: 1200px;
+            margin: 3rem auto 0;
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-gray);
+            border-top: 1px solid var(--glass-border);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 背景装饰形状 -->
+<div class="bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+</div>
+
+<!-- 页眉 -->
+<header>
+    <div class="logo">
+        <div class="logo-icon">
+            <i class="fas fa-cube"></i>
+        </div>
+        <div class="logo-text">GlassUI</div>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="#">首页</a></li>
+            <li><a href="#">项目</a></li>
+            <li><a href="#">服务</a></li>
+            <li><a href="#">关于</a></li>
+            <li><a href="/itemform.html">开发文档</a></li>
+        </ul>
+    </nav>
+</header>
+
+<!-- 主标题区域 -->
+<section class="hero">
+    <h1>创新玻璃态设计体验</h1>
+    <p>探索我们精选的现代化UI项目，融合了流畅的动画、优雅的玻璃效果和直观的用户体验。我们的设计哲学是将美学与功能完美结合。</p>
+    <div class="cta-buttons">
+        <button class="btn btn-primary">
+            <a href="http://localhost:9527/">浏览项目</a>
+        </button>
+        <button class="btn btn-secondary">了解更多</button>
+    </div>
+</section>
+
+<!-- 项目展示 -->
+<section class="projects">
+    <h2 class="section-title">精选项目</h2>
+    <div class="cards-container">
+        <!-- 项目卡片 1 -->
+        <div class="card">
+            <div class="card-icon">
+                <i class="fas fa-palette"></i>
+            </div>
+            <h3>设计系统</h3>
+            <p>一套完整的UI设计系统，包含组件库、设计规范和主题定制工具，帮助团队快速构建一致的用户界面。</p>
+            <div class="card-tags">
+                <span class="tag">UI/UX</span>
+                <span class="tag">Figma</span>
+                <span class="tag">设计规范</span>
+            </div>
+            <div class="card-footer">
+                <span><i class="fas fa-calendar"></i> 2023年6月</span>
+                <a href="#" class="view-btn">查看详情</a>
+            </div>
+        </div>
+
+        <!-- 项目卡片 2 -->
+        <div class="card">
+            <div class="card-icon">
+                <i class="fas fa-mobile-alt"></i>
+            </div>
+            <h3>移动应用</h3>
+            <p>响应式设计的移动应用，采用最新的玻璃态设计风格，提供流畅的用户体验和直观的导航。</p>
+            <div class="card-tags">
+                <span class="tag">React Native</span>
+                <span class="tag">iOS/Android</span>
+                <span class="tag">响应式</span>
+            </div>
+            <div class="card-footer">
+                <span><i class="fas fa-calendar"></i> 2023年8月</span>
+                <a href="#" class="view-btn">查看详情</a>
+            </div>
+        </div>
+
+        <!-- 项目卡片 3 -->
+        <div class="card">
+            <div class="card-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h3>数据可视化</h3>
+            <p>高级数据仪表板，使用D3.js和Chart.js创建交互式图表，提供直观的数据洞察和分析功能。</p>
+            <div class="card-tags">
+                <span class="tag">数据可视化</span>
+                <span class="tag">D3.js</span>
+                <span class="tag">数据分析</span>
+            </div>
+            <div class="card-footer">
+                <span><i class="fas fa-calendar"></i> 2023年5月</span>
+                <a href="#" class="view-btn">查看详情</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 统计信息 -->
+<section class="projects">
+    <h2 class="section-title">项目成果</h2>
+    <div class="stats">
+        <div class="stat-card">
+            <i class="fas fa-project-diagram fa-2x"></i>
+            <div class="stat-value">42+</div>
+            <div class="stat-label">完成项目</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-users fa-2x"></i>
+            <div class="stat-value">120+</div>
+            <div class="stat-label">满意客户</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-code-branch fa-2x"></i>
+            <div class="stat-value">97%</div>
+            <div class="stat-label">代码复用率</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-rocket fa-2x"></i>
+            <div class="stat-value">3.2x</div>
+            <div class="stat-label">开发效率提升</div>
+        </div>
+    </div>
+</section>
+
+<!-- 页脚 -->
+<footer>
+    <p>© 2023 GlassUI 设计工作室 | 创造卓越的数字体验</p>
+    <p>联系我们: contact@glassui.design | 关注我们: <i class="fab fa-twitter"></i> <i class="fab fa-instagram"></i> <i class="fab fa-dribbble"></i></p>
+</footer>
+<script>
+    // 添加简单的动画效果
+    document.addEventListener('DOMContentLoaded', function() {
+        // 卡片加载动画
+        const cards = document.querySelectorAll('.card');
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 200 * index);
+        });
+
+        // 统计卡片动画
+        const stats = document.querySelectorAll('.stat-card');
+        stats.forEach((stat, index) => {
+            setTimeout(() => {
+                stat.style.opacity = '1';
+                stat.style.transform = 'scale(1)';
+            }, 300 * index);
+        });
+
+        // 背景形状动画
+        const shapes = document.querySelectorAll('.shape');
+        shapes.forEach(shape => {
+            const randomX = (Math.random() - 0.5) * 20;
+            const randomY = (Math.random() - 0.5) * 20;
+
+            shape.animate(
+                [
+                    { transform: 'translate(0, 0)' },
+                    { transform: `translate(${randomX}px, ${randomY}px)` }
+                ],
+                {
+                    duration: 10000,
+                    iterations: Infinity,
+                    direction: 'alternate',
+                    easing: 'ease-in-out'
+                }
+            );
+        });
+    });
+</script>
+</body>
+</html>

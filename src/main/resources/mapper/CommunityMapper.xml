@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.travel.dao.CommunityDao">
+    <!-- 查询所有社区信息 -->
+    <select id="findAll" resultType="com.example.travel.entity.Community">
+        SELECT * FROM community
+    </select>
+
+    <!-- 根据 ID 查询社区信息 -->
+    <select id="findById" resultType="com.example.travel.entity.Community">
+        SELECT * FROM community WHERE id = #{id}
+    </select>
+
+    <!-- 插入社区信息 -->
+    <insert id="insert" parameterType="com.example.travel.entity.Community">
+        INSERT INTO community (name, description) VALUES (#{name}, #{description})
+    </insert>
+
+    <!-- 更新社区信息 -->
+    <update id="update" parameterType="com.example.travel.entity.Community">
+        UPDATE community SET name = #{name}, description = #{description} WHERE id = #{id}
+    </update>
+
+    <!-- 删除社区信息 -->
+    <delete id="deleteById">
+        DELETE FROM community WHERE id = #{id}
+    </delete>
+</mapper>

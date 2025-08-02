@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.travel.dao.FoodDao">
+    <!-- 查询所有 -->
+    <select id="findAllfood" resultType="Food">
+        SELECT * FROM foods
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+    </select>
+    <!-- 查询总数（用于分页） -->
+    <select id="countfood" resultType="int">
+        SELECT COUNT(*) FROM foods
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+    </select>
+    <select id="searchByNameOrDescription" resultType="Food">
+        SELECT * FROM foods
+        WHERE name LIKE CONCAT('%', #{keyword}, '%')
+           OR description LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+    <select id="findById" resultType="Food">
+        SELECT * FROM foods WHERE id = #{id}
+    </select>
+    <!-- 新增 -->
+    <insert id="insertFood" parameterType="Food" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO foods (name, price, image, rating, sales, description)
+        VALUES (
+            #{name},
+            #{price,jdbcType=DECIMAL},
+            #{image},
+            #{rating},
+            #{sales},
+            #{description}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="updateFood" parameterType="Food">
+        UPDATE foods
+        SET name = #{name},
+            description = #{description},
+            price = CONVERT(#{price,jdbcType=DECIMAL}, DOUBLE),
+            image = #{image},
+            rating = #{rating},
+            sales = #{sales}
+
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <select id="exists" resultType="boolean">
+        SELECT COUNT(1)
+        FROM foods
+        WHERE id = #{id}
+    </select>
+    <delete id="deleteFood" parameterType="long">
+        DELETE FROM foods WHERE id = #{id}
+    </delete>
+</mapper>

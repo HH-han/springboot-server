@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <!-- 数据库驱动路径（可选，若使用Maven插件可省略） -->
+    <!-- <classPathEntry location="驱动绝对路径，如：C:/mysql-connector-java-8.0.23.jar" /> -->
+    <!-- 关键配置说明-->
+    <!-- 数据库连接：替换your_database、your_password为实际值，注意时区参数（如serverTimezone=UTC）。-->
+
+    <!-- 生成路径：-->
+
+    <!-- javaModelGenerator：实体类生成到src/main/java下的com.example.demo.model包。-->
+
+    <!-- sqlMapGenerator：XML文件生成到src/main/resources/mapper目录。-->
+
+    <!-- javaClientGenerator：Mapper接口生成到com.example.demo.mapper包。-->
+
+    <!-- 表配置：-->
+
+    <!-- tableName：数据库表名。-->
+
+    <!-- domainObjectName：生成的实体类名。-->
+
+    <!-- 使用generatedKey配置自增主键（如MySQL的AUTO_INCREMENT）。-->
+    <context id="MysqlTables" targetRuntime="MyBatis3">
+        <!-- 防止生成的代码中有注释 -->
+        <commentGenerator>
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <!-- 数据库连接配置 -->
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/db_travel?"
+                        userId="root"
+                        password="123456">
+        </jdbcConnection>
+
+        <!-- 实体类生成配置 -->
+        <javaModelGenerator targetPackage="com.example.travel.entity"
+                            targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!-- XML映射文件生成位置 -->
+        <sqlMapGenerator targetPackage="mapper"
+                         targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!-- Mapper接口生成配置 -->
+        <javaClientGenerator type="XMLMAPPER"
+                             targetPackage="com.example.travel.dao"
+                             targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <!-- 配置需要生成的表 -->
+        <table tableName="my_post" domainObjectName="Mypost">
+            <!-- 可选：主键生成策略 -->
+            <generatedKey column="id" sqlStatement="MySQL" identity="true"/>
+        </table>
+        <!-- 添加其他表 -->
+        <!-- <table tableName="order" domainObjectName="Order"/> -->
+    </context>
+</generatorConfiguration>

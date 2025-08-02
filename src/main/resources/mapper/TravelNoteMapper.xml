@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.travel.dao.TravelNoteDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="travelNoteResultMap" type="com.example.travel.entity.TravelNote">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="color" column="color"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <!-- 插入旅游笔记 -->
+    <insert id="insertNote" parameterType="com.example.travel.entity.TravelNote" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO travel_notes
+            (username, title, content, color, created_at, updated_at)
+        VALUES
+            (#{username}, #{title}, #{content}, #{color}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <!-- 根据ID查询笔记 -->
+    <select id="findById" resultMap="travelNoteResultMap">
+        SELECT * FROM travel_notes WHERE id = #{id}
+    </select>
+    <!-- 分页查询所有笔记 -->
+    <select id="findAll" resultMap="travelNoteResultMap">
+        SELECT * FROM travel_notes
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+        LIMIT #{offset}, #{pageSize}
+    </select>
+    <!-- 分页查询所有帖子 -->
+    <select id="findAllNote" resultMap="travelNoteResultMap">
+        SELECT * FROM travel_notes
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+        LIMIT #{offset}, #{pageSize}
+    </select>
+    <!-- 根据关键字分页查询帖子 -->
+    <select id="findByTitleContaining" resultMap="travelNoteResultMap">
+        SELECT * FROM travel_notes
+        WHERE username = #{username}
+        ORDER BY created_at DESC
+            LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 统计所有笔记数量 -->
+    <select id="countAllNote" resultType="int">
+        SELECT COUNT(*) FROM travel_notes
+        WHERE username = #{username}
+    </select>
+    
+    <!-- 根据关键字和用户名统计笔记数量 -->
+    <select id="countNotes" resultType="int">
+        SELECT COUNT(*) FROM travel_notes
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM travel_notes
+    </select>
+    <!-- 根据关键字统计帖子数量 -->
+    <select id="countByTitleContaining" resultType="int">
+        SELECT COUNT(*) FROM travel_posts
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+    <!-- 更新笔记基本信息 -->
+    <update id="updateNote" parameterType="com.example.travel.entity.TravelNote">
+        UPDATE travel_notes
+        SET title = #{title},
+            content = #{content},
+            color = #{color},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 逻辑删除笔记 -->
+    <delete id="deleteById">
+        DELETE FROM travel_notes WHERE id = #{id}
+    </delete>
+
+    <!-- 根据位置搜索帖子 -->
+    <select id="findByLocation" resultMap="travelNoteResultMap">
+        SELECT * FROM travel_notes
+        WHERE location LIKE CONCAT('%', #{location}, '%')
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 根据标签搜索帖子 -->
+    <select id="findByTag" resultMap="travelNoteResultMap">
+        SELECT * FROM travel_notes
+        WHERE JSON_CONTAINS(tags, JSON_QUOTE(#{tag}))
+        ORDER BY created_at DESC
+    </select>
+
+
+</mapper>

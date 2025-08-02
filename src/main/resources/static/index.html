@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目启动成功</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="/bootstrap-5.0.0-beta1-dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="/bootstrap-5.0.0-beta1-dist/font/bootstrap-icons.css">
+    <style>
+        .nav{
+            position: absolute;
+            display: flex;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            padding: 5rem 0;
+            height: 100vh;
+        }
+        .center{
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        footer {
+            position: absolute;
+            display: flex;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+<!-- 导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark nav">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <i class="bi bi-rocket me-2"></i>博览旅行
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/details.html"><i class="bi bi-house-door me-1"></i>首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="bi bi-info-circle me-1"></i>关于</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="bi bi-envelope me-1"></i>联系</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- 主要内容 -->
+<main>
+    <!-- 英雄区域 -->
+    <section class="hero-section text-center">
+        <div class="container center">
+            <h1 class="display-4 fw-bold mb-4">
+                <i class="bi bi-check-circle-fill me-2"></i>项目启动成功!
+            </h1>
+            <p class="lead mb-4">您的应用程序已成功部署并正在运行</p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <button type="button" class="btn btn-light btn-lg px-4 gap-3">
+                    <i class="bi bi-book me-1"></i>查看文档
+                </button>
+                <button type="button" class="btn btn-outline-light btn-lg px-4">
+                    <i class="bi bi-github me-1"></i>GitHub
+                </button>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- 页脚 -->
+<footer class="bg-dark text-white py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h5><i class="bi bi-rocket me-2"></i>博览旅行</h5>
+                <p class="text-muted">© 2023 公司名称. 保留所有权利.</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a href="#" class="text-white me-3"><i class="bi bi-twitter"></i></a>
+                <a href="#" class="text-white me-3"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="text-white me-3"><i class="bi bi-linkedin"></i></a>
+                <a href="#" class="text-white"><i class="bi bi-github"></i></a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap 5 JS 包 -->
+<script src="/bootstrap-5.0.0-beta1-dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

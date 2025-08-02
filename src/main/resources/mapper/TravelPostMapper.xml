@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.travel.dao.TravelPostDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="travelPostResultMap" type="com.example.travel.entity.TravelPost">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="username" column="username"/>
+        <result property="location" column="location"/>
+        <result property="date" column="date"/>
+        <result property="content" column="content"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="images" column="images"/>
+        <result property="tags" column="tags"/>
+    </resultMap>
+
+    <!-- 插入旅游帖子 -->
+    <insert id="insertPost" parameterType="com.example.travel.entity.TravelPost" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO travel_posts (title,username, location, date, content, created_at, updated_at, images, tags)
+        VALUES (#{title},#{username} ,#{location}, #{date}, #{content}, #{createdAt}, #{updatedAt}, #{images}, #{tags})
+    </insert>
+
+    <!-- 根据ID查询帖子 -->
+    <select id="findById" resultMap="travelPostResultMap">
+        SELECT * FROM travel_posts WHERE id = #{id}
+    </select>
+    <!-- 分页查询所有帖子 -->
+    <select id="findAll" resultMap="travelPostResultMap">
+        SELECT * FROM travel_posts
+        WHERE username = #{username}
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+    <!-- 分页查询所有帖子 -->
+    <select id="findAllPost" resultMap="travelPostResultMap">
+        SELECT * FROM travel_posts
+        ORDER BY created_at DESC
+            LIMIT #{offset}, #{pageSize}
+    </select>
+    <!-- 根据关键字分页查询帖子 -->
+    <select id="findByTitleContaining" resultMap="travelPostResultMap">
+        SELECT * FROM travel_posts
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+    <select id="findAllByTitleContaining" resultMap="travelPostResultMap">
+        SELECT * FROM travel_posts
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY created_at DESC
+            LIMIT #{offset}, #{pageSize}
+    </select>
+    
+    <!-- 统计所有帖子数量 -->
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM travel_posts
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+    </select>
+    
+    <!-- 根据关键字统计帖子数量 -->
+    <select id="countByTitleContaining" resultType="int">
+        SELECT COUNT(*) FROM travel_posts
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+    <!-- 更新帖子基本信息 -->
+    <update id="updatePost" parameterType="com.example.travel.entity.TravelPost">
+        UPDATE travel_posts
+        SET title = #{title},
+            username =#{username},
+            location = #{location},
+            date = #{date},
+            content = #{content},
+            updated_at = #{updatedAt},
+            images = #{images},
+            tags = #{tags}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除帖子 -->
+    <delete id="deleteById">
+        DELETE FROM travel_posts WHERE id = #{id}
+    </delete>
+
+    <!-- 根据位置搜索帖子 -->
+    <select id="findByLocation" resultMap="travelPostResultMap">
+        SELECT * FROM travel_posts
+        WHERE location LIKE CONCAT('%', #{location}, '%')
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 根据标签搜索帖子 -->
+    <select id="findByTag" resultMap="travelPostResultMap">
+        SELECT * FROM travel_posts
+        WHERE JSON_CONTAINS(tags, JSON_QUOTE(#{tag}))
+        ORDER BY created_at DESC
+    </select>
+
+
+</mapper>

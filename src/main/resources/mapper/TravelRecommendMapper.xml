@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.travel.dao.TravelRecommendDao">
+    <!-- 查询所有酒店 -->
+    <select id="findAllRecommend" resultType="com.example.travel.entity.TravelRecommend">
+        SELECT * FROM travel_recommend
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+        LIMIT #{offset}, #{pageSize}
+    </select>
+    <!-- 查询酒店总数（用于分页） -->
+    <select id="countRecommend" resultType="int">
+        SELECT COUNT(*) FROM travel_recommend
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+    </select>
+    <!-- 根据ID查询酒店 -->
+    <select id="findById" parameterType="long" resultType="com.example.travel.entity.Hotel">
+        SELECT * FROM travel_recommend WHERE id = #{id}
+    </select>
+    <!-- 修改 -->
+    <update id="updateRecommend" parameterType="com.example.travel.entity.Hotel">
+        UPDATE travel_recommend
+        SET image = #{image},
+            name = #{name},
+            description = #{description},
+            details = #{details}
+        WHERE id = #{id}
+    </update>
+    <!-- 新增 -->
+    <insert id="insertRecommend" parameterType="com.example.travel.entity.Hotel">
+        INSERT INTO travel_recommend (image, name, description, details)
+        VALUES (#{image}, #{name}, #{description}, #{details})</insert>
+
+    <select id="exists" resultType="boolean">
+        SELECT COUNT(1)
+        FROM travel_recommend
+        WHERE id = #{id}
+    </select>
+    <!--删除-->
+    <delete id="deleteById">
+        DELETE FROM travel_recommend WHERE id = #{id}
+    </delete>
+</mapper>

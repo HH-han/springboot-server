@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.travel.dao.ScenicDao">
+    <!-- 查询所有景点 -->
+    <select id="findAllScenic" resultType="com.example.travel.entity.Scenic">
+        SELECT * FROM scenic
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+        LIMIT #{offset}, #{pageSize}
+    </select>
+    <!-- 查询景点总数 -->
+    <select id="countScenic" resultType="int">
+        SELECT COUNT(*) FROM scenic
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+    </select>
+    <!--  根据id查询  -->
+    <select id="findById" resultType="com.example.travel.entity.Scenic">
+        SELECT * FROM scenic WHERE id = #{id}
+    </select>
+    <!-- 修改 -->
+    <update id="updateScenic" parameterType="com.example.travel.entity.Scenic">
+    UPDATE scenic
+    SET title=#{title},
+        subtitle=#{subtitle},
+        image=#{image},
+        sales=#{sales},
+        evaluation=#{evaluation},
+        price=#{price,jdbcType=DOUBLE},
+        updated_at=#{updated_at}
+        WHERE id = #{id}
+    </update>
+    <!-- 新增 -->
+    <insert id="insertScenic" parameterType="com.example.travel.entity.Scenic">
+    INSERT INTO scenic(title, subtitle, image, price, created_at)
+
+    VALUES(#{title}, #{subtitle}, #{image}, #{price,jdbcType=DOUBLE}, #{created_at})
+    </insert>
+    <!-- 删除 -->
+    <delete id="deleteScenic" parameterType="java.lang.Long">
+        DELETE FROM scenic WHERE id = #{id}
+    </delete>
+    <select id="exists" resultType="boolean">
+        SELECT COUNT(*) FROM scenic WHERE id = #{id}
+    </select>
+</mapper>

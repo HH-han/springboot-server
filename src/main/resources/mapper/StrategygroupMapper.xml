@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.travel.dao.StrategygroupDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="strategyGroupResultMap" type="com.example.travel.entity.Strategygroup">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="image" column="image"/>
+        <result property="tag" column="tag"/>
+        <result property="tagIcon" column="tagIcon"/>
+        <result property="avatar" column="avatar"/>
+        <result property="members" column="members"/>
+        <result property="description" column="description"/>
+        <result property="price" column="price"/>
+        <result property="type" column="type"/>
+        <result property="groupName" column="groupName"/>
+        <result property="groupDescription" column="groupDescription"/>
+        <result property="dates" column="dates"/>
+        <result property="highlights" column="highlights"/>
+    </resultMap>
+
+    <!-- 插入策略组 -->
+    <insert id="insertStrategygroup" parameterType="com.example.travel.entity.Strategygroup" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO travel_strategygroup 
+        (title, image, tag, tagIcon, avatar, members, description, price, type, groupName, groupDescription, dates, highlights)
+        VALUES 
+        (#{title}, #{image}, #{tag}, #{tagIcon}, #{avatar}, #{members}, #{description}, #{price}, #{type}, #{groupName}, #{groupDescription}, #{dates}, #{highlights})
+    </insert>
+
+    <!-- 根据ID查询策略组 -->
+    <select id="findById" resultMap="strategyGroupResultMap">
+        SELECT * FROM travel_strategygroup WHERE id = #{id}
+    </select>
+
+    <!-- 分页查询所有策略组 -->
+    <select id="findAll" resultMap="strategyGroupResultMap">
+        SELECT * FROM travel_strategygroup
+        ORDER BY id DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 根据标题分页查询策略组 -->
+    <select id="findByTitleContaining" resultMap="strategyGroupResultMap">
+        SELECT * FROM travel_strategygroup
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY id DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+    
+    <!-- 统计所有策略组数量 -->
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM travel_strategygroup
+    </select>
+    
+    <!-- 根据标题统计策略组数量 -->
+    <select id="countByTitleContaining" resultType="int">
+        SELECT COUNT(*) FROM travel_strategygroup
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+    <!-- 更新策略组信息 -->
+    <update id="updateStrategygroup" parameterType="com.example.travel.entity.Strategygroup">
+        UPDATE travel_strategygroup
+        SET title = #{title},
+            image = #{image},
+            tag = #{tag},
+            tagIcon = #{tagIcon},
+            avatar = #{avatar},
+            members = #{members},
+            description = #{description},
+            price = #{price},
+            type = #{type},
+            groupName = #{groupName},
+            groupDescription = #{groupDescription},
+            dates = #{dates},
+            highlights = #{highlights}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除策略组 -->
+    <delete id="deleteById">
+        DELETE FROM travel_strategygroup WHERE id = #{id}
+    </delete>
+</mapper>

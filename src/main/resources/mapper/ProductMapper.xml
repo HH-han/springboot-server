@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.travel.dao.Product">
+    <!-- ResultMap定义 -->
+    <resultMap id="ProductResultMap" type="com.example.travel.entity.Product">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="price" column="price"/>
+        <result property="stock" column="stock"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <!-- 查询所有产品 -->
+    <select id="selectAllProducts" resultMap="ProductResultMap">
+        SELECT id, name, description, price, stock, category_id, created_at, updated_at
+        FROM product
+    </select>
+
+    <!-- 根据ID查询产品 -->
+    <select id="selectProductById" parameterType="int" resultMap="ProductResultMap">
+        SELECT id, name, description, price, stock, category_id, created_at, updated_at
+        FROM product
+        WHERE id = #{id}
+    </select>
+
+    <!-- 根据分类ID查询产品 -->
+    <select id="selectProductsByCategoryId" parameterType="int" resultMap="ProductResultMap">
+        SELECT id, name, description, price, stock, category_id, created_at, updated_at
+        FROM product
+        WHERE category_id = #{categoryId}
+    </select>
+
+    <!-- 插入新的产品 -->
+    <insert id="insertProduct" parameterType="com.example.travel.entity.Product">
+        INSERT INTO product (name, description, price, stock, category_id, created_at, updated_at)
+        VALUES (#{name}, #{description}, #{price,jdbcType=DECIMAL}, #{stock}, #{categoryId}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <!-- 更新产品信息 -->
+    <update id="updateProduct" parameterType="com.example.travel.entity.Product">
+        UPDATE product
+        SET name = #{name},
+            description = #{description},
+            price = #{price,jdbcType=DECIMAL},
+            stock = #{stock},
+            category_id = #{categoryId},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除产品 -->
+    <delete id="deleteProductById" parameterType="int">
+        DELETE FROM product
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

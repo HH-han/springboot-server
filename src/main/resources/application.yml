@@ -1,0 +1,78 @@
+spring:
+  application:
+    name: travel
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/db_travel?useUnicode=true&characterEncoding=utf-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      auto-commit: true
+      connection-timeout: 30000
+      maximum-pool-size: 10
+      minimum-idle: 5
+
+  jackson:
+    date-format: yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+    time-zone: GMT+8
+
+  jpa:
+    show-sql: true
+    database: mysql
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        transaction:
+          jta:
+            platform: org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform
+    open-in-view: false
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+
+  web:
+    resources:
+      static-locations: classpath:static
+
+  mail:
+    host: smtp.qq.com
+    username: 2560177364@qq.com
+    password: emxnkcjubwyzebjd
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: 123456
+      database: 0
+      lettuce:
+        pool:
+          min-idle: 0
+          max-idle: 8
+          max-wait: -1ms
+          max-active: 16
+
+server:
+  port: 2025
+
+#mybatis
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml
+  typeAliasesPackage: com.example.travel.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+jwt:
+  secret: 12@~!www1231**
+  expiration: 86400000

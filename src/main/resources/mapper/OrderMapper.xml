@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.travel.dao.OrderDao">
+    <!-- 查询所有订单（分页） -->
+    <select id="findAllOrder" resultType="com.example.travel.entity.Order">
+        SELECT * FROM orders
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 查询订单总数（用于分页） -->
+    <select id="countOrders" resultType="int">
+        SELECT COUNT(*) FROM orders
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据 ID 查询订单 -->
+    <select id="findById" resultType="com.example.travel.entity.Order">
+        SELECT * FROM orders WHERE id = #{id}
+    </select>
+
+    <!-- 新增订单 -->
+    <insert id="insert" parameterType="com.example.travel.entity.Order" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO orders (image, price, totalAmount, status, orderDate, paymentDate, paymentMethod, sku)
+        VALUES (#{image}, #{price}, #{totalAmount}, #{status}, #{orderDate}, #{paymentDate}, #{paymentMethod}, #{sku})
+    </insert>
+    <!-- 删除订单 -->
+    <delete id="deleteById">
+        DELETE FROM orders WHERE id = #{id}
+    </delete>
+    <!-- 修改 -->
+    <update id="update" parameterType="com.example.travel.entity.Order">
+        UPDATE orders
+        SET image = #{image},
+            price = #{price},
+            totalAmount = #{totalAmount},
+            status = #{status},
+            orderDate = #{orderDate},
+            paymentDate = #{paymentDate},
+            paymentMethod = #{paymentMethod},
+            sku = #{sku}
+        WHERE id = #{id}
+    </update>
+
+
+</mapper>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.travel.dao.HotelDao">
+    <!-- 查询所有酒店 -->
+    <select id="findAllHotel" resultType="com.example.travel.entity.Hotel">
+        SELECT * FROM hotel
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+        LIMIT #{offset}, #{pageSize}
+    </select>
+    <!-- 查询酒店总数（用于分页） -->
+    <select id="countHotels" resultType="int">
+        SELECT COUNT(*) FROM hotel
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+    </select>
+    <!-- 根据ID查询酒店 -->
+    <select id="getById" parameterType="long" resultType="com.example.travel.entity.Hotel">
+        SELECT * FROM hotel WHERE id = #{id}
+    </select>
+    <!-- 修改 -->
+    <update id="updateHotel" parameterType="com.example.travel.entity.Hotel">
+        UPDATE hotel
+        SET hotelName = #{hotelName},
+            hotelDescription = #{hotelDescription},
+            hotelImage = #{hotelImage},
+            evaluation = #{evaluation},
+            sales = #{sales},
+            hotelPrice = #{hotelPrice,jdbcType=DECIMAL}
+        WHERE id = #{id}
+    </update>
+    <!-- 新增 -->
+    <insert id="insertHotel" parameterType="com.example.travel.entity.Hotel">
+        INSERT INTO hotel (hotelName, hotelDescription, hotelImage, hotelPrice)
+        VALUES (#{hotelName}, #{hotelDescription}, #{hotelImage}, #{hotelPrice})</insert>
+
+    <select id="exists" resultType="boolean">
+        SELECT COUNT(1) 
+        FROM hotel
+        WHERE id = #{id}
+    </select>
+    <!--删除-->
+    <delete id="deleteById">
+        DELETE FROM hotel WHERE id = #{id}
+    </delete>
+</mapper>

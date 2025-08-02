@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.travel.dao.PaymentDao">
+    <sql id="baseColumns">
+        id, order_id, username,item_id, item_name, amount, payment_method, status, created_at, updated_at, version,quantity
+    </sql>
+
+    <select id="findAll" resultType="com.example.travel.entity.Payment">
+        SELECT <include refid="baseColumns"/>
+        FROM payments
+        <where>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="keyword != null">
+                AND (
+                    order_id LIKE #{keyword}
+                    OR item_name LIKE #{keyword}
+                    OR item_id LIKE #{keyword}
+                )
+            </if>
+            AND username = #{username}
+        </where>
+        ORDER BY created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="count" resultType="int">
+        SELECT COUNT(*)
+        FROM payments
+        <where>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="keyword != null">
+                AND (
+                order_id LIKE #{keyword}
+                OR item_name LIKE #{keyword}
+                OR item_id LIKE #{keyword}
+                )
+            </if>
+            AND username = #{username}
+        </where>
+    </select>
+    <select id="findAllOrders" resultType="com.example.travel.entity.Payment">
+        SELECT <include refid="baseColumns"/>
+        FROM payments
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+        LIMIT #{offset}, #{pageSize}
+    </select>
+    <!--  查询所有  -->
+    <select id="countallOrders" resultType="int">
+        SELECT COUNT(*)
+        FROM payments
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+    </select>
+    <!-- ResultMap定义 -->
+    <resultMap id="PaymentResultMap" type="com.example.travel.entity.Payment">
+        <id property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="itemId" column="item_id"/>
+        <result property="itemName" column="item_name"/>
+        <result property="paymentMethod" column="payment_method"/>
+        <result property="amount" column="amount"/>
+        <result property="status" column="status"/>
+        <result property="quantity" column="quantity"/>
+    </resultMap>
+
+    <!-- 查询所有支付记录 -->
+    <select id="selectAllPayments" resultMap="PaymentResultMap">
+        SELECT * FROM payments
+    </select>
+
+
+
+    <!-- 根据ID查询支付记录 -->
+    <select id="selectPaymentById" parameterType="int" resultMap="PaymentResultMap">
+        SELECT * FROM payments
+        WHERE id = #{id}
+    </select>
+
+
+
+    <!-- 插入新的支付记录 -->
+    <insert id="insertPayment" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO payments (
+                order_id,
+                username,
+                amount,
+                payment_method,
+                item_name,
+                status,
+                created_at,
+                quantity,
+                version
+        ) VALUES (
+                #{orderId},
+                #{username},
+                #{amount},
+                #{paymentMethod},
+                #{itemName},
+                #{status},
+                #{createdAt},
+                #{quantity},
+                0
+         )
+    </insert>
+
+    <update id="updateStatusWithLock">
+        UPDATE payments
+        SET
+            status = #{status, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+            payment_method = #{paymentMethod},
+            version = version - 1
+        WHERE id = #{id}
+          AND version = #{version}
+    </update>
+
+    <update id="update">
+        UPDATE payments
+        SET
+            status = #{status},
+            updated_at = NOW(),
+            version = version + 1
+        WHERE order_id = #{orderId}
+    </update>
+    <!-- 更新支付记录 -->
+    <update id="updatePayment" parameterType="com.example.travel.entity.Payment">
+        update payments
+        set
+            payment_method = #{paymentMethod},
+            status = #{status},
+            updated_at = now(),
+            version = version - 1
+        where id = #{id}
+          and version = #{version}
+    </update>
+
+    <select id="selectByOrderId" parameterType="String" resultMap="PaymentResultMap">
+        SELECT * FROM payments WHERE order_id = #{orderId}
+    </select>
+
+    <select id="countByCondition" resultType="int">
+        SELECT COUNT(*)
+        FROM payments
+        <where>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="keyword != null">
+                AND (
+                    order_id LIKE #{keyword}
+                    OR item_name LIKE #{keyword}
+                    OR item_id LIKE #{keyword}
+                )
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteById">
+        DELETE FROM payments
+        WHERE id = #{id}
+    </delete>
+
+    <select id="findByOrderId" resultType="com.example.travel.entity.Payment">
+        SELECT <include refid="baseColumns"/>
+        FROM payments
+        WHERE order_id = #{orderId}
+    </select>
+
+    <!-- 删除支付记录 -->
+    <delete id="deletePaymentById" parameterType="int">
+        DELETE FROM payments
+        WHERE id = #{id}
+    </delete>
+
+    <!-- 插入购物车记录 -->
+    <insert id="insertCartItem" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO payments (
+            order_id,
+            username,
+            item_id,
+            amount,
+            item_name,
+            quantity,
+            version
+        ) VALUES (
+            #{orderId},
+            #{username},
+            #{itemId},
+            #{amount},
+            #{itemName},
+            #{quantity},
+            1
+         )
+    </insert>
+
+  <select id="findAllWithCondition" resultType="com.example.travel.entity.Payment">
+    SELECT * FROM payments
+    <where>
+      <if test="condition.status != null">
+        AND status = #{condition.status}
+      </if>
+      <if test="condition.keyword != null and condition.keyword != ''">
+        AND (item_name LIKE CONCAT('%', #{condition.keyword}, '%')
+        OR order_id LIKE CONCAT('%', #{condition.keyword}, '%'))
+      </if>
+    </where>
+  </select>
+</mapper>
