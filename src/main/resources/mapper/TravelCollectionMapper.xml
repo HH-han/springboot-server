@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.travel.dao.TravelCollectionDao">
+
+    <resultMap id="travelCollectionResultMap" type="com.example.travel.entity.TravelCollection">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="collectionname" property="collectionname"/>
+        <result column="price" property="price"/>
+        <result column="profile" property="profile"/>
+        <result column="location" property="location"/>
+        <result column="characteristics" property="characteristics"/>
+        <result column="score" property="score"/>
+        <result column="collection" property="collection"/>
+        <result column="sales" property="sales"/>
+        <result column="image" property="image"/>
+        <result column="classification" property="classification"/>
+        <result column="createTime" property="createTime"/>
+        <result column="updateTime" property="updateTime"/>
+    </resultMap>
+
+    <!-- 查询所有收藏 -->
+    <select id="findAll" resultMap="travelCollectionResultMap">
+        SELECT * FROM travel_collection
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="findAllCollections" resultMap="travelCollectionResultMap">
+        SELECT * FROM travel_collection
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (username LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 查询收藏总数 -->
+    <select id="countCollection" resultType="int">
+        SELECT COUNT(*) FROM travel_collection
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (username LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据id查询收藏 -->
+    <select id="findById" parameterType="java.lang.Integer" resultMap="travelCollectionResultMap">
+        SELECT * FROM travel_collection WHERE id = #{id}
+    </select>
+
+    <!-- 根据用户名查询收藏 -->
+    <select id="findByUsername" parameterType="java.lang.String" resultMap="travelCollectionResultMap">
+        SELECT * FROM travel_collection WHERE username = #{username}
+    </select>
+
+    <!-- 新增收藏 -->
+    <insert id="insertCollection" parameterType="com.example.travel.entity.TravelCollection" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO travel_collection
+        (username, collectionname, price, profile, location, characteristics, score, collection, sales, image, classification,createTime,updateTime)
+        VALUES
+            (#{username}, #{collectionname}, #{price}, #{profile}, #{location}, #{characteristics}, #{score}, #{collection}, #{sales}, #{image}, #{classification},#{createTime},#{updateTime})
+    </insert>
+
+    <!-- 修改收藏 -->
+    <update id="updateCollection" parameterType="com.example.travel.entity.TravelCollection">
+        UPDATE travel_collection
+        SET username = #{username},
+            collectionname = #{collectionname},
+            price = #{price},
+            profile = #{profile},
+            location = #{location},
+            characteristics = #{characteristics},
+            score = #{score},
+            collection = #{collection},
+            sales = #{sales},
+            image = #{image},
+            classification = #{classification},
+            createTime = #{createTime},
+            updateTime = #{updateTime}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除收藏 -->
+    <delete id="deleteCollection" parameterType="java.lang.Integer">
+        DELETE FROM travel_collection WHERE id = #{id}
+    </delete>
+
+    <!-- 多条件搜索收藏 -->
+    <select id="searchCollections" resultMap="travelCollectionResultMap">
+        SELECT * FROM travel_collection
+        <where>
+            <if test="id != null">
+                AND id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                AND username LIKE CONCAT('%', #{username}, '%')
+            </if>
+            <if test="collectionname != null and collectionname != ''">
+                AND collectionname LIKE CONCAT('%', #{collectionname}, '%')
+            </if>
+            <if test="location != null and location != ''">
+                AND location LIKE CONCAT('%', #{location}, '%')
+            </if>
+            <if test="classification != null and classification != ''">
+                AND classification LIKE CONCAT('%', #{characteristics}, '%')
+            </if>
+        </where>
+    </select>
+</mapper>

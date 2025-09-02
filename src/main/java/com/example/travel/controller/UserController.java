@@ -32,21 +32,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/public/user")
 public class UserController {
-    /**
-     * 用户服务
-     */
+    //记录器
+    Logger logger = LoggerFactory.getLogger(UserController.class);
+     //用户服务
     private final UserService userService;
-    /**
-     * JWT工具类
-     */
+     //JWT工具类
     private final JwtUtils jwtUtils;
-
-    /**
-     * 获取用户信息
-     */
+     //获取用户信息
     @GetMapping("/info")
     public Result getUserInfo(HttpServletRequest request) {
-        Logger logger = LoggerFactory.getLogger(UserController.class);
 
         try {
             // 认证检查
@@ -82,8 +76,6 @@ public class UserController {
     public Result login(@RequestBody User loginUser) {
         String username = loginUser.getUsername();
         String password = loginUser.getPassword();
-
-        Logger logger = LoggerFactory.getLogger(UserController.class);
         
         // 参数校验
         if (username == null || username.trim().isEmpty()) {
@@ -101,7 +93,7 @@ public class UserController {
             return Result.error("用户名或密码错误");
         }
         //查询用户状态
-        if(user.getStatus() == 0){
+        if(user.getStatus() == 1){
             logger.warn("登录失败: 用户被禁用 - {}", username);
             return Result.error("用户被禁用");
         }
@@ -118,6 +110,60 @@ public class UserController {
         data.put("user", user);
         data.put("token", jwtUtils.generateToken(username));
         // 返回完整数据
+        logger.info("登录成功 - {}",username);
+        return Result.success("登录成功",data);
+    }
+
+    /**
+     * admin用户登录
+     * @param loginUser 登录用户信息（包含用户名和密码）
+     * @return 登录结果
+     */
+    @PostMapping("/adminlogin")
+    public Result adminlogin(@RequestBody User loginUser) {
+        String username = loginUser.getUsername();
+        String password = loginUser.getPassword();
+
+
+        // 参数校验
+        if (username == null || username.trim().isEmpty()) {
+            logger.warn("登录失败: 用户名为空");
+            return Result.error("用户名不能为空！");
+        }
+        if (password == null || password.trim().isEmpty()) {
+            logger.warn("登录失败: 密码为空");
+            return Result.error("密码不能为空！");
+        }
+        // 查询用户
+        User user = userService.findByUsername(username);
+        if (user == null) {
+            logger.warn("登录失败: 用户不存在 - {}", username);
+            return Result.error("用户名或密码错误！");
+        }
+        //admin登录
+        if (user.getPermissions() == 0){
+            logger.info("权限不足，请联系管理员 - {}",username);
+            return Result.error("权限不足，请联系管理员。");
+        }
+        //查询用户状态
+        if(user.getStatus() == 1){
+            logger.warn("登录失败: 用户被禁用 - {}", username);
+            return Result.error("登录失败: 用户被禁用，请联系客服。");
+        }
+        // 密码比对
+        if (!password.equals(user.getPassword())) {
+            logger.warn("登录失败: 密码错误 - {}", username);
+            return Result.error("用户名或密码错误！");
+        }
+        // 移除敏感信息再返回
+        //user.setPassword(null);
+
+        // 创建返回数据
+        Map<String, Object> data = new HashMap<>();
+        data.put("user", user);
+        data.put("token", jwtUtils.generateToken(username));
+        // 返回完整数据
+        logger.info("登录成功 - {}",username);
         return Result.success("登录成功",data);
     }
     /**
@@ -127,7 +173,6 @@ public class UserController {
      */
     @PutMapping("/avatar/{username}")
     public Result uploadAvatar(@PathVariable String username, @RequestParam("file") MultipartFile file) {
-        Logger logger = LoggerFactory.getLogger(UserController.class);
         try {
             // 使用ImageUtils处理图片上传
             String image = ImageUtils.processMultipartFile(file);
@@ -161,7 +206,6 @@ public class UserController {
      */
     @PutMapping("/update")
     public Result updateUser(@RequestBody User user) {
-        Logger logger = LoggerFactory.getLogger(UserController.class);
         try {
             // 参数校验
             if (user.getNickname() == null || user.getNickname().trim().isEmpty()) {
@@ -231,7 +275,6 @@ public class UserController {
      */
     @PutMapping("/updateRole")
     public Result updateRole(@RequestBody Map<String, Object> params) {
-        Logger logger = LoggerFactory.getLogger(UserController.class);
         try {
             Long id = Long.parseLong(params.get("id").toString());
             int permissions = Integer.parseInt(params.get("permissions").toString());
@@ -255,7 +298,6 @@ public class UserController {
      */
     @PutMapping("/updateStatus")
     public Result updateStatus(@RequestBody Map<String, Object> params) {
-        Logger logger = LoggerFactory.getLogger(UserController.class);
         try {
             Long id = Long.parseLong(params.get("id").toString());
             int status = Integer.parseInt(params.get("status").toString());
@@ -280,21 +322,16 @@ public class UserController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) String keyword){
-        Logger logger = LoggerFactory.getLogger(UserController.class);
         List<User> users=userService.getAllUsers(page,pageSize,keyword);
         int total =userService.countUser(keyword);
         Map<String, Object> result = new HashMap<>();
         result.put("list",users);
         result.put("total",total);
-        for (User user : users) {
-            logger.info("查询用户: {}", user.getUsername());
-        }
         return Result.success(result);
     }
     //新增
     @PostMapping
     public Result addUser(@RequestBody User user) {
-        Logger logger = LoggerFactory.getLogger(UserController.class);
         try {
             // 参数校验
             if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
@@ -337,7 +374,6 @@ public class UserController {
     //修改
     @PutMapping("/{id}")
     public Result updateUser(@PathVariable Long id, @RequestBody User user) {
-        Logger logger = LoggerFactory.getLogger(UserController.class);
         try {
             // 获取原有用户信息
             User existingUser = userService.getById(id);
@@ -391,7 +427,6 @@ public class UserController {
     //删除
     @DeleteMapping(("/{id}"))
     public Result deleteUser(@PathVariable Long id) {
-        Logger logger = LoggerFactory.getLogger(UserController.class);
         try {
             // 获取用户信息，包含图片路径
             User user = userService.getById(id);
@@ -434,7 +469,6 @@ public class UserController {
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String phone,
             @RequestParam(required = false) Long userID) {
-        Logger logger = LoggerFactory.getLogger(UserController.class);
         if (id != null) {
             User user = userService.getById(id);
             if (user != null) {
@@ -454,7 +488,6 @@ public class UserController {
      * **/
     @PostMapping("/register")
     public Result registerUser(@RequestBody Map<String, String> registerData) {
-        Logger logger = LoggerFactory.getLogger(UserController.class);
         // 获取参数
         String username = registerData.get("username");
         String nickname = registerData.get("nickname");
@@ -531,7 +564,6 @@ public class UserController {
     @GetMapping("/export")
     @ApiOperation("导出用户列表")
     public void exportUserList(HttpServletResponse response) throws IOException {
-        Logger logger = LoggerFactory.getLogger(UserController.class);
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
         String fileName = URLEncoder.encode("用户列表", StandardCharsets.UTF_8).replaceAll("\\+", "%20");
@@ -548,7 +580,6 @@ public class UserController {
     @PostMapping("/import")
     @ApiOperation("导入用户数据")
     public Result importUserList(MultipartFile file) throws IOException {
-        Logger logger = LoggerFactory.getLogger(UserController.class);
         EasyExcel.read(file.getInputStream(), User.class, new UserDataListener(userService))
                 .sheet()
                 .doRead();
