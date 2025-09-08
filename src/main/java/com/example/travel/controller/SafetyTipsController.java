@@ -5,12 +5,9 @@ import com.example.travel.entity.SafetyTips;
 import com.example.travel.service.SafetyTipsService;
 import com.example.travel.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 @CrossOrigin
@@ -85,31 +82,17 @@ public class SafetyTipsController {
                 return Result.error("内容不能为空");
             }
             
-            // 图片处理
+            // 处理图片
             if (safetyTips.getImageUrl() != null && safetyTips.getImageUrl().startsWith("data:image")) {
                 try {
-                    // 解码base64图片
-                    String[] parts = safetyTips.getImageUrl().split(",");
-                    byte[] imageBytes = Base64.getDecoder().decode(parts[1]);
-
-                    // 生成唯一文件名
-                    String fileName = UUID.randomUUID().toString() + ".png";
-                    Path uploadPath = Paths.get("D:/Image/");
-
-                    // 确保目录存在
-                    if (!Files.exists(uploadPath)) {
-                        Files.createDirectories(uploadPath);
-                    }
-
-                    // 保存文件
-                    Path filePath = uploadPath.resolve(fileName);
-                    Files.write(filePath, imageBytes);
-
-                    // 更新数据库中的图片路径
-                    safetyTips.setImageUrl("http://localhost:2025/upload/" + fileName);
+                    String imageUrl = ImageUtils.processBase64Image(safetyTips.getImageUrl());
+                    safetyTips.setImageUrl(imageUrl);
                 } catch (Exception e) {
                     return Result.error("图片保存失败: " + e.getMessage());
                 }
+            } else if (safetyTips.getImageUrl() != null) {
+                // 如果imageUrl不是base64格式，保持原样（已经是有效的URL）
+                // 不需要额外处理
             }
 
             boolean result = safetyTipsService.createSafetyTip(safetyTips);
@@ -125,7 +108,7 @@ public class SafetyTipsController {
      * @param safetyTips 安全提示数据
      * @return 操作结果
      */
-    @PutMapping
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Result update(@Validated @RequestBody SafetyTips safetyTips) {
         try {
             if (safetyTips.getId() == null) {
@@ -141,26 +124,40 @@ public class SafetyTipsController {
             // 获取原有安全提示信息
             SafetyTips existingTip = safetyTipsService.getSafetyTipById(safetyTips.getId());
             
-            // 图片处理
+            // 处理图片
             if (safetyTips.getImageUrl() != null && safetyTips.getImageUrl().startsWith("data:image")) {
                 try {
                     String imageUrl = ImageUtils.processBase64Image(safetyTips.getImageUrl());
                     safetyTips.setImageUrl(imageUrl);
 
                     // 删除旧图片
-                    if (existingTip != null && safetyTips.getImageUrl() != null) {
-                        ImageUtils.deleteImage(safetyTips.getImageUrl());
+                    if (existingTip != null && existingTip.getImageUrl() != null) {
+                        ImageUtils.deleteImage(existingTip.getImageUrl());
                     }
                 } catch (Exception e) {
                     return Result.error("图片保存失败: " + e.getMessage());
                 }
-            } else if (safetyTips.getImageUrl() == null && existingTip != null && existingTip.getImageUrl() != null) {
+            } else if (safetyTips.getImageUrl() == null) {
                 // 删除原有图片
-                try {
-                    ImageUtils.deleteImage(existingTip.getImageUrl());
-                } catch (Exception e) {
-                    // 文件删除失败不影响主流程
-                    System.err.println("删除图片文件失败: " + e.getMessage());
+                if (existingTip != null && existingTip.getImageUrl() != null) {
+                    try {
+                        ImageUtils.deleteImage(existingTip.getImageUrl());
+                    } catch (Exception e) {
+                        // 文件删除失败不影响主流程
+                        System.err.println("删除图片文件失败: " + e.getMessage());
+                    }
+                }
+            } else {
+                // 如果imageUrl不是base64格式，保持原样（已经是有效的URL）
+                // 删除旧图片（如果URL发生变化）
+                if (existingTip != null && existingTip.getImageUrl() != null && 
+                    !existingTip.getImageUrl().equals(safetyTips.getImageUrl())) {
+                    try {
+                        ImageUtils.deleteImage(existingTip.getImageUrl());
+                    } catch (Exception e) {
+                        // 文件删除失败不影响主流程
+                        System.err.println("删除图片文件失败: " + e.getMessage());
+                    }
                 }
             }
 
@@ -204,7 +201,7 @@ public class SafetyTipsController {
         try {
             // 获取安全提示信息，包含图片路径
             SafetyTips safetyTip = safetyTipsService.getSafetyTipById(id);
-            if (safetyTip != null && safetyTip.getImageUrl() != null && safetyTip.getImageUrl().startsWith("http://localhost:2025/upload/")) {
+            if (safetyTip != null && safetyTip.getImageUrl() != null) {
                 try {
                     // 删除图片文件
                     ImageUtils.deleteImage(safetyTip.getImageUrl());

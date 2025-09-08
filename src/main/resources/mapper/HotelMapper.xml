@@ -4,9 +4,31 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.travel.dao.HotelDao">
+    
+    <!-- 结果映射 -->
+    <resultMap id="hotelResultMap" type="com.example.travel.entity.Hotel">
+        <id property="id" column="id"/>
+        <result property="sales" column="sales"/>
+        <result property="evaluation" column="evaluation"/>
+        <result property="hotelName" column="hotelName"/>
+        <result property="hotelDescription" column="hotelDescription"/>
+        <result property="hotelImage" column="hotelImage"/>
+        <result property="hotelPrice" column="hotelPrice"/>
+        <result property="hotelAddress" column="hotelAddress"/>
+        <result property="hotelPhone" column="hotelPhone"/>
+        <result property="hotelType" column="hotelType"/>
+        <result property="hotelStar" column="hotelStar"/>
+        <result property="hotelFacility" column="hotelFacility"/>
+        <result property="hotelService" column="hotelService"/>
+        <result property="hotelTraffic" column="hotelTraffic"/>
+        <result property="hotelStatus" column="hotelStatus"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+    </resultMap>
+    
     <!-- 查询所有酒店 -->
-    <select id="findAllHotel" resultType="com.example.travel.entity.Hotel">
-        SELECT * FROM hotel
+    <select id="findAllHotel" resultMap="hotelResultMap">
+        SELECT * FROM travel_hotel
         <where>
             <if test="keyword != null and keyword != ''">
                 AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
@@ -16,7 +38,7 @@
     </select>
     <!-- 查询酒店总数（用于分页） -->
     <select id="countHotels" resultType="int">
-        SELECT COUNT(*) FROM hotel
+        SELECT COUNT(*) FROM travel_hotel
         <where>
             <if test="keyword != null and keyword != ''">
                 AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
@@ -24,32 +46,48 @@
         </where>
     </select>
     <!-- 根据ID查询酒店 -->
-    <select id="getById" parameterType="long" resultType="com.example.travel.entity.Hotel">
-        SELECT * FROM hotel WHERE id = #{id}
+    <select id="getById" parameterType="long" resultMap="hotelResultMap">
+        SELECT * FROM travel_hotel WHERE id = #{id}
     </select>
     <!-- 修改 -->
     <update id="updateHotel" parameterType="com.example.travel.entity.Hotel">
-        UPDATE hotel
+        UPDATE travel_hotel
         SET hotelName = #{hotelName},
             hotelDescription = #{hotelDescription},
             hotelImage = #{hotelImage},
             evaluation = #{evaluation},
             sales = #{sales},
-            hotelPrice = #{hotelPrice,jdbcType=DECIMAL}
+            hotelPrice = #{hotelPrice,jdbcType=DECIMAL},
+            hotelStatus = #{hotelStatus},
+            hotelAddress = #{hotelAddress},
+            hotelPhone = #{hotelPhone},
+            hotelStar = #{hotelStar},
+            hotelType = #{hotelType},
+            hotelTraffic = #{hotelTraffic},
+            hotelFacility = #{hotelFacility},
+            hotelService = #{hotelService}
         WHERE id = #{id}
     </update>
+
+    <!-- 修改营业状态 -->
+    <update id="updateStatus" parameterType="com.example.travel.entity.Hotel">
+            UPDATE travel_hotel
+            SET hotelStatus = #{hotelStatus}
+            WHERE id = #{id}
+    </update>
+
     <!-- 新增 -->
     <insert id="insertHotel" parameterType="com.example.travel.entity.Hotel">
-        INSERT INTO hotel (hotelName, hotelDescription, hotelImage, hotelPrice)
-        VALUES (#{hotelName}, #{hotelDescription}, #{hotelImage}, #{hotelPrice})</insert>
+        INSERT INTO travel_hotel (hotelName, hotelDescription, hotelImage, hotelPrice,hotelAddress,hotelPhone,hotelStar,hotelType,hotelTraffic,hotelFacility,hotelService))
+        VALUES (#{hotelName}, #{hotelDescription}, #{hotelImage}, #{hotelPrice}, #{hotelAddress},#{hotelPhone},#{hotelStar},#{hotelType},#{hotelTraffic},#{hotelFacility},#{hotelService}))</insert>
 
     <select id="exists" resultType="boolean">
         SELECT COUNT(1) 
-        FROM hotel
+        FROM travel_hotel
         WHERE id = #{id}
     </select>
     <!--删除-->
     <delete id="deleteById">
-        DELETE FROM hotel WHERE id = #{id}
+        DELETE FROM travel_hotel WHERE id = #{id}
     </delete>
 </mapper>

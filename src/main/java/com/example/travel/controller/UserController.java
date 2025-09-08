@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.time.LocalDateTime;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -167,7 +164,7 @@ public class UserController {
         return Result.success("登录成功",data);
     }
     /**
-     * 获取用户头像
+     * 用户头像
      * @param username 用户名
      * @return 统一响应结果
      */
@@ -198,6 +195,7 @@ public class UserController {
             logger.info("头像更新成功，用户名: {}", username);
             return Result.success("0", image);
         } catch (Exception e) {
+            logger.info("图片上传失败: {}", username+ e.getMessage());
             return Result.error("图片上传失败: " + e.getMessage());
         }
     }
@@ -516,30 +514,6 @@ public class UserController {
             return Result.error("手机号已注册");
         }
 
-        // 处理头像
-        String imagePath = null;
-        if (image != null && image.startsWith("data:image")) {
-            try {
-                // 解码base64图片
-                String[] parts = image.split(",");
-                byte[] imageBytes = Base64.getDecoder().decode(parts[1]);
-
-                // 生成唯一文件名
-                String fileName = UUID.randomUUID().toString() + ".png";
-                Path uploadPath = Paths.get("D:/Image/");
-                
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-                
-                Path filePath = uploadPath.resolve(fileName);
-                Files.write(filePath, imageBytes);
-                imagePath = "http://localhost:2025/upload/" + fileName;
-            } catch (Exception e) {
-                return Result.error("图片保存失败: " + e.getMessage());
-            }
-        }
-
         // 创建用户对象
         User user = new User();
         user.setUsername(username);
@@ -547,8 +521,17 @@ public class UserController {
         user.setEmail(email);
         user.setPhone(phone);
         user.setPassword(password);
-        user.setImage(imagePath);
         user.setCreateTime(LocalDateTime.now());
+
+        // 处理图片
+        if (image != null && image.startsWith("data:image")) {
+            try {
+                String imageUrl = ImageUtils.processBase64Image(image);
+                user.setImage(imageUrl);
+            } catch (Exception e) {
+                return Result.error("图片保存失败: " + e.getMessage());
+            }
+        }
 
         // 保存用户
         int result = userService.addUser(user);

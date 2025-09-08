@@ -1,54 +1,99 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.travel.dao.TravelCardDao">
-    <!-- 查询所有酒店 -->
-    <select id="findAllTravelCard" resultType="com.example.travel.entity.TravelCard">
+
+    <!-- 结果映射 -->
+    <resultMap id="travelCardResultMap" type="com.example.travel.entity.TravelCard">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="image" column="image"/>
+        <result property="likes" column="likes"/>
+        <result property="saved" column="saved"/>
+        <result property="category" column="category"/>
+        <result property="badgeType" column="badge_type"/>
+        <result property="badgeText" column="badge_text"/>
+        <result property="score" column="score"/>
+    </resultMap>
+
+    <!-- 查询所有旅游卡 -->
+    <select id="findAllTravelCard" resultMap="travelCardResultMap">
         SELECT * FROM travel_cards
         <where>
             <if test="keyword != null and keyword != ''">
-                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+                AND (title LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
             </if>
         </where>
+        ORDER BY id DESC
         LIMIT #{offset}, #{pageSize}
     </select>
-    <!-- 查询酒店总数（用于分页） -->
+
+    <!-- 查询旅游卡总数 -->
     <select id="countTravelCard" resultType="int">
         SELECT COUNT(*) FROM travel_cards
         <where>
             <if test="keyword != null and keyword != ''">
-                AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+                AND (title LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
             </if>
         </where>
     </select>
-    <!-- 根据ID查询酒店 -->
-    <select id="getById" parameterType="long" resultType="com.example.travel.entity.TravelCard">
-        SELECT * FROM hotel WHERE id = #{id}
+
+    <!-- 根据ID查询旅游卡 -->
+    <select id="getCardById" resultMap="travelCardResultMap">
+        SELECT * FROM travel_cards WHERE id = #{id}
     </select>
-    <!-- 修改 -->
+
+    <!-- 新增旅游卡 -->
+    <insert id="insertTravelCard" parameterType="com.example.travel.entity.TravelCard" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO travel_cards (title, description, image, likes, saved, category, badge_type, badge_text, score)
+        VALUES (#{title}, #{description}, #{image}, #{likes}, #{saved}, #{category}, #{badgeType}, #{badgeText}, #{score})
+    </insert>
+
+    <!-- 修改旅游卡 -->
     <update id="updateTravelCard" parameterType="com.example.travel.entity.TravelCard">
-        UPDATE hotel
-        SET hotelName = #{hotelName},
-            hotelDescription = #{hotelDescription},
-            hotelImage = #{hotelImage},
-            hotelPrice = #{hotelPrice,jdbcType=DECIMAL}
+        UPDATE travel_cards
+        SET title = #{title},
+            description = #{description},
+            image = #{image},
+            likes = #{likes},
+            saved = #{saved},
+            category = #{category},
+            badge_type = #{badgeType},
+            badge_text = #{badgeText},
+            score = #{score}
         WHERE id = #{id}
     </update>
-    <!-- 新增 -->
-    <!-- 插入用户 -->
-    <insert id="insertTravelCard" parameterType="com.example.travel.entity.TravelCard">
-        INSERT INTO hotel (hotelName, hotelDescription, hotelImage, hotelPrice)
-        VALUES (#{hotelName}, #{hotelDescription}, #{hotelImage}, #{hotelPrice})</insert>
-
+    <!-- 检查旅游卡是否存在 -->
     <select id="exists" resultType="boolean">
         SELECT COUNT(1)
-        FROM hotel
+        FROM travel_cards
         WHERE id = #{id}
     </select>
-    <!--删除-->
+
+    <!-- 删除旅游卡 -->
     <delete id="deleteById">
-        DELETE FROM hotel WHERE id = #{id}
+        DELETE FROM travel_cards WHERE id = #{id}
     </delete>
+
+    <!-- 根据分类查询旅游卡 -->
+    <select id="findByCategory" resultMap="travelCardResultMap">
+        SELECT * FROM travel_cards WHERE category = #{category}
+    </select>
+
+    <!-- 根据徽章类型查询旅游卡 -->
+    <select id="findByBadgeType" resultMap="travelCardResultMap">
+        SELECT * FROM travel_cards WHERE badge_type = #{badgeType}
+    </select>
+
+    <!-- 根据名称查询旅游卡 -->
+    <select id="findByName" resultMap="travelCardResultMap">
+        SELECT * FROM travel_cards WHERE title LIKE CONCAT('%', #{name}, '%')
+    </select>
+
+    <!-- 根据关键词查询旅游卡 -->
+    <select id="findByKeyword" resultMap="travelCardResultMap">
+        SELECT * FROM travel_cards 
+        WHERE title LIKE CONCAT('%', #{keyword}, '%') 
+           OR description LIKE CONCAT('%', #{keyword}, '%')
+    </select>
 </mapper>

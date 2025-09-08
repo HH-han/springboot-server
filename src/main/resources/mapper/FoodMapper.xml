@@ -3,8 +3,19 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.travel.dao.FoodDao">
+    <!-- ResultMap定义 -->
+    <resultMap id="foodResultMap" type="com.example.travel.entity.Food">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="image" column="image"/>
+        <result property="price" column="price"/>
+        <result property="sales" column="sales"/>
+        <result property="rating" column="rating"/>
+        <result property="provinceId" column="province_id"/>
+    </resultMap>
     <!-- 查询所有 -->
-    <select id="findAllfood" resultType="Food">
+    <select id="findAllfood" resultMap="foodResultMap">
         SELECT * FROM foods
         <where>
             <if test="keyword != null and keyword != ''">
@@ -21,12 +32,12 @@
             </if>
         </where>
     </select>
-    <select id="searchByNameOrDescription" resultType="Food">
+    <select id="searchByNameOrDescription" resultMap="foodResultMap">
         SELECT * FROM foods
         WHERE name LIKE CONCAT('%', #{keyword}, '%')
            OR description LIKE CONCAT('%', #{keyword}, '%')
     </select>
-    <select id="findById" resultType="Food">
+    <select id="findById" resultMap="foodResultMap">
         SELECT * FROM foods WHERE id = #{id}
     </select>
     <!-- 新增 -->

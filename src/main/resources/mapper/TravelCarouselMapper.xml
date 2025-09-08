@@ -3,8 +3,18 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.travel.dao.TravelCarouselDao">
+    <!-- ResultMap定义 -->
+    <resultMap id="travelCarouselResultMap" type="com.example.travel.entity.TravelCarousel">
+        <id property="id" column="id"/>
+        <result property="image" column="image"/>
+        <result property="title" column="title"/>
+        <result property="location" column="location"/>
+        <result property="description" column="description"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
     <!-- 查询所有 -->
-    <select id="findAllCarousel" resultType="com.example.travel.entity.TravelCarousel">
+    <select id="findAllCarousel" resultMap="travelCarouselResultMap">
         SELECT * FROM travel_carousel
         <where>
             <if test="keyword != null and keyword != ''">
@@ -23,7 +33,7 @@
         </where>
     </select>
     <!-- 根据ID查询 -->
-    <select id="findById" parameterType="long" resultType="com.example.travel.entity.TravelCarousel">
+    <select id="findById" parameterType="long" resultMap="travelCarouselResultMap">
         SELECT * FROM travel_carousel WHERE id = #{id}
     </select>
     <!-- 修改 -->

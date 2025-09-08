@@ -5,7 +5,7 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Table(name = "hotel")
+@Table(name = "travel_hotel")
 public class Hotel {
     private Long id; // 卡片ID
     private Double sales;//评价
@@ -14,6 +14,14 @@ public class Hotel {
     private String hotelDescription; // 卡片副标题
     private String hotelImage; // 卡片图片（Base64或URL）
     private BigDecimal hotelPrice;//价格
+    private String hotelAddress;//地址
+    private String hotelPhone;//电话
+    private String hotelType;//酒店类型
+    private String hotelStar;//酒店星级
+    private String hotelFacility;//酒店设施
+    private String hotelService;//酒店服务
+    private String hotelTraffic;//酒店交通
+    private String hotelStatus;//酒店状态
     private LocalDateTime created_at; // 创建时间
     private LocalDateTime updated_at; // 更新时
 
@@ -79,6 +87,70 @@ public class Hotel {
     public void setHotelPrice(BigDecimal hotelPrice) {
 
         this.hotelPrice = hotelPrice;
+    }
+
+    public String getHotelAddress() {
+        return hotelAddress;
+    }
+
+    public void setHotelAddress(String hotelAddress) {
+        this.hotelAddress = hotelAddress;
+    }
+
+    public String getHotelPhone() {
+        return hotelPhone;
+    }
+
+    public void setHotelPhone(String hotelPhone) {
+        this.hotelPhone = hotelPhone;
+    }
+
+    public String getHotelType() {
+        return hotelType;
+    }
+
+    public void setHotelType(String hotelType) {
+        this.hotelType = hotelType;
+    }
+
+    public String getHotelStar() {
+        return hotelStar;
+    }
+
+    public void setHotelStar(String hotelStar) {
+        this.hotelStar = hotelStar;
+    }
+
+    public String getHotelFacility() {
+        return hotelFacility;
+    }
+
+    public void setHotelFacility(String hotelFacility) {
+        this.hotelFacility = hotelFacility;
+    }
+
+    public String getHotelService() {
+        return hotelService;
+    }
+
+    public void setHotelService(String hotelService) {
+        this.hotelService = hotelService;
+    }
+
+    public String getHotelTraffic() {
+        return hotelTraffic;
+    }
+
+    public void setHotelTraffic(String hotelTraffic) {
+        this.hotelTraffic = hotelTraffic;
+    }
+
+    public String getHotelStatus() {
+        return hotelStatus;
+    }
+
+    public void setHotelStatus(String hotelStatus) {
+        this.hotelStatus = hotelStatus;
     }
 
     public LocalDateTime getCreated_at() {

@@ -46,6 +46,7 @@
         ORDER BY created_at DESC
         LIMIT #{offset}, #{pageSize}
     </select>
+    
     <select id="findAllByTitleContaining" resultMap="travelPostResultMap">
         SELECT * FROM travel_posts
         WHERE title LIKE CONCAT('%', #{keyword}, '%')

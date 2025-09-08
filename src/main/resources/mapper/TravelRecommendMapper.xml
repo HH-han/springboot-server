@@ -3,8 +3,16 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.travel.dao.TravelRecommendDao">
+    <!-- ResultMap定义 -->
+    <resultMap id="travelRecommendResultMap" type="com.example.travel.entity.TravelRecommend">
+        <id property="id" column="id"/>
+        <result property="image" column="image"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="details" column="details"/>
+    </resultMap>
     <!-- 查询所有 -->
-    <select id="findAllRecommend" resultType="com.example.travel.entity.TravelRecommend">
+    <select id="findAllRecommend" resultMap="travelRecommendResultMap">
         SELECT * FROM travel_recommend
         <where>
             <if test="keyword != null and keyword != ''">
@@ -23,7 +31,7 @@
         </where>
     </select>
     <!-- 根据ID查询 -->
-    <select id="findById" parameterType="long" resultType="com.example.travel.entity.TravelRecommend">
+    <select id="findById" parameterType="long" resultMap="travelRecommendResultMap">
         SELECT * FROM travel_recommend WHERE id = #{id}
     </select>
     <!-- 修改 -->

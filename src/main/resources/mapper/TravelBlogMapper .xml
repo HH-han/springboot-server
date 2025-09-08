@@ -4,8 +4,24 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.travel.dao.TravelBlogDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="travelBlogResultMap" type="com.example.travel.entity.TravelBlog">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="location" column="location"/>
+        <result property="coverImage" column="cover_image"/>
+        <result property="likes" column="likes"/>
+        <result property="price" column="price"/>
+        <result property="favorites" column="favorites"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updata_at" column="updata_at"/>
+        <result property="browse" column="browse"/>
+        <result property="state" column="state"/>
+    </resultMap>
     <!-- 查询所有（分页） -->
-    <select id="findAllTravel" resultType="com.example.travel.entity.TravelBlog">
+    <select id="findAllTravel" resultMap="travelBlogResultMap">
         select *from travel_blog
         <where>
             <if test="keyword != null and keyword != ''">
@@ -24,7 +40,7 @@
         </where>
     </select>
     <!-- 查询所有旅游博客 -->
-    <select id="SelectAllTravel" resultType="com.example.travel.entity.TravelBlog">
+    <select id="SelectAllTravel" resultMap="travelBlogResultMap">
         SELECT
             id,
             title,
@@ -34,22 +50,14 @@
             likes,
             favorites,
             created_at AS createdAt
+            updata_at AS updataAt
         FROM travel_blog
         ORDER BY created_at DESC
     </select>
 
     <!-- 根据ID查询单个旅游博客 -->
-    <select id="findById" resultType="com.example.travel.entity.TravelBlog">
-        SELECT
-            id,
-            title,
-            content,
-            location,
-            cover_image AS coverImage,
-            likes,
-            favorites,
-            created_at AS createdAt
-        FROM travel_blog
+    <select id="findById" resultMap="travelBlogResultMap">
+        SELECT * FROM travel_blog
         WHERE id = #{id}
     </select>
 
@@ -73,7 +81,13 @@
             content=#{content},
             cover_image=#{coverImage},
             favorites=#{favorites},
-            created_at=#{created_at}
+            created_at=#{created_at},
+            updata_at=#{updata_at},
+            price=#{price},
+            location=#{location},
+            likes=#{likes},
+            browse=#{browse},
+            state=#{state}
         WHERE id = #{id}
     </update>
     <!-- 新增 -->
@@ -85,7 +99,11 @@
             cover_image,
             favorites,
             price,
-            created_at
+            created_at,
+            updata_at,
+            likes,
+            browse,
+            state
         ) VALUES (
             #{title},
             #{content},
@@ -93,7 +111,11 @@
             #{coverImage},
             #{favorites},
             #{price},
-            #{created_at}
+            #{created_at},
+            #{updata_at},
+            #{likes},
+            #{browse},
+            #{state}
         )
     </insert>
     <!-- 删除 -->

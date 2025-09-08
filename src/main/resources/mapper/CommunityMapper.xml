@@ -4,13 +4,24 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.travel.dao.CommunityDao">
+    <!-- ResultMap定义 -->
+    <resultMap id="communityResultMap" type="com.example.travel.entity.Community">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="memberCount" column="member_count"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="creatorId" column="creator_id"/>
+    </resultMap>
     <!-- 查询所有社区信息 -->
-    <select id="findAll" resultType="com.example.travel.entity.Community">
+    <select id="findAll" resultMap="communityResultMap">
         SELECT * FROM community
     </select>
 
     <!-- 根据 ID 查询社区信息 -->
-    <select id="findById" resultType="com.example.travel.entity.Community">
+    <select id="findById" resultMap="communityResultMap">
         SELECT * FROM community WHERE id = #{id}
     </select>
 

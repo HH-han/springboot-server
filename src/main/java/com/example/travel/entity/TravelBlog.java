@@ -21,6 +21,9 @@ public class TravelBlog {
     private Double price;
     private Integer favorites;
     private LocalDateTime created_at;
+    private LocalDateTime updata_at;
+    private String state;
+    private String browse;
 
     public Long getId() {
         return id;
@@ -96,5 +99,29 @@ public class TravelBlog {
 
     public void setUpdatedAt(LocalDateTime now) {
 
+    }
+
+    public LocalDateTime getUpdata_at() {
+        return updata_at;
+    }
+
+    public void setUpdata_at(LocalDateTime updata_at) {
+        this.updata_at = updata_at;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getBrowse() {
+        return browse;
+    }
+
+    public void setBrowse(String browse) {
+        this.browse = browse;
     }
 }

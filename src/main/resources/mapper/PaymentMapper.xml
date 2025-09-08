@@ -8,7 +8,7 @@
         id, order_id, username,item_id, item_name, amount, payment_method, status, created_at, updated_at, version,quantity
     </sql>
 
-    <select id="findAll" resultType="com.example.travel.entity.Payment">
+    <select id="findAll" resultMap="PaymentResultMap">
         SELECT <include refid="baseColumns"/>
         FROM payments
         <where>
@@ -44,7 +44,7 @@
             AND username = #{username}
         </where>
     </select>
-    <select id="findAllOrders" resultType="com.example.travel.entity.Payment">
+    <select id="findAllOrders" resultMap="PaymentResultMap">
         SELECT <include refid="baseColumns"/>
         FROM payments
         <where>
@@ -172,7 +172,7 @@
         WHERE id = #{id}
     </delete>
 
-    <select id="findByOrderId" resultType="com.example.travel.entity.Payment">
+    <select id="findByOrderId" resultMap="PaymentResultMap">
         SELECT <include refid="baseColumns"/>
         FROM payments
         WHERE order_id = #{orderId}

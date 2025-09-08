@@ -4,8 +4,20 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.travel.dao.ScenicDao">
+    <!-- ResultMap定义 -->
+    <resultMap id="scenicResultMap" type="com.example.travel.entity.Scenic">
+        <id property="id" column="id"/>
+        <result property="sales" column="sales"/>
+        <result property="evaluation" column="evaluation"/>
+        <result property="title" column="title"/>
+        <result property="subtitle" column="subtitle"/>
+        <result property="image" column="image"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+        <result property="price" column="price"/>
+    </resultMap>
     <!-- 查询所有景点 -->
-    <select id="findAllScenic" resultType="com.example.travel.entity.Scenic">
+    <select id="findAllScenic" resultMap="scenicResultMap">
         SELECT * FROM scenic
         <where>
             <if test="keyword != null and keyword != ''">
@@ -24,7 +36,7 @@
         </where>
     </select>
     <!--  根据id查询  -->
-    <select id="findById" resultType="com.example.travel.entity.Scenic">
+    <select id="findById" resultMap="scenicResultMap">
         SELECT * FROM scenic WHERE id = #{id}
     </select>
     <!-- 修改 -->
