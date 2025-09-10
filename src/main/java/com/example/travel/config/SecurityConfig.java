@@ -4,6 +4,8 @@ import com.example.travel.filter.JwtAuthenticationFilter;
 import com.example.travel.service.UserService;
 import com.example.travel.service.impl.CustomUserDetailsService;
 import com.example.travel.utils.JwtUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +28,8 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
     
     private final UserService userService;
     
@@ -56,10 +60,12 @@ public class SecurityConfig {
             )
             .exceptionHandling(ex -> ex
                 .authenticationEntryPoint((request, response, authException) -> {
-                    response.sendError(401, "未经授权 ");
+                    logger.error("认证失败: {}, URL: {}", authException.getMessage(), request.getRequestURI());
+                    response.sendRedirect("/401.html");
                 })
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    response.sendError(403, "禁止");
+                    logger.error("访问被拒绝: {}, URL: {}", accessDeniedException.getMessage(), request.getRequestURI());
+                    response.sendRedirect("/403.html");
                 })
             );
         return http.build();

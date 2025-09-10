@@ -5,6 +5,8 @@ import com.example.travel.entity.TravelNews;
 import com.example.travel.service.TravelNewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -46,11 +48,13 @@ public class TravelNewsServiceImpl implements TravelNewsService {
 
     @Override
     public int updateTravelNews(TravelNews travelNews) {
+        travelNews.setUpdated_at(LocalDateTime.now());
         return travelNewsDao.updateTravelNews(travelNews);
     }
 
     @Override
     public int insertTravelNews(TravelNews travelNews) {
+        travelNews.setUpdated_at(LocalDateTime.now());
         return travelNewsDao.insertTravelNews(travelNews);
     }
 

@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public Result handleGenericException(Exception ex) {
-        log.error("系统异常: ", ex);
+        log.error("系统异常: {}", ex.getMessage());
         return Result.fail(500, "系统异常，请联系管理员");
     }
 }

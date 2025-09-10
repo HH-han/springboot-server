@@ -15,6 +15,12 @@ public class Food {
     private Integer sales; // 销量
     private Double rating; // 评分
     private Integer provinceId; // 所属省份 ID
+    private String category; //分类
+    private String location; //地址
+    private String status; //状态
+    private String phone; //电话
+    private LocalDateTime created_at;
+    private LocalDateTime updated_at;
 
     // Getters and Setters
     public Integer getId() {
@@ -81,6 +87,54 @@ public class Food {
         this.provinceId = provinceId;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public void setUpdatedAt(LocalDateTime now) {
+    }
+
+    public LocalDateTime getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(LocalDateTime created_at) {
+        this.created_at = created_at;
+    }
+
+    public LocalDateTime getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(LocalDateTime updated_at) {
+        this.updated_at = updated_at;
     }
 }

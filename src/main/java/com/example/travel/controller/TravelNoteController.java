@@ -15,6 +15,7 @@ import java.util.Map;
 public class TravelNoteController {
     @Autowired
     private TravelNoteService travelNoteService;
+
     @GetMapping("/{id}")
     public Result getNoteById(@PathVariable String id) {
         travelNoteService.getNoteById(id);
@@ -32,7 +33,7 @@ public class TravelNoteController {
         Map<String ,Object> result=new HashMap<>();
         result.put("list", travelNotes);
         result.put("total", total);
-        return Result.success(result);
+        return Result.success("查询成功",result);
     }
 
     @GetMapping("/search")
@@ -46,7 +47,7 @@ public class TravelNoteController {
         Map<String ,Object> result=new HashMap<>();
         result.put("list", travelNotes);
         result.put("total", total);
-        return Result.success(result);
+        return Result.success("查询成功",result);
     }
 
     @GetMapping("/count")
@@ -63,18 +64,18 @@ public class TravelNoteController {
     @PutMapping
     public Result updateNote(@RequestBody TravelNote note) {
         travelNoteService.updateNote(note);
-        return  Result.success();
+        return  Result.success("notes更新成功");
     }
 
     @DeleteMapping("/{id}")
     public Result deleteNote(@PathVariable String id) {
         travelNoteService.deleteNote(id);
-        return Result.success();
+        return Result.success("删除成功");
     }
     // 新增
     @PostMapping("/insert")
     public Result insertNote(@RequestBody TravelNote note) {
         travelNoteService.insertNote(note);
-        return Result.success(note);
+        return Result.success("notes插入成功");
     }
 }

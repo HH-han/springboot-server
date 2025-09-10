@@ -74,6 +74,7 @@
     <insert id="insertTravelNews" parameterType="com.example.travel.entity.TravelNews">
         INSERT INTO travel_news
         (
+            id,
             title,
             content,
             location,
@@ -81,6 +82,7 @@
             created_at,
             updated_at
         ) VALUES (
+                     #{id},
                      #{title},
                      #{content},
                      #{location},

@@ -15,10 +15,19 @@
         <result property="created_at" column="created_at"/>
         <result property="updated_at" column="updated_at"/>
         <result property="price" column="price"/>
+        <result property="location" column="location"/>
+        <result property="type" column="type"/>
+        <result property="facility" column="facility"/>
+        <result property="traffic" column="traffic"/>
+        <result property="status" column="status"/>
+        <result property="feature" column="feature"/>
+        <result property="phone" column="phone"/>
+        <result property="star" column="star"/>
+        <result property="service" column="service"/>
     </resultMap>
     <!-- 查询所有景点 -->
     <select id="findAllScenic" resultMap="scenicResultMap">
-        SELECT * FROM scenic
+        SELECT * FROM travel_scenic
         <where>
             <if test="keyword != null and keyword != ''">
                 AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
@@ -28,7 +37,7 @@
     </select>
     <!-- 查询景点总数 -->
     <select id="countScenic" resultType="int">
-        SELECT COUNT(*) FROM scenic
+        SELECT COUNT(*) FROM travel_scenic
         <where>
             <if test="keyword != null and keyword != ''">
                 AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
@@ -37,31 +46,40 @@
     </select>
     <!--  根据id查询  -->
     <select id="findById" resultMap="scenicResultMap">
-        SELECT * FROM scenic WHERE id = #{id}
+        SELECT * FROM travel_scenic WHERE id = #{id}
     </select>
     <!-- 修改 -->
     <update id="updateScenic" parameterType="com.example.travel.entity.Scenic">
-    UPDATE scenic
+    UPDATE travel_scenic
     SET title=#{title},
         subtitle=#{subtitle},
         image=#{image},
         sales=#{sales},
         evaluation=#{evaluation},
         price=#{price,jdbcType=DOUBLE},
-        updated_at=#{updated_at}
+        updated_at=#{updated_at},
+        location=#{location},
+        type=#{type},
+        facility=#{facility},
+        traffic=#{traffic},
+        status=#{status},
+        feature=#{feature},
+        phone=#{phone},
+        star=#{star},
+        service=#{service}
         WHERE id = #{id}
     </update>
     <!-- 新增 -->
     <insert id="insertScenic" parameterType="com.example.travel.entity.Scenic">
-    INSERT INTO scenic(title, subtitle, image, price, created_at)
+    INSERT INTO travel_scenic(title, subtitle, image, price, created_at, location, type, facility, traffic, status, feature, phone, star, service, sales, evaluation)
 
-    VALUES(#{title}, #{subtitle}, #{image}, #{price,jdbcType=DOUBLE}, #{created_at})
+    VALUES(#{title}, #{subtitle}, #{image}, #{price,jdbcType=DOUBLE}, #{created_at}, #{location}, #{type}, #{facility}, #{traffic}, #{status}, #{feature}, #{phone}, #{star}, #{service}, #{sales}, #{evaluation})
     </insert>
     <!-- 删除 -->
     <delete id="deleteScenic" parameterType="java.lang.Long">
-        DELETE FROM scenic WHERE id = #{id}
+        DELETE FROM travel_scenic WHERE id = #{id}
     </delete>
     <select id="exists" resultType="boolean">
-        SELECT COUNT(*) FROM scenic WHERE id = #{id}
+        SELECT COUNT(*) FROM travel_scenic WHERE id = #{id}
     </select>
 </mapper>
