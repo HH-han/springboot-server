@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API文档测试</title>
+    <script>
+        // 测试API数据渲染
+        function testRender() {
+            const apiData = {
+                'user-controller': {
+                    name: '用户管理接口',
+                    controller: 'UserController',
+                    basePath: '/api/public/user',
+                    icon: 'fas fa-users',
+                    apis: [
+                        { method: 'GET', endpoint: '/info', title: '获取用户信息', description: '获取当前登录用户的详细信息', tags: ['用户管理', '需要认证'], icons: ['fa-user', 'fa-shield-alt'] }
+                    ]
+                }
+            };
+
+            const section = apiData['user-controller'];
+            const api = section.apis[0];
+            
+            const html = `
+                <div class="col-md-6 api-item">
+                    <div class="card api-card method-${api.method.toLowerCase()}">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge badge-method badge-${api.method.toLowerCase()}">${api.method}</span>
+                                <small class="text-muted">${api.tags[0]}</small>
+                            </div>
+                            <h6 class="card-title">${api.title}</h6>
+                            <div class="endpoint">${section.basePath}${api.endpoint}</div>
+                            <p class="card-text small text-muted">${api.description}</p>
+                            <div class="d-flex justify-content-between">
+                                <small><i class="fas ${api.icons[0]} me-1"></i>${api.tags[0]}</small>
+                                <small><i class="fas ${api.icons[1]} me-1"></i>${api.tags[1]}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('test-result').innerHTML = html;
+            document.getElementById('test-status').textContent = '渲染测试成功！';
+        }
+    </script>
+</head>
+<body onload="testRender()">
+    <h1>API文档渲染测试</h1>
+    <p id="test-status">正在测试...</p>
+    <div id="test-result"></div>
+</body>
+</html>

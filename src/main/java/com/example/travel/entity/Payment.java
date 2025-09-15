@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Table(name = "payments")
+@Table(name = "travel_payments")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

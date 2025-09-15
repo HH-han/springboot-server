@@ -20,7 +20,7 @@
     </resultMap>
     <!-- 查询所有订单（分页） -->
     <select id="findAllOrder" resultMap="orderResultMap">
-        SELECT * FROM orders
+        SELECT * FROM travel_orders
         <where>
             <if test="keyword != null and keyword != ''">
                 AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
@@ -31,7 +31,7 @@
 
     <!-- 查询订单总数（用于分页） -->
     <select id="countOrders" resultType="int">
-        SELECT COUNT(*) FROM orders
+        SELECT COUNT(*) FROM travel_orders
         <where>
             <if test="keyword != null and keyword != ''">
                 AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
@@ -41,7 +41,7 @@
 
     <!-- 根据 ID 查询订单 -->
     <select id="findById" resultMap="orderResultMap">
-        SELECT * FROM orders WHERE id = #{id}
+        SELECT * FROM travel_orders WHERE id = #{id}
     </select>
 
     <!-- 新增订单 -->
@@ -51,11 +51,11 @@
     </insert>
     <!-- 删除订单 -->
     <delete id="deleteById">
-        DELETE FROM orders WHERE id = #{id}
+        DELETE FROM travel_orders WHERE id = #{id}
     </delete>
     <!-- 修改 -->
     <update id="update" parameterType="com.example.travel.entity.Order">
-        UPDATE orders
+        UPDATE travel_orders
         SET image = #{image},
             price = #{price},
             totalAmount = #{totalAmount},

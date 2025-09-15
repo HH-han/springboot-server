@@ -26,7 +26,8 @@ public class ConsoleUtils {
     
     public static void printUrl(String name, String url) {
         System.out.println("🌍" + "后端" + "地址:" + "http://localhost:2025/");
-        System.out.println("🌍" + "前端" + "地址:" + "http://localhost:9527/");
-        System.out.println("🧺"+"Github地址:" + "https://github.com/");
+        System.out.println("📃"+"接口文档"+"地址:"+"http://localhost:2025/apiDocument.html");
+        System.out.println("🌌" + "前端" + "地址:" + "http://localhost:9527/");
+        System.out.println("🧺"+"Github地址:" + "https://github.com/HH-han");
     }
 }

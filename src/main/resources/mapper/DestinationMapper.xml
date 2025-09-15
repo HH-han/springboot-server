@@ -14,7 +14,7 @@
     </resultMap>
 
     <select id="findBySearchAndCategory" resultMap="destinationResultMap">
-        SELECT * FROM destination
+        SELECT * FROM travel_destination
         <where>
             <if test="searchQuery != null and searchQuery != ''">
                 (name LIKE CONCAT('%', #{searchQuery}, '%')
@@ -28,11 +28,11 @@
     </select>
     <!--  根据id查询  -->
     <select id="findById" resultMap="destinationResultMap">
-        SELECT * FROM destination WHERE id = #{id}
+        SELECT * FROM travel_destination WHERE id = #{id}
     </select>
     <!--  查询总条数  -->
     <select id="countBySearchAndCategory" resultType="int">
-        SELECT COUNT(*) FROM destination
+        SELECT COUNT(*) FROM travel_destination
         <where>
             <if test="searchQuery != null and searchQuery != ''">
                 (name LIKE CONCAT('%', #{searchQuery}, '%')
@@ -45,7 +45,7 @@
     </select>
     <!-- 新增 -->
     <insert id="insertDestination" parameterType="com.example.travel.entity.Destination">
-        INSERT INTO destination (name, category, image, price, cities, description)
+        INSERT INTO travel_destination (name, category, image, price, cities, description)
         VALUES (
                     #{name},
                     #{category},
@@ -58,7 +58,7 @@
 
     <!-- 修改 -->
     <update id="updateDestination" parameterType="com.example.travel.entity.Destination">
-        UPDATE destination
+        UPDATE travel_destination
         SET
             name = #{name},
             category = #{category},
@@ -72,11 +72,11 @@
     <!-- 删除 -->
     <select id="exists" resultType="boolean">
         SELECT COUNT(1)
-        FROM destination
+        FROM travel_destination
         WHERE id = #{id}
     </select>
     <delete id="deleteDestination" parameterType="long">
-        DELETE FROM destination WHERE id = #{id}
+        DELETE FROM travel_destination WHERE id = #{id}
     </delete>
 
 </mapper>

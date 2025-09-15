@@ -1,10 +1,13 @@
 package com.example.travel.entity;
 
+import jakarta.persistence.Table;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @Data
+@Table(name = "travel_destination")
 public class Destination {
     private Integer id;
     private String name;

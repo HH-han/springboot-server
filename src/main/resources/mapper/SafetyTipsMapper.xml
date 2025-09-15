@@ -15,7 +15,7 @@
     <select id="selectByPage" resultMap="BaseResultMap" parameterType="com.example.travel.entity.SafetyTips">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM safety_tips
+        FROM travel_safetytips
         ORDER BY create_time DESC
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
@@ -24,7 +24,7 @@
     <select id="selectByConditionWithPage" resultMap="BaseResultMap" parameterType="map">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM safety_tips
+        FROM travel_safetytips
         <where>
             <if test="title != null and title != ''">
                 AND title LIKE CONCAT('%', #{title}, '%')
@@ -44,13 +44,13 @@
     <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM safety_tips
+        FROM travel_safetytips
         WHERE id = #{id}
     </select>
 
     <!-- 新增 -->
     <insert id="insert" parameterType="com.example.travel.entity.SafetyTips" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO safety_tips
+        INSERT INTO travel_safetytips
             (title, description, image_url, create_time, update_time)
         VALUES
             (#{title}, #{description}, #{imageUrl}, NOW(), NOW())
@@ -58,7 +58,7 @@
 
     <!-- 批量新增 -->
     <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO safety_tips
+        INSERT INTO travel_safetytips
         (title, description, image_url, create_time, update_time)
         VALUES
         <foreach collection="list" item="item" separator=",">
@@ -68,7 +68,7 @@
 
     <!-- 更新 -->
     <update id="update" parameterType="com.example.travel.entity.SafetyTips">
-        UPDATE safety_tips
+        UPDATE travel_safetytips
         SET
             title = #{title},
             description = #{description},
@@ -80,7 +80,7 @@
     <!-- 批量更新 -->
     <update id="batchUpdate" parameterType="java.util.List">
         <foreach collection="list" item="item" separator=";">
-            UPDATE safety_tips
+            UPDATE travel_safetytips
             SET
             title = #{item.title},
             description = #{item.description},
@@ -92,12 +92,12 @@
 
     <!-- 删除 -->
     <delete id="deleteById" parameterType="java.lang.Long">
-        DELETE FROM safety_tips WHERE id = #{id}
+        DELETE FROM travel_safetytips WHERE id = #{id}
     </delete>
 
     <!-- 批量删除 -->
     <delete id="batchDelete" parameterType="java.util.List">
-        DELETE FROM safety_tips WHERE id IN
+        DELETE FROM travel_safetytips WHERE id IN
         <foreach collection="list" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
@@ -107,7 +107,7 @@
     <select id="selectByCondition" resultMap="BaseResultMap" parameterType="java.util.Map">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM safety_tips
+        FROM travel_safetytips
         <where>
             <if test="title != null and title != ''">
                 AND title LIKE CONCAT('%', #{title}, '%')
@@ -131,12 +131,12 @@
 
     <!-- 统计总数 -->
     <select id="count" resultType="java.lang.Long" parameterType="com.example.travel.entity.SafetyTips">
-        SELECT COUNT(*) FROM safety_tips
+        SELECT COUNT(*) FROM travel_safetytips
     </select>
 
     <!-- 条件统计 -->
     <select id="countByCondition" resultType="java.lang.Long" parameterType="java.util.Map">
-        SELECT COUNT(*) FROM safety_tips
+        SELECT COUNT(*) FROM travel_safetytips
         <where>
             <if test="title != null and title != ''">
                 AND title LIKE CONCAT('%', #{title}, '%')
@@ -151,7 +151,7 @@
     </select>
     <!-- 分页 -->
     <select id="findAllSafetyTips" resultType="com.example.travel.entity.SafetyTips">
-        SELECT * FROM safety_tips
+        SELECT * FROM travel_safetytips
         <where>
             <if test="keyword != null and keyword != ''">
                 AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
@@ -161,7 +161,7 @@
     </select>
     <!-- 查询总数（用于分页） -->
     <select id="countSafety" resultType="int">
-        select COUNT(*) from safety_tips
+        select COUNT(*) from travel_safetytips
         <where>
             <if test="keyword != null and keyword != ''">
                 AND (sku LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
