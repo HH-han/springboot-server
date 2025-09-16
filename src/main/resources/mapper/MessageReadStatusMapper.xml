@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.travel.dao.MessageReadStatusDao">
+
+    <resultMap id="messageReadStatusResultMap" type="com.example.travel.entity.MessageReadStatus">
+        <id column="id" property="id"/>
+        <result column="message_id" property="messageId"/>
+        <result column="user_id" property="userId"/>
+        <result column="is_read" property="isRead"/>
+        <result column="read_time" property="readTime"/>
+        <result column="message_type" property="messageType"/>
+    </resultMap>
+
+    <!-- 根据ID查询阅读状态 -->
+    <select id="findById" resultMap="messageReadStatusResultMap">
+        SELECT * FROM message_read_status WHERE id = #{id}
+    </select>
+
+    <!-- 根据消息ID和用户ID查询阅读状态 -->
+    <select id="findByMessageIdAndUserId" resultMap="messageReadStatusResultMap">
+        SELECT * FROM message_read_status 
+        WHERE message_id = #{messageId} AND user_id = #{userId}
+    </select>
+
+    <!-- 根据用户ID查询阅读状态 -->
+    <select id="findByUserId" resultMap="messageReadStatusResultMap">
+        SELECT * FROM message_read_status WHERE user_id = #{userId}
+    </select>
+
+    <!-- 根据消息ID查询阅读状态 -->
+    <select id="findByMessageId" resultMap="messageReadStatusResultMap">
+        SELECT * FROM message_read_status WHERE message_id = #{messageId}
+    </select>
+
+    <!-- 查询未读消息 -->
+    <select id="findUnreadMessages" resultMap="messageReadStatusResultMap">
+        SELECT * FROM message_read_status 
+        WHERE user_id = #{userId} AND is_read = 0
+    </select>
+
+    <!-- 新增阅读状态记录 -->
+    <insert id="insert" parameterType="com.example.travel.entity.MessageReadStatus" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO message_read_status 
+        (message_id, user_id, is_read, read_time, message_type)
+        VALUES 
+        (#{messageId}, #{userId}, #{isRead}, #{readTime}, #{messageType})
+    </insert>
+
+    <!-- 更新阅读状态 -->
+    <update id="updateReadStatus">
+        UPDATE message_read_status 
+        SET is_read = #{isRead}, read_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 标记消息为已读 -->
+    <update id="markAsRead">
+        UPDATE message_read_status 
+        SET is_read = 1, read_time = NOW()
+        WHERE message_id = #{messageId} AND user_id = #{userId}
+    </update>
+
+    <!-- 删除阅读状态记录 -->
+    <delete id="delete">
+        DELETE FROM message_read_status WHERE id = #{id}
+    </delete>
+
+    <!-- 根据消息ID删除阅读状态记录 -->
+    <delete id="deleteByMessageId">
+        DELETE FROM message_read_status WHERE message_id = #{messageId}
+    </delete>
+
+    <!-- 统计用户未读消息数量 -->
+    <select id="countUnreadMessages" resultType="int">
+        SELECT COUNT(*) FROM message_read_status 
+        WHERE user_id = #{userId} AND is_read = 0
+    </select>
+
+    <!-- 统计特定消息的已读用户数量 -->
+    <select id="countReadUsersByMessageId" resultType="int">
+        SELECT COUNT(*) FROM message_read_status 
+        WHERE message_id = #{messageId} AND is_read = 1
+    </select>
+
+</mapper>

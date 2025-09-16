@@ -197,6 +197,7 @@
             <artifactId>easyexcel</artifactId>
             <version>3.3.2</version>
         </dependency>
+
         <!--Swagger 的 Java API 注解库-->
         <dependency>
             <groupId>io.swagger</groupId>
@@ -207,6 +208,11 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>
             <version>3.0.0</version>
+        </dependency>
+        <!-- WebSocket -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
     </dependencies>
     <build>

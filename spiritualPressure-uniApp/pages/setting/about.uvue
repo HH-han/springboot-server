@@ -1,0 +1,306 @@
+<template>
+	<view class="about-page">
+		<!-- 顶部导航栏 -->
+		<view class="nav-bar">
+			<view class="nav-left" @click="navigateBack">
+				<uni-icons type="arrowleft" size="24" color="#333"></uni-icons>
+			</view>
+			<view class="nav-title">关于我们</view>
+			<view class="nav-right"></view>
+		</view>
+
+		<view class="content">
+			<!-- 应用信息 -->
+			<view class="app-info">
+				<image class="app-logo" src="/static/logo.png" mode="aspectFit"></image>
+				<view class="app-name">心灵减压</view>
+				<view class="app-version">版本号：v1.0.0</view>
+			</view>
+
+			<!-- 功能介绍 -->
+			<view class="section">
+				<view class="section-title">应用介绍</view>
+				<view class="section-content">
+					<text>心灵减压是一款专注于心理健康和压力管理的应用，为用户提供专业的心理服务、放松训练、冥想指导和情绪管理工具，帮助用户在快节奏的生活中找到内心的平静与平衡。</text>
+				</view>
+			</view>
+
+			<!-- 特色功能 -->
+			<view class="section">
+				<view class="section-title">特色功能</view>
+				<view class="feature-list">
+					<view class="feature-item">
+						<uni-icons type="sound" size="20" color="#4A90E2"></uni-icons>
+						<text>专业冥想指导</text>
+					</view>
+					<view class="feature-item">
+						<uni-icons type="heart" size="20" color="#4A90E2"></uni-icons>
+						<text>情绪追踪分析</text>
+					</view>
+					<view class="feature-item">
+						<uni-icons type="calendar" size="20" color="#4A90E2"></uni-icons>
+						<text>个性化减压计划</text>
+					</view>
+					<view class="feature-item">
+						<uni-icons type="chat" size="20" color="#4A90E2"></uni-icons>
+						<text>专业心理咨询</text>
+					</view>
+				</view>
+			</view>
+
+			<!-- 开发团队 -->
+			<view class="section">
+				<view class="section-title">开发团队</view>
+				<view class="team-info">
+					<text>心灵减压由专业的心理专家和技术团队共同打造，致力于为用户提供科学有效的心理健康服务。</text>
+				</view>
+			</view>
+
+			<!-- 联系方式 -->
+			<view class="section">
+				<view class="section-title">联系我们</view>
+				<view class="contact-info">
+					<view class="contact-item">
+						<uni-icons type="mail" size="20" color="#4A90E2"></uni-icons>
+						<text>邮箱：support@mindrelax.com</text>
+					</view>
+					<view class="contact-item">
+						<uni-icons type="phone" size="20" color="#4A90E2"></uni-icons>
+						<text>客服热线：400-123-4567</text>
+					</view>
+					<view class="contact-item">
+						<uni-icons type="weixin" size="20" color="#4A90E2"></uni-icons>
+						<text>微信公众号：心灵减压</text>
+					</view>
+				</view>
+			</view>
+
+			<!-- 版权信息 -->
+			<view class="copyright">
+				<text>© 2023 心灵减压 All Rights Reserved</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const appInfo = ref({
+	name: '心灵减压',
+	version: '1.0.0',
+	build: '20231201',
+	company: '心灵科技',
+	website: 'https://www.xinling.com',
+	tel: '400-123-4567',
+	email: 'support@xinling.com'
+})
+
+// 返回上一页
+const navigateBack = () => {
+	uni.navigateBack()
+}
+
+// 检查更新
+const checkUpdate = () => {
+	uni.showLoading({ title: '检查中...' })
+	
+	setTimeout(() => {
+		uni.hideLoading()
+		uni.showToast({ 
+			title: '当前已是最新版本', 
+			icon: 'success' 
+		})
+	}, 1500)
+}
+
+// 用户协议
+const viewUserAgreement = () => {
+	uni.navigateTo({ url: '/pages/setting/user-agreement' })
+}
+
+// 隐私政策
+const viewPrivacyPolicy = () => {
+	uni.navigateTo({ url: '/pages/setting/privacy-policy' })
+}
+
+// 联系客服
+const contactCustomerService = () => {
+	uni.makePhoneCall({
+		phoneNumber: appInfo.value.tel
+	})
+}
+
+// 访问官网
+const visitWebsite = () => {
+	uni.navigateTo({ 
+		url: `/pages/webview/webview?url=${encodeURIComponent(appInfo.value.website)}` 
+	})
+}
+
+// 发送邮件
+const sendEmail = () => {
+	uni.setClipboardData({
+		data: appInfo.value.email,
+		success: () => {
+			uni.showToast({ 
+				title: '邮箱已复制', 
+				icon: 'success' 
+			})
+		}
+	})
+}
+</script>
+
+<style>
+	.about-page {
+		min-height: 100vh;
+		background-color: #f5f5f5;
+	}
+
+	.nav-bar {
+		height: 88rpx;
+		background-color: #fff;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 32rpx;
+		border-bottom: 1rpx solid #eee;
+		position: sticky;
+		top: 0;
+		z-index: 100;
+	}
+
+	.nav-bar .nav-left {
+		width: 80rpx;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+	}
+
+	.nav-bar .nav-title {
+		font-size: 36rpx;
+		font-weight: 600;
+		color: #333;
+	}
+
+	.nav-bar .nav-right {
+		width: 80rpx;
+	}
+
+	.content {
+		padding: 32rpx;
+	}
+
+	.app-info {
+		background-color: #fff;
+		border-radius: 16rpx;
+		padding: 48rpx 32rpx;
+		text-align: center;
+		margin-bottom: 32rpx;
+	}
+
+	.app-info .app-logo {
+		width: 120rpx;
+		height: 120rpx;
+		margin-bottom: 24rpx;
+		border-radius: 24rpx;
+	}
+
+	.app-info .app-name {
+		font-size: 40rpx;
+		font-weight: bold;
+		color: #333;
+		margin-bottom: 16rpx;
+	}
+
+	.app-info .app-version {
+		font-size: 28rpx;
+		color: #999;
+	}
+
+	.section {
+		background-color: #fff;
+		border-radius: 16rpx;
+		padding: 32rpx;
+		margin-bottom: 32rpx;
+	}
+
+	.section .section-title {
+		font-size: 32rpx;
+		font-weight: 600;
+		color: #333;
+		margin-bottom: 24rpx;
+		position: relative;
+		padding-left: 20rpx;
+	}
+
+	.section .section-title::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 8rpx;
+		height: 32rpx;
+		background: linear-gradient(135deg, #4A90E2, #357ABD);
+		border-radius: 4rpx;
+	}
+
+	.section .section-content {
+		font-size: 28rpx;
+		line-height: 1.6;
+		color: #666;
+	}
+
+	.feature-list .feature-item {
+		display: flex;
+		align-items: center;
+		margin-bottom: 24rpx;
+		flex-direction: row;
+	}
+
+	.feature-list .feature-item:last-child {
+		margin-bottom: 0;
+	}
+
+	.feature-list .feature-item text {
+		font-size: 28rpx;
+		color: #666;
+		margin-left: 16rpx;
+	}
+
+	.team-info,
+	.contact-info {
+		font-size: 28rpx;
+		line-height: 1.6;
+		color: #666;
+		display: flex;
+		flex-direction: row;
+	}
+
+	.contact-info .contact-item {
+		display: flex;
+		align-items: center;
+		margin-bottom: 20rpx;
+	}
+
+	.contact-info .contact-item:last-child {
+		margin-bottom: 0;
+	}
+
+	.contact-info .contact-item text {
+		margin-left: 16rpx;
+		font-size: 28rpx;
+		color: #666;
+	}
+
+	.copyright {
+		text-align: center;
+		font-size: 24rpx;
+		color: #999;
+		margin-top: 48rpx;
+		padding: 32rpx 0;
+	}
+</style>

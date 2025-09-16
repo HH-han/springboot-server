@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.travel.dao.ChatGroupDao">
+
+    <resultMap id="chatGroupResultMap" type="com.example.travel.entity.ChatGroup">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="description" property="description" />
+        <result column="avatar" property="avatar" />
+        <result column="creator_id" property="creatorId" />
+        <result column="max_members" property="maxMembers" />
+        <result column="status" property="status" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <!-- 关联关系 -->
+        <association property="creator" javaType="com.example.travel.entity.User">
+            <id column="creator_id" property="id" />
+            <result column="creator_username" property="username" />
+            <result column="creator_nickname" property="nickname" />
+            <result column="creator_image" property="image" />
+        </association>
+    </resultMap>
+
+    <!-- 根据ID查询群组 -->
+    <select id="findById" resultMap="chatGroupResultMap"> SELECT cg.*, u.username as
+        creator_username, u.nickname as creator_nickname, u.image as creator_image FROM chat_groups
+        cg LEFT JOIN users u ON cg.creator_id = u.id WHERE cg.id = #{id} </select>
+
+    <!-- 根据创建者ID查询群组 -->
+    <select id="findByCreatorId" resultMap="chatGroupResultMap"> SELECT cg.*, u.username as
+        creator_username, u.nickname as creator_nickname, u.image as creator_image FROM chat_groups
+        cg LEFT JOIN users u ON cg.creator_id = u.id WHERE cg.creator_id = #{creatorId} ORDER BY
+        cg.created_at DESC </select>
+
+    <!-- 根据群组名称模糊查询 -->
+    <select id="findByNameLike" resultMap="chatGroupResultMap"> SELECT cg.*, u.username as
+        creator_username, u.nickname as creator_nickname, u.image as creator_image FROM chat_groups
+        cg LEFT JOIN users u ON cg.creator_id = u.id WHERE cg.name LIKE CONCAT('%', #{name}, '%')
+        ORDER BY cg.created_at DESC </select>
+
+    <!-- 查询所有群组 -->
+    <select id="findAll" resultMap="chatGroupResultMap"> SELECT cg.*, u.username as
+        creator_username, u.nickname as creator_nickname, u.image as creator_image FROM chat_groups
+        cg LEFT JOIN users u ON cg.creator_id = u.id ORDER BY cg.created_at DESC </select>
+
+    <!-- 新增群组 -->
+    <insert id="insert" parameterType="com.example.travel.entity.ChatGroup" useGeneratedKeys="true"
+        keyProperty="id"> INSERT INTO chat_groups (name, description, avatar, creator_id,
+        max_members, status, created_at, updated_at) VALUES (#{name}, #{description}, #{avatar},
+        #{creatorId}, #{maxMembers}, #{status}, #{createdAt}, #{updatedAt}) </insert>
+
+    <!-- 更新群组信息 -->
+    <update id="update" parameterType="com.example.travel.entity.ChatGroup"> UPDATE chat_groups SET
+        name = #{name}, description = #{description}, avatar = #{avatar}, max_members =
+        #{maxMembers}, updated_at = #{updatedAt} WHERE id = #{id} </update>
+
+    <!-- 更新群组状态 -->
+    <update id="updateStatus"> UPDATE chat_groups SET status = #{status}, updated_at =
+        CURRENT_TIMESTAMP WHERE id = #{id} </update>
+
+    <!-- 删除群组 -->
+    <delete id="delete"> DELETE FROM chat_groups WHERE id = #{id} </delete>
+
+    <!-- 统计群组数量 -->
+    <select id="count" resultType="int"> SELECT COUNT(*) FROM chat_groups </select>
+
+</mapper>

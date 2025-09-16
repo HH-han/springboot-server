@@ -1,0 +1,215 @@
+<template>
+	<view class="notification-page">
+		<!-- 顶部导航栏 -->
+		<view class="nav-bar">
+			<view class="nav-left" @click="navigateBack">
+				<uni-icons type="arrowleft" size="24" color="#333"></uni-icons>
+			</view>
+			<view class="nav-title">通知设置</view>
+			<view class="nav-right"></view>
+		</view>
+
+		<view class="content">
+			<!-- 通知设置项 -->
+			<view class="setting-list">
+				<view class="setting-item" @click="toggleSetting('orderNotify')">
+					<view class="setting-info">
+						<view class="setting-title">订单通知</view>
+						<view class="setting-desc">订单状态变更、支付成功等通知</view>
+					</view>
+					<switch :checked="settings.orderNotify" @change="toggleSetting('orderNotify')" />
+				</view>
+
+				<view class="setting-item" @click="toggleSetting('promotionNotify')">
+					<view class="setting-info">
+						<view class="setting-title">促销通知</view>
+						<view class="setting-desc">优惠活动、折扣信息等通知</view>
+					</view>
+					<switch :checked="settings.promotionNotify" @change="toggleSetting('promotionNotify')" />
+				</view>
+
+				<view class="setting-item" @click="toggleSetting('systemNotify')">
+					<view class="setting-info">
+						<view class="setting-title">系统通知</view>
+						<view class="setting-desc">系统维护、版本更新等通知</view>
+					</view>
+					<switch :checked="settings.systemNotify" @change="toggleSetting('systemNotify')" />
+				</view>
+
+				<view class="setting-item" @click="toggleSetting('messageNotify')">
+					<view class="setting-info">
+						<view class="setting-title">消息通知</view>
+						<view class="setting-desc">客服消息、评论回复等通知</view>
+					</view>
+					<switch :checked="settings.messageNotify" @change="toggleSetting('messageNotify')" />
+				</view>
+
+				<view class="setting-item" @click="toggleSetting('soundNotify')">
+					<view class="setting-info">
+						<view class="setting-title">声音提醒</view>
+						<view class="setting-desc">收到通知时播放提示音</view>
+					</view>
+					<switch :checked="settings.soundNotify" @change="toggleSetting('soundNotify')" />
+				</view>
+
+				<view class="setting-item" @click="toggleSetting('vibrateNotify')">
+					<view class="setting-info">
+						<view class="setting-title">振动提醒</view>
+						<view class="setting-desc">收到通知时振动提醒</view>
+					</view>
+					<switch :checked="settings.vibrateNotify" @change="toggleSetting('vibrateNotify')" />
+				</view>
+			</view>
+
+			<!-- 保存按钮 -->
+			<view class="save-btn" @click="saveSettings">
+				<text>保存设置</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+
+const settings = ref({
+	orderNotify: true,
+	promotionNotify: true,
+	systemNotify: true,
+	messageNotify: true,
+	soundNotify: true,
+	vibrateNotify: false
+})
+
+// 返回上一页
+const navigateBack = () => {
+	uni.navigateBack()
+}
+
+// 切换设置项
+const toggleSetting = (key) => {
+	settings.value[key] = !settings.value[key]
+}
+
+// 保存设置
+const saveSettings = () => {
+	// 这里可以添加保存到本地存储或服务器的逻辑
+	uni.setStorageSync('notificationSettings', settings.value)
+	uni.showToast({
+		title: '设置已保存',
+		icon: 'success',
+		duration: 2000
+	})
+}
+
+// 加载设置
+const loadSettings = () => {
+	const savedSettings = uni.getStorageSync('notificationSettings')
+	if (savedSettings) {
+		settings.value = { ...settings.value, ...savedSettings }
+	}
+}
+
+onMounted(() => {
+	loadSettings()
+})
+</script>
+
+<style>
+	.notification-page {
+		min-height: 100vh;
+		background-color: #f5f5f5;
+	}
+
+	.nav-bar {
+		height: 88rpx;
+		background-color: #fff;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 32rpx;
+		border-bottom: 1rpx solid #eee;
+		position: sticky;
+		top: 0;
+		z-index: 100;
+	}
+
+	.nav-bar .nav-left {
+		width: 80rpx;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+	}
+
+	.nav-bar .nav-title {
+		font-size: 36rpx;
+		font-weight: 600;
+		color: #333;
+	}
+
+	.nav-bar .nav-right {
+		width: 80rpx;
+	}
+
+	.content {
+		padding: 32rpx;
+	}
+
+	.setting-list {
+		background-color: #fff;
+		border-radius: 16rpx;
+		overflow: hidden;
+		margin-bottom: 48rpx;
+	}
+
+	.setting-item {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-direction: row;
+		padding: 32rpx;
+		border-bottom: 1rpx solid #f5f5f5;
+	}
+
+	.setting-item:last-child {
+		border-bottom: none;
+	}
+
+	.setting-item .setting-info {
+		flex: 1;
+		margin-right: 32rpx;
+	}
+
+	.setting-item .setting-title {
+		font-size: 32rpx;
+		color: #333;
+		margin-bottom: 8rpx;
+	}
+
+	.setting-item .setting-desc {
+		font-size: 24rpx;
+		color: #999;
+	}
+
+	.setting-item switch {
+		transform: scale(0.8);
+		transform-origin: right center;
+	}
+
+	.save-btn {
+		height: 96rpx;
+		background: linear-gradient(135deg, #4A90E2, #357ABD);
+		border-radius: 48rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: #fff;
+		font-size: 32rpx;
+		font-weight: 500;
+	}
+
+	.save-btn:active {
+		opacity: 0.8;
+	}
+</style>

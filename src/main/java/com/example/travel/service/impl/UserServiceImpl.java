@@ -123,5 +123,41 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    // 即时通信相关方法实现
+    @Override
+    public int updateLastLoginTime(Long id, java.time.LocalDateTime lastLoginTime) {
+        return userDao.updateLastLoginTime(id, lastLoginTime);
+    }
+
+    @Override
+    public int updateOnlineStatus(Long id, Integer onlineStatus) {
+        return userDao.updateOnlineStatus(id, onlineStatus);
+    }
+
+    @Override
+    public int updateWebsocketSessionId(Long id, String websocketSessionId) {
+        return userDao.updateWebsocketSessionId(id, websocketSessionId);
+    }
+
+    @Override
+    public int updateDeviceInfo(Long id, String deviceInfo) {
+        return userDao.updateDeviceInfo(id, deviceInfo);
+    }
+
+    @Override
+    public int updateIpAddress(Long id, String ipAddress) {
+        return userDao.updateIpAddress(id, ipAddress);
+    }
+
+    @Override
+    public List<User> findByOnlineStatus(Integer onlineStatus) {
+        return userDao.findByOnlineStatus(onlineStatus);
+    }
+
+    @Override
+    public User findByWebsocketSessionId(String websocketSessionId) {
+        return userDao.findByWebsocketSessionId(websocketSessionId);
+    }
+
 
 }

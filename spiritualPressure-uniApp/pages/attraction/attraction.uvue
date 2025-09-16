@@ -1,0 +1,364 @@
+<template>
+	<view class="container">
+		<!-- 搜索栏 -->
+		<view class="search-bar">
+			<view class="search-input">
+				<uni-icons type="search" size="18" color="#999"></uni-icons>
+				<input 
+					class="input" 
+					v-model="searchKeyword" 
+					placeholder="搜索景点名称" 
+					placeholder-style="color: #999;"
+					@confirm="handleSearch"
+				/>
+			</view>
+		</view>
+
+		<!-- 筛选条件 -->
+		<scroll-view class="filter-scroll" scroll-x="true">
+			<view 
+				class="filter-item" 
+				:class="{ active: selectedCategory === '' }"
+				@click="selectCategory('')"
+			>全部</view>
+			<view 
+				class="filter-item" 
+				:class="{ active: selectedCategory === '自然风光' }"
+				@click="selectCategory('自然风光')"
+			>自然风光</view>
+			<view 
+				class="filter-item" 
+				:class="{ active: selectedCategory === '人文古迹' }"
+				@click="selectCategory('人文古迹')"
+			>人文古迹</view>
+			<view 
+				class="filter-item" 
+				:class="{ active: selectedCategory === '主题公园' }"
+				@click="selectCategory('主题公园')"
+			>主题公园</view>
+			<view 
+				class="filter-item" 
+				:class="{ active: selectedCategory === '海滨度假' }"
+				@click="selectCategory('海滨度假')"
+			>海滨度假</view>
+			<view 
+				class="filter-item" 				:class="{ active: selectedCategory === '山地探险' }"
+				@click="selectCategory('山地探险')"
+			>山地探险</view>
+		</scroll-view>
+
+		<!-- 景点列表 -->
+		<view class="attraction-list">
+			<!-- 加载状态 -->
+			<view class="loading-state" v-if="loading">
+				<uni-load-more status="loading"></uni-load-more>
+			</view>
+
+			<!-- 空状态 -->
+			<view class="empty-state" v-else-if="attractionList.length === 0">
+				<uni-icons type="search" size="48" color="#CCC"></uni-icons>
+				<text class="empty-text">暂无景点数据</text>
+			</view>
+
+			<!-- 景点列表 -->
+			<view 
+				class="attraction-card" 
+				v-for="(item, index) in attractionList" 
+				:key="index"
+				@click="navigateToDetail(item)"
+			>
+				<image class="attraction-image" :src="item.image || '/static/attraction/default.jpg'" mode="aspectFill" />
+				<view class="attraction-content">
+					<text class="attraction-name">{{ item.title }}</text>
+					<view class="attraction-location">
+						<uni-icons type="location" size="12" color="#999"></uni-icons>
+						<text>{{ item.location || '位置信息' }}</text>
+					</view>
+					<text class="attraction-desc">{{ item.subtitle || item.desc || '暂无描述' }}</text>
+					<view class="attraction-footer">
+						<text class="attraction-price" v-if="item.price > 0">¥{{ item.price }}</text>
+						<text class="attraction-price free" v-else>免费</text>
+						<view class="attraction-rating" v-if="item.rating">
+							<uni-icons type="star-filled" size="12" color="#FFA726"></uni-icons>
+							<text>{{ item.rating }}</text>
+						</view>
+					</view>
+				</view>
+			</view>
+
+			<!-- 加载更多 -->
+			<view class="load-more" v-if="hasMore && !loading">
+				<uni-load-more 
+					:status="loadMoreStatus" 
+					:icon-size="16" 
+					:content-text="{ contentdown: '上拉加载更多', contentrefresh: '正在加载...', contentnomore: '没有更多数据了' }"
+					:show-text="true"
+					@click="loadMore"
+				></uni-load-more>
+			</view>
+
+			<!-- 没有更多数据 -->
+			<view class="no-more" v-if="!hasMore && attractionList.length > 0">
+				<text class="no-more-text">没有更多数据了</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { scenicApi } from '@/api/index.js'
+
+// 景点列表数据
+const attractionList = ref([])
+// 搜索关键词
+const searchKeyword = ref('')
+// 选中分类
+const selectedCategory = ref('')
+// 加载状态
+const loading = ref(false)
+// 是否有更多数据
+const hasMore = ref(true)
+// 加载更多状态
+const loadMoreStatus = ref('more')
+// 当前页码
+const currentPage = ref(1)
+// 每页数量
+const pageSize = ref(10)
+
+// 获取景点列表
+const fetchAttractionList = async (reset = false) => {
+	if (loading.value) return
+	
+	loading.value = true
+	
+	try {
+		const page = reset ? 1 : currentPage.value
+		const params = {
+			page: page,
+			pageSize: pageSize.value,
+			keyword: searchKeyword.value || undefined,
+			category: selectedCategory.value || undefined
+		}
+
+		// 过滤掉undefined参数
+		Object.keys(params).forEach(key => {
+			if (params[key] === undefined) {
+				delete params[key]
+			}
+		})
+
+		const response = await scenicApi.getList(params)
+		const data = response.data || {}
+		const list = data.list || []
+		const total = data.total || 0
+
+		if (reset) {
+			attractionList.value = list
+		} else {
+			attractionList.value = [...attractionList.value, ...list]
+		}
+
+		// 更新分页状态
+		hasMore.value = attractionList.value.length < total
+		loadMoreStatus.value = hasMore.value ? 'more' : 'noMore'
+		currentPage.value = page + 1
+	} catch (error) {
+		console.error('获取景点列表失败:', error)
+		uni.showToast({
+			title: '获取数据失败',
+			icon: 'none'
+		})
+	} finally {
+		loading.value = false
+	}
+}
+
+// 搜索处理
+const handleSearch = () => {
+	currentPage.value = 1
+	fetchAttractionList(true)
+}
+
+// 选择分类
+const selectCategory = (category) => {
+	selectedCategory.value = category
+	currentPage.value = 1
+	fetchAttractionList(true)
+}
+
+// 加载更多
+const loadMore = () => {
+	if (hasMore.value && !loading.value) {
+		loadMoreStatus.value = 'loading'
+		fetchAttractionList()
+	}
+}
+
+// 跳转到详情页
+const navigateToDetail = (item) => {
+	// 将景点数据编码后传递到详情页
+	const attractionData = encodeURIComponent(JSON.stringify(item))
+	uni.navigateTo({
+		url: `/pages/attraction/detail?data=${attractionData}&id=${item.id}`
+	})
+}
+
+// 页面加载时获取数据
+onMounted(() => {
+	fetchAttractionList(true)
+})
+</script>
+
+<style>
+	.container {
+		background: #F6F9FE;
+		min-height: 100vh;
+		padding-bottom: 20px;
+	}
+
+	.search-bar {
+		padding: 15px;
+		background: #FFFFFF;
+		border-bottom: 1px solid #EEE;
+	}
+
+	.search-input {
+		background: #F8F9FA;
+		border-radius: 20px;
+		padding: 10px 15px;
+		display: flex;
+		align-items: center;
+		flex-direction: row;
+	}
+
+	.input {
+		flex: 1;
+		margin-left: 8px;
+		font-size: 14px;
+		color: #333;
+	}
+
+	.filter-scroll {
+		display: flex;
+		flex-direction: row;
+		padding: 15px 15px 0;
+		background: #FFFFFF;
+		white-space: nowrap;
+	}
+
+	.filter-item {
+		display: inline-block;
+		padding: 8px 16px;
+		background: #F8F9FA;
+		border-radius: 16px;
+		margin-right: 10px;
+		font-size: 12px;
+		color: #666;
+	}
+
+	.filter-item.active {
+		background: #4A90E2;
+		color: #FFFFFF;
+	}
+
+	.attraction-list {
+		padding: 15px;
+	}
+
+	.attraction-card {
+		background: #FFFFFF;
+		border-radius: 12px;
+		overflow: hidden;
+		margin-bottom: 15px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	}
+
+	.attraction-image {
+		width: 100%;
+		height: 180px;
+	}
+
+	.attraction-content {
+		padding: 15px;
+	}
+
+	.attraction-name {
+		font-size: 16px;
+		font-weight: bold;
+		color: #333;
+		display: block;
+		margin-bottom: 8px;
+	}
+
+	.attraction-location {
+		font-size: 12px;
+		color: #999;
+		display: flex;
+		align-items: center;
+		flex-direction: row;
+		margin-bottom: 8px;
+	}
+
+	.attraction-desc {
+		font-size: 13px;
+		color: #666;
+		line-height: 1.4;
+		margin-bottom: 12px;
+		display: block;
+	}
+
+	.attraction-footer {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-direction: row;
+	}
+
+	.attraction-price {
+		font-size: 16px;
+		color: #FF6B6B;
+		font-weight: bold;
+	}
+
+	.attraction-price.free {
+		color: #52C41A;
+	}
+
+	.attraction-rating {
+		font-size: 12px;
+		color: #999;
+		display: flex;
+		align-items: center;
+	}
+
+	/* 加载状态 */
+	.loading-state {
+		padding: 30px 0;
+		text-align: center;
+	}
+
+	/* 空状态 */
+	.empty-state {
+		padding: 60px 0;
+		text-align: center;
+		color: #999;
+	}
+
+	.empty-text {
+		font-size: 14px;
+		margin-top: 12px;
+		display: block;
+	}
+
+	/* 加载更多 */
+	.load-more, .no-more {
+		padding: 20px 0;
+		text-align: center;
+	}
+
+	.no-more-text {
+		font-size: 12px;
+		color: #999;
+	}
+</style>

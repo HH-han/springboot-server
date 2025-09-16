@@ -1,0 +1,426 @@
+<template>
+	<view class="container">
+		<!-- 酒店图片轮播 -->
+		<swiper class="hotel-swiper" :autoplay="true" :interval="3000" :circular="true" v-if="hotelDetail.images && hotelDetail.images.length > 0">
+			<swiper-item v-for="(image, index) in hotelDetail.images" :key="index">
+				<image class="swiper-image" :src="image" mode="aspectFill" />
+			</swiper-item>
+		</swiper>
+		<view class="hotel-swiper" v-else>
+			<image class="swiper-image" src="/static/hotel/default.jpg" mode="aspectFill" />
+		</view>
+
+		<!-- 酒店基本信息 -->
+		<view class="hotel-info">
+			<text class="hotel-name">{{ hotelDetail.name }}</text>
+			<view class="hotel-meta">
+				<text class="hotel-rating">
+					<uni-icons type="star-filled" size="16" color="#FFA726"></uni-icons>
+					{{ hotelDetail.rating }}
+				</text>
+				<text class="hotel-location">
+					<uni-icons type="location" size="16" color="#999"></uni-icons>
+					{{ hotelDetail.location }}
+				</text>
+			</view>
+			<view class="hotel-tags">
+				<text class="hotel-tag" v-for="(tag, index) in hotelDetail.tags" :key="index">{{ tag }}</text>
+			</view>
+			<text class="hotel-description">{{ hotelDetail.description }}</text>
+		</view>
+
+		<!-- 房型选择 -->
+		<view class="room-section" v-if="hotelDetail.rooms && hotelDetail.rooms.length > 0">
+			<text class="section-title">选择房型</text>
+			<view class="room-list">
+				<view 
+					class="room-card" 
+					v-for="(room, index) in hotelDetail.rooms" 
+					:key="index"
+					:class="{ selected: selectedRoomIndex === index }"
+					@click="selectRoom(index)"
+				>
+					<image class="room-image" :src="room.images || '/static/hotel/room-default.jpg'" mode="aspectFill" />
+					<view class="room-info">
+						<text class="room-name">{{ room.name || '房型名称' }}</text>
+						<text class="room-features" v-if="room.features && room.features.length > 0">{{ room.features.join(' | ') }}</text>
+						<view class="room-footer">
+							<text class="room-price">¥{{ room.price || 0 }}</text>
+							<text class="room-unit">/晚</text>
+							<text class="room-discount" v-if="room.discount">{{ room.discount }}</text>
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
+		<view class="room-section" v-else>
+			<text class="section-title">房型信息</text>
+			<view class="empty-room">
+				<uni-icons type="info" size="24" color="#999"></uni-icons>
+				<text class="empty-text">暂无房型信息</text>
+			</view>
+		</view>
+
+		<!-- 酒店设施 -->
+		<view class="facility-section" v-if="hotelDetail.facilities && hotelDetail.facilities.length > 0">
+			<text class="section-title">酒店设施</text>
+			<view class="facility-grid">
+				<view class="facility-item" v-for="(facility, index) in hotelDetail.facilities" :key="index">
+					<uni-icons :type="facility.icon || 'info'" size="20" color="#4A90E2"></uni-icons>
+					<text>{{ facility.name || '设施' }}</text>
+				</view>
+			</view>
+		</view>
+		<view class="facility-section" v-else>
+			<text class="section-title">酒店设施</text>
+			<view class="empty-facility">
+				<uni-icons type="info" size="24" color="#999"></uni-icons>
+				<text class="empty-text">暂无设施信息</text>
+			</view>
+		</view>
+
+		<!-- 底部预订栏 -->
+		<view class="booking-bar">
+			<view class="price-info">
+				<text class="price">¥{{ selectedRoom ? selectedRoom.price : hotelDetail.minPrice }}</text>
+				<text class="unit">起</text>
+			</view>
+			<button class="book-btn" :disabled="!selectedRoom" @click="navigateToBooking">
+				{{ selectedRoom ? '立即预订' : '选择房型' }}
+			</button>
+		</view>
+	</view>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+
+const selectedRoomIndex = ref(-1)
+const hotelDetail = ref({})
+
+// 处理从列表页传递的数据
+onLoad((options) => {
+	try {
+		if (options.data) {
+			const passedData = JSON.parse(decodeURIComponent(options.data))
+			
+			// 映射API字段到页面字段
+		hotelDetail.value = {
+			id: passedData.id || '',
+			name: passedData.name || '',
+			rating: passedData.evaluation || 0,
+			location: passedData.location || '',
+			tags: passedData.starLevel ? [passedData.starLevel] : [],
+			description: passedData.description || '',
+			minPrice: passedData.price || 0,
+			images: passedData.image ? [passedData.image] : ['/static/hotel/default.jpg'],
+			rooms: passedData.rooms || [],
+			facilities: passedData.hotelFacility ? passedData.hotelFacility.map(facility => ({ name: facility, icon: 'info' })) : []
+		}
+		} else {
+			// 如果没有传递数据，使用默认空数据
+			hotelDetail.value = {
+				id: '',
+				name: '酒店名称',
+				rating: 0,
+				location: '位置信息',
+				tags: [],
+				description: '暂无描述',
+				minPrice: 0,
+				images: ['/static/hotel/default.jpg'],
+				rooms: [],
+				facilities: []
+			}
+		}
+	} catch (error) {
+		console.error('解析酒店数据失败:', error)
+		// 解析失败时使用默认空数据
+		hotelDetail.value = {
+			id: '',
+			name: '酒店名称',
+			rating: 0,
+			location: '位置信息',
+			tags: [],
+			description: '暂无描述',
+			minPrice: 0,
+			images: ['/static/hotel/default.jpg'],
+			rooms: [],
+			facilities: []
+		}
+	}
+})
+
+const selectedRoom = computed(() => {
+	return selectedRoomIndex.value >= 0 ? hotelDetail.value.rooms[selectedRoomIndex.value] : null
+})
+
+const selectRoom = (index) => {
+	selectedRoomIndex.value = index
+}
+
+const navigateToBooking = () => {
+	if (!selectedRoom.value) return
+	
+	const bookingData = {
+		hotelId: hotelDetail.value.id,
+		hotelName: hotelDetail.value.name,
+		roomType: selectedRoom.value.name,
+		roomPrice: selectedRoom.value.price,
+		checkInDate: getFormattedDate(new Date()),
+		checkOutDate: getFormattedDate(new Date(Date.now() + 86400000))
+	}
+	
+	uni.navigateTo({
+		url: `/pages/hotel/booking?data=${encodeURIComponent(JSON.stringify(bookingData))}`
+	})
+}
+
+const getFormattedDate = (date) => {
+	return date.toISOString().split('T')[0]
+}
+</script>
+
+<style>
+.container {
+	padding-bottom: 100rpx;
+	background: #f8f9fa;
+}
+
+.hotel-swiper {
+	height: 400rpx;
+}
+
+.swiper-image {
+	width: 100%;
+	height: 100%;
+}
+
+.hotel-info {
+	background: #fff;
+	padding: 30rpx;
+	border-radius: 16rpx;
+	margin: 20rpx;
+}
+
+.hotel-name {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 20rpx;
+}
+
+.hotel-meta {
+	display: flex;
+	align-items: flex-start;
+	gap: 30rpx;
+	margin-bottom: 20rpx;
+}
+
+.hotel-rating {
+	font-size: 28rpx;
+	color: #FFA726;
+	display: flex;
+	align-items: center;
+	gap: 8rpx;
+}
+
+.hotel-location {
+	font-size: 26rpx;
+	color: #666;
+	display: flex;
+	align-items: center;
+	gap: 8rpx;
+}
+
+.hotel-tags {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	gap: 12rpx;
+	margin-bottom: 20rpx;
+}
+
+.hotel-tag {
+	font-size: 22rpx;
+	color: #4A90E2;
+	background: #E8F4FF;
+	padding: 8rpx 16rpx;
+	border-radius: 20rpx;
+}
+
+.hotel-description {
+	font-size: 26rpx;
+	color: #666;
+	line-height: 1.6;
+}
+
+.room-section {
+	background: #fff;
+	border-radius: 16rpx;
+	margin: 20rpx;
+	padding: 30rpx;
+}
+
+.section-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 30rpx;
+}
+
+.room-list {
+	gap: 20rpx;
+}
+
+.room-card {
+	border: 2rpx solid #eee;
+	border-radius: 16rpx;
+	padding: 24rpx;
+	margin-bottom: 20rpx;
+	transition: all 0.3s ease;
+}
+
+.room-card.selected {
+	border-color: #4A90E2;
+	background: #F0F7FF;
+}
+
+.room-image {
+	width: 100%;
+	height: 200rpx;
+	border-radius: 12rpx;
+	margin-bottom: 20rpx;
+}
+
+.room-name {
+	font-size: 30rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 12rpx;
+}
+
+.room-features {
+	font-size: 24rpx;
+	color: #666;
+	display: block;
+	margin-bottom: 20rpx;
+}
+
+.room-footer {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	gap: 12rpx;
+}
+
+.room-price {
+	font-size: 32rpx;
+	color: #FF6B00;
+	font-weight: bold;
+}
+
+.room-unit {
+	font-size: 24rpx;
+	color: #999;
+}
+
+.room-discount {
+	font-size: 22rpx;
+	color: #FF6B6B;
+	background: #FFF0F0;
+	padding: 4rpx 12rpx;
+	border-radius: 12rpx;
+}
+
+.facility-section {
+	background: #fff;
+	border-radius: 16rpx;
+	margin: 20rpx;
+	padding: 30rpx;
+}
+
+.facility-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 24rpx;
+}
+
+.facility-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12rpx;
+	padding: 20rpx;
+	background: #f8f9fa;
+	border-radius: 12rpx;
+}
+
+.facility-item text {
+	font-size: 22rpx;
+	color: #666;
+}
+
+.booking-bar {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: #fff;
+	padding: 20rpx 30rpx;
+	border-top: 1rpx solid #eee;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-direction: row;
+}
+
+.price-info {
+	display: flex;
+	align-items: baseline;
+	flex-direction: row;
+}
+
+.price {
+	font-size: 36rpx;
+	color: #FF6B00;
+	font-weight: bold;
+}
+
+.unit {
+	font-size: 24rpx;
+	color: #999;
+	margin-left: 8rpx;
+}
+
+.book-btn {
+	background: #4A90E2;
+	color: #fff;
+	border-radius: 40rpx;
+	padding: 20rpx 40rpx;
+	font-size: 28rpx;
+	font-weight: bold;
+}
+
+.book-btn:disabled {
+	background: #ccc;
+}
+
+.empty-room,
+.empty-facility {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 60rpx 0;
+	color: #999;
+}
+
+.empty-text {
+	font-size: 26rpx;
+	margin-top: 20rpx;
+}
+</style>

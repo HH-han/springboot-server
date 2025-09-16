@@ -1,0 +1,423 @@
+<template>
+	<view class="container">
+		<!-- 顶部导航 -->
+		<view class="nav-header">
+			<uni-icons type="arrow-left" size="24" color="#333" @click="goBack"></uni-icons>
+			<text class="nav-title">景点详情</text>
+			<view style="width: 24rpx"></view>
+		</view>
+
+		<!-- 加载状态 -->
+		<view class="loading-state" v-if="loading">
+			<uni-load-more status="loading"></uni-load-more>
+		</view>
+
+		<!-- 空状态 -->
+		<view class="empty-state" v-else-if="!attraction || Object.keys(attraction).length === 0">
+			<uni-icons type="search" size="48" color="#CCC"></uni-icons>
+			<text class="empty-text">景点信息加载失败</text>
+		</view>
+
+		<!-- 景点详情内容 -->
+		<view v-else>
+			<!-- 图片轮播 -->
+			<swiper v-if="attraction.images && attraction.images.length > 0" class="image-swiper" :indicator-dots="true" :autoplay="true" :interval="3000" :duration="500">
+				<swiper-item v-for="(image, index) in attraction.images" :key="index">
+					<image class="swiper-image" :src="image" mode="aspectFill" />
+				</swiper-item>
+			</swiper>
+
+			<!-- 景点基本信息 -->
+			<view class="info-section">
+				<text class="attraction-name">{{ attraction.name || '未命名景点' }}</text>
+				<view class="rating-section">
+					<uni-rate v-if="attraction.rating" :value="attraction.rating" :size="16" readonly></uni-rate>
+					<text class="rating-text">{{ attraction.rating || 0 }}分</text>
+					<text class="review-count">({{ attraction.reviewCount || 0 }}条评价)</text>
+				</view>
+				
+				<view class="location-section">
+					<uni-icons type="location" size="20" color="#666"></uni-icons>
+					<text class="location-text">{{ attraction.location || '位置信息暂缺' }}</text>
+				</view>
+				
+				<view class="price-section">
+					<text class="price">¥{{ attraction.price || 0 }}</text>
+					<text class="price-label">起/人</text>
+				</view>
+			</view>
+
+			<!-- 景点特色 -->
+			<view class="feature-section" v-if="attraction.highlights && attraction.highlights.length > 0">
+				<text class="section-title">景点特色</text>
+				<view class="feature-tags">
+					<view class="feature-tag" v-for="(feature, index) in attraction.highlights" :key="index">
+						{{ feature }}
+					</view>
+				</view>
+			</view>
+
+			<!-- 景点介绍 -->
+			<view class="description-section" v-if="attraction.description">
+				<text class="section-title">景点介绍</text>
+				<text class="description-text">{{ attraction.description }}</text>
+			</view>
+
+			<!-- 开放时间 -->
+			<view class="opening-section" v-if="attraction.openingHours">
+				<text class="section-title">开放时间</text>
+				<text class="opening-text">{{ attraction.openingHours }}</text>
+			</view>
+
+			<!-- 推荐玩法 -->
+			<view class="recommendation-section" v-if="attraction.tips && attraction.tips.length > 0">
+				<text class="section-title">推荐玩法</text>
+				<view class="recommendation-list">
+					<view class="recommendation-item" v-for="(item, index) in attraction.tips" :key="index">
+						<text class="recommendation-index">{{ index + 1 }}.</text>
+						<text class="recommendation-text">{{ item }}</text>
+					</view>
+				</view>
+			</view>
+		</view>
+
+		<!-- 底部操作栏 -->
+		<view class="action-bar" v-if="attraction && Object.keys(attraction).length > 0">
+			<view class="price-info">
+				<text class="price-label">¥</text>
+				<text class="price-amount">{{ attraction.price || 0 }}</text>
+				<text class="price-unit">起</text>
+			</view>
+			<button class="book-btn" @click="navigateToBooking">立即预订</button>
+		</view>
+	</view>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+
+const attraction = ref({})
+const loading = ref(false)
+
+// 页面加载时获取参数并加载数据
+onLoad((options) => {
+	console.log('详情页接收到的参数:', options)
+	
+	if (options && options.data) {
+		// 如果有传递的景点数据，直接使用
+		try {
+			const attractionData = JSON.parse(decodeURIComponent(options.data))
+			console.log('解析后的景点数据:', attractionData)
+			
+			// 确保数据格式正确，与列表页数据结构保持一致
+		attraction.value = {
+			id: attractionData.id || attractionData.scenicId || '',
+			name: attractionData.title || attractionData.title || '未命名景点',
+			rating: Number(attractionData.sales) || Number(attractionData.score) || 0,
+			location: attractionData.location || attractionData.address || '位置信息暂缺',
+			price: Number(attractionData.price) || Number(attractionData.ticketPrice) || 0,
+			// 处理图片字段：优先使用image单图，然后尝试images数组，最后使用imageUrls
+			images: attractionData.image ? [attractionData.image] :
+					  Array.isArray(attractionData.images) ? attractionData.images :
+					  Array.isArray(attractionData.imageUrls) ? attractionData.imageUrls : [],
+			// 处理描述字段：优先使用subtitle，然后使用description，最后使用desc
+			description: attractionData.subtitle || attractionData.description || attractionData.intro || attractionData.desc || '',
+			highlights: Array.isArray(attractionData.highlights) ? attractionData.highlights :
+						  Array.isArray(attractionData.features) ? attractionData.features : [],
+			tips: Array.isArray(attractionData.tips) ? attractionData.tips :
+					 Array.isArray(attractionData.recommendations) ? attractionData.recommendations : [],
+			openingHours: attractionData.openingHours || attractionData.openTime || '',
+			reviewCount: Number(attractionData.reviewCount) || Number(attractionData.commentCount) || 0
+		}
+			
+			console.log('处理后的景点数据:', attraction.value)
+			
+			// 如果不使用后端API，直接使用传递的数据，不调用fetchAttractionDetail
+			if (options.id && options.id !== 'undefined') {
+				console.log('接收到ID但不调用API:', options.id)
+			}
+		} catch (error) {
+			console.error('解析景点数据失败:', error)
+			uni.showToast({ title: '数据解析失败', icon: 'none' })
+			
+			// 如果解析失败，显示空状态
+			attraction.value = {}
+		}
+	} else if (options && options.id && options.id !== 'undefined') {
+		// 如果没有传递数据，只传递了ID，显示提示信息
+		uni.showToast({
+			title: '请传递景点数据',
+			icon: 'none'
+		})
+		attraction.value = { id: options.id }
+	} else {
+		uni.showToast({
+			title: '缺少景点参数',
+			icon: 'none'
+		})
+		uni.navigateBack()
+	}
+})
+
+// 不再使用API获取景点详情，完全依赖前端传递的数据
+
+const navigateToBooking = () => {
+	if (!attraction.value || !attraction.value.id) {
+		uni.showToast({
+			title: '景点信息加载中，请稍后',
+			icon: 'none'
+		})
+		return
+	}
+	
+	const bookingData = {
+		attractionId: attraction.value.id,
+		attractionName: attraction.value.name || '',
+		price: attraction.value.price || 0,
+		visitDate: getFormattedDate(new Date(Date.now() + 86400000))
+	}
+	
+	uni.navigateTo({
+		url: `/pages/attraction/booking?data=${encodeURIComponent(JSON.stringify(bookingData))}`
+	})
+}
+
+const getFormattedDate = (date) => {
+	return date.toISOString().split('T')[0]
+}
+
+const goBack = () => {
+	uni.navigateBack()
+}
+</script>
+
+<style>
+.container {
+	padding-bottom: 120rpx;
+	background: #f8f9fa;
+}
+
+.nav-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+	padding: 30rpx;
+	background: #fff;
+	border-bottom: 1rpx solid #eee;
+}
+
+.nav-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+}
+
+.loading-state {
+	padding: 100rpx 0;
+	text-align: center;
+}
+
+.empty-state {
+	padding: 200rpx 0;
+	text-align: center;
+	color: #999;
+}
+
+.empty-text {
+	font-size: 28rpx;
+	margin-top: 20rpx;
+	display: block;
+}
+
+.image-swiper {
+	height: 400rpx;
+	width: 100%;
+}
+
+.swiper-image {
+	width: 100%;
+	height: 100%;
+}
+
+.info-section {
+	background: #fff;
+	padding: 30rpx;
+	border-bottom: 1rpx solid #eee;
+}
+
+.attraction-name {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 20rpx;
+}
+
+.rating-section {
+	display: flex;
+	align-items: center;
+	margin-bottom: 20rpx;
+	flex-direction: row;
+}
+
+.rating-text {
+	font-size: 28rpx;
+	color: #FF9500;
+	font-weight: bold;
+	margin-left: 12rpx;
+}
+
+.review-count {
+	font-size: 24rpx;
+	color: #999;
+	margin-left: 12rpx;
+}
+
+.location-section {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	margin-bottom: 20rpx;
+}
+
+.location-text {
+	font-size: 28rpx;
+	color: #666;
+	margin-left: 8rpx;
+}
+
+.price-section {
+	display: flex;
+	align-items: baseline;
+	flex-direction: row;
+}
+
+.price {
+	font-size: 36rpx;
+	color: #FF6B00;
+	font-weight: bold;
+}
+
+.price-label {
+	font-size: 24rpx;
+	color: #999;
+	margin-left: 8rpx;
+}
+
+.feature-section,
+.description-section,
+.opening-section,
+.recommendation-section {
+	background: #fff;
+	padding: 30rpx;
+	margin-top: 20rpx;
+}
+
+.section-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 20rpx;
+}
+
+.feature-tags {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	gap: 16rpx;
+}
+
+.feature-tag {
+	background: #E8F5FF;
+	color: #4A90E2;
+	padding: 12rpx 20rpx;
+	border-radius: 20rpx;
+	font-size: 24rpx;
+}
+
+.description-text {
+	font-size: 28rpx;
+	color: #666;
+	line-height: 1.6;
+}
+
+.opening-text {
+	font-size: 28rpx;
+	color: #666;
+}
+
+.recommendation-list {
+	margin-top: 16rpx;
+}
+
+.recommendation-item {
+	display: flex;
+	align-items: flex-start;
+	margin-bottom: 16rpx;
+	flex-direction: row;
+}
+
+.recommendation-index {
+	font-size: 28rpx;
+	color: #4A90E2;
+	font-weight: bold;
+	min-width: 40rpx;
+}
+
+.recommendation-text {
+	font-size: 28rpx;
+	color: #666;
+	line-height: 1.4;
+	flex: 1;
+}
+
+.action-bar {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: #fff;
+	padding: 20rpx 30rpx;
+	border-top: 1rpx solid #eee;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-direction: row;
+}
+
+.price-info {
+	display: flex;
+	align-items: baseline;
+	flex-direction: row;
+}
+
+.price-label {
+	font-size: 24rpx;
+	color: #FF6B00;
+	font-weight: bold;
+}
+
+.price-amount {
+	font-size: 36rpx;
+	color: #FF6B00;
+	font-weight: bold;
+	margin: 0 4rpx;
+}
+
+.price-unit {
+	font-size: 24rpx;
+	color: #999;
+}
+
+.book-btn {
+	background: #4A90E2;
+	color: #fff;
+	border-radius: 40rpx;
+	padding: 20rpx 40rpx;
+	font-size: 28rpx;
+	font-weight: bold;
+}
+</style>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.travel.dao.UserFriendDao">
+
+    <resultMap id="userFriendResultMap" type="com.example.travel.entity.UserFriend">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="friend_id" property="friendId" />
+        <result column="remark" property="remark" />
+        <result column="relation_status" property="relationStatus" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
+
+    <!-- 根据ID查询好友关系 -->
+    <select id="findById" resultMap="userFriendResultMap"> SELECT * FROM user_friends WHERE id =
+        #{id} </select>
+
+    <!-- 根据用户ID和好友ID查询关系 -->
+    <select id="findByUserIdAndFriendId" resultMap="userFriendResultMap"> SELECT * FROM user_friends
+        WHERE user_id = #{userId} AND friend_id = #{friendId} </select>
+
+    <!-- 根据用户ID查询好友列表 -->
+    <select id="findFriendsByUserId" resultType="com.example.travel.entity.User"> SELECT u.* FROM
+        users u INNER JOIN user_friends uf ON u.id = uf.friend_id WHERE uf.user_id = #{userId} AND
+        uf.relation_status = 1 </select>
+
+    <!-- 根据用户ID查询好友关系 -->
+    <select id="findByUserId" resultMap="userFriendResultMap"> SELECT * FROM user_friends WHERE
+        user_id = #{userId} </select>
+
+    <!-- 根据关系状态查询 -->
+    <select id="findByRelationStatus" resultMap="userFriendResultMap"> SELECT * FROM user_friends
+        WHERE relation_status = #{relationStatus} </select>
+
+    <!-- 新增好友关系 -->
+    <insert id="insert" parameterType="com.example.travel.entity.UserFriend" useGeneratedKeys="true"
+        keyProperty="id"> INSERT INTO user_friends (user_id, friend_id, remark, relation_status,
+        created_at, updated_at) VALUES (#{userId}, #{friendId}, #{remark}, #{relationStatus},
+        #{createdAt}, #{updatedAt}) </insert>
+
+    <!-- 更新好友关系状态 -->
+    <update id="updateRelationStatus"> UPDATE user_friends SET relation_status = #{relationStatus},
+        updated_at = NOW() WHERE id = #{id} </update>
+
+    <!-- 更新好友备注 -->
+    <update id="updateRemark"> UPDATE user_friends SET remark = #{remark}, updated_at = NOW() WHERE
+        id = #{id} </update>
+
+    <!-- 删除好友关系 -->
+    <delete id="delete"> DELETE FROM user_friends WHERE id = #{id} </delete>
+
+    <!-- 根据用户ID和好友ID删除关系 -->
+    <delete id="deleteByUserIdAndFriendId"> DELETE FROM user_friends WHERE user_id = #{userId} AND
+        friend_id = #{friendId} </delete>
+
+    <!-- 统计用户好友数量 -->
+    <select id="countByUserId" resultType="int"> SELECT COUNT(*) FROM user_friends WHERE user_id =
+        #{userId} AND relation_status = 1 </select>
+
+</mapper>

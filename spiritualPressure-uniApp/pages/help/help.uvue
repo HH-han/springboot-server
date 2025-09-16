@@ -1,0 +1,227 @@
+<template>
+	<view class="container">
+		<!-- 顶部导航栏 -->
+		<uni-nav-bar 
+			left-icon="back" 
+			title="帮助中心" 
+			:border="false"
+			@clickLeft="goBack">
+		</uni-nav-bar>
+
+		<!-- 搜索框 -->
+		<view class="search-section">
+			<uni-search-bar 
+				placeholder="搜索问题或关键词" 
+				:radius="100"
+				@confirm="onSearch">
+			</uni-search-bar>
+		</view>
+
+		<!-- 常见问题分类 -->
+		<view class="category-section">
+			<text class="section-title">常见问题</text>
+			<view class="category-grid">
+				<view class="category-item" @click="navigateTo('/pages/help/booking')">
+					<uni-icons type="cart" size="36" color="#4A90E2"></uni-icons>
+					<text>预订相关</text>
+				</view>
+				<view class="category-item" @click="navigateTo('/pages/help/payment')">
+					<uni-icons type="wallet" size="36" color="#FF6B6B"></uni-icons>
+					<text>支付问题</text>
+				</view>
+				<view class="category-item" @click="navigateTo('/pages/help/refund')">
+					<uni-icons type="refresh" size="36" color="#52C41A"></uni-icons>
+					<text>退款售后</text>
+				</view>
+				<view class="category-item" @click="navigateTo('/pages/help/account')">
+					<uni-icons type="person" size="36" color="#FA8C16"></uni-icons>
+					<text>账户问题</text>
+				</view>
+			</view>
+		</view>
+
+		<!-- 热门问题 -->
+		<view class="faq-section">
+			<text class="section-title">热门问题</text>
+			<view class="faq-list">
+				<view class="faq-item" @click="showAnswer('如何修改预订信息？')">
+					<text>如何修改预订信息？</text>
+					<uni-icons type="forward" size="20" color="#ccc"></uni-icons>
+				</view>
+				<view class="faq-item" @click="showAnswer('预订后如何取消？')">
+					<text>预订后如何取消？</text>
+					<uni-icons type="forward" size="20" color="#ccc"></uni-icons>
+				</view>
+				<view class="faq-item" @click="showAnswer('支付方式有哪些？')">
+					<text>支付方式有哪些？</text>
+					<uni-icons type="forward" size="20" color="#ccc"></uni-icons>
+				</view>
+				<view class="faq-item" @click="showAnswer('如何申请发票？')">
+					<text>如何申请发票？</text>
+					<uni-icons type="forward" size="20" color="#ccc"></uni-icons>
+				</view>
+				<view class="faq-item" @click="showAnswer('忘记密码怎么办？')">
+					<text>忘记密码怎么办？</text>
+					<uni-icons type="forward" size="20" color="#ccc"></uni-icons>
+				</view>
+			</view>
+		</view>
+
+		<!-- 联系客服 -->
+		<view class="contact-section">
+			<text class="section-title">联系客服</text>
+			<view class="contact-methods">
+				<view class="contact-item" @click="makePhoneCall">
+					<uni-icons type="phone" size="32" color="#4A90E2"></uni-icons>
+					<text>电话客服</text>
+					<text class="contact-info">400-123-4567</text>
+				</view>
+				<view class="contact-item" @click="openOnlineService">
+					<uni-icons type="chat" size="32" color="#52C41A"></uni-icons>
+					<text>在线客服</text>
+					<text class="contact-info">09:00-22:00</text>
+				</view>
+				<view class="contact-item" @click="sendEmail">
+					<uni-icons type="email" size="32" color="#FA8C16"></uni-icons>
+					<text>邮件反馈</text>
+					<text class="contact-info">service@travel.com</text>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup>
+
+const goBack = () => {
+	uni.navigateBack()
+}
+
+const navigateTo = (url) => {
+	uni.navigateTo({ url })
+}
+
+const onSearch = (e) => {
+	console.log('搜索关键词:', e.value)
+	uni.showToast({ title: '搜索: ' + e.value, icon: 'none' })
+}
+
+const showAnswer = (question) => {
+	uni.showModal({
+		title: question,
+		content: '这里是关于"' + question + '"的详细解答内容。',
+		showCancel: false
+	})
+}
+
+const makePhoneCall = () => {
+	uni.makePhoneCall({
+		phoneNumber: '4001234567'
+	})
+}
+
+const openOnlineService = () => {
+	uni.showToast({ title: '正在连接在线客服...', icon: 'none' })
+}
+
+const sendEmail = () => {
+	uni.showToast({ title: '准备发送邮件...', icon: 'none' })
+}
+</script>
+
+<style>
+.container {
+	background-color: #f8f9fa;
+	min-height: 100vh;
+}
+
+.search-section {
+	padding: 20rpx;
+	background: #fff;
+}
+
+.category-section, .faq-section, .contact-section {
+	background: #fff;
+	margin: 20rpx;
+	border-radius: 20rpx;
+	padding: 30rpx;
+}
+
+.section-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 20rpx;
+}
+
+.category-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 20rpx;
+}
+
+.category-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 30rpx;
+	border-radius: 12rpx;
+	background: #f8f9fa;
+}
+
+.category-item text {
+	font-size: 24rpx;
+	color: #666;
+	margin-top: 15rpx;
+}
+
+.faq-list {
+	background: #fff;
+}
+
+.faq-item {
+	display: flex;
+	align-items: flex-start;
+	flex-direction: row;
+	padding: 25rpx 0;
+	border-bottom: 1rpx solid #eee;
+}
+
+.faq-item:last-child {
+	border-bottom: none;
+}
+
+.faq-item text {
+	font-size: 28rpx;
+	color: #333;
+}
+
+.contact-methods {
+	background: #fff;
+}
+
+.contact-item {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	padding: 25rpx 0;
+	border-bottom: 1rpx solid #eee;
+}
+
+.contact-item:last-child {
+	border-bottom: none;
+}
+
+.contact-item text {
+	font-size: 28rpx;
+	color: #333;
+	margin-left: 20rpx;
+}
+
+.contact-info {
+	font-size: 24rpx;
+	color: #999;
+	text-align: right;
+}
+</style>

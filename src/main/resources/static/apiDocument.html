@@ -172,6 +172,8 @@
                                     <a class="nav-link" href="#travel-news-controller">旅游新闻</a>
                                     <a class="nav-link" href="#strategy-group-controller">攻略组</a>
                                     <a class="nav-link" href="#safety-tips-controller">安全提示</a>
+                                    <a class="nav-link" href="#chat-group-controller">群组管理</a>
+                                    <a class="nav-link" href="#instant-messaging-controller">即时通信</a>
                                 </nav>
                             </div>
                         </div>
@@ -492,6 +494,42 @@
                     { method: 'PUT', endpoint: '/batch', title: '批量更新安全提示', description: '批量更新安全提示信息', tags: ['数据操作', '批量操作'], icons: ['fa-sync-alt', 'fa-database'] },
                     { method: 'DELETE', endpoint: '/{id}', title: '删除安全提示', description: '根据ID删除安全提示记录', tags: ['数据操作', '不可恢复'], icons: ['fa-trash', 'fa-warning'] },
                     { method: 'DELETE', endpoint: '/batch', title: '批量删除安全提示', description: '批量删除安全提示记录', tags: ['数据操作', '批量操作'], icons: ['fa-trash-alt', 'fa-database'] }
+                ]
+            },
+            'chat-group-controller': {
+                name: '群组管理接口',
+                controller: 'ChatGroupController',
+                basePath: '/api/public/chat-group',
+                icon: 'fas fa-users',
+                apis: [
+                    { method: 'GET', endpoint: '/{id}', title: '根据ID查询群组', description: '根据ID获取群组的详细信息', tags: ['群组管理', 'ID查询'], icons: ['fa-id-card', 'fa-info-circle'] },
+                    { method: 'GET', endpoint: '/creator/{creatorId}', title: '根据创建者查询群组', description: '根据创建者ID查询用户创建的群组', tags: ['群组管理', '创建者查询'], icons: ['fa-user', 'fa-search'] },
+                    { method: 'GET', endpoint: '/search', title: '搜索群组', description: '根据名称关键词搜索群组', tags: ['群组管理', '关键词搜索'], icons: ['fa-search', 'fa-filter'] },
+                    { method: 'POST', endpoint: '', title: '创建群组', description: '创建新的聊天群组', tags: ['群组管理', '创建操作'], icons: ['fa-plus', 'fa-users'] },
+                    { method: 'PUT', endpoint: '', title: '更新群组信息', description: '更新群组的基本信息', tags: ['群组管理', '信息更新'], icons: ['fa-edit', 'fa-sync'] },
+                    { method: 'DELETE', endpoint: '/{id}', title: '删除群组', description: '根据ID删除群组记录', tags: ['群组管理', '删除操作'], icons: ['fa-trash', 'fa-warning'] }
+                ]
+            },
+            'instant-messaging-controller': {
+                name: '即时通信接口',
+                controller: 'InstantMessagingController',
+                basePath: '/api/public/im',
+                icon: 'fas fa-comments',
+                apis: [
+                    { method: 'POST', endpoint: '/single/send/param', title: '发送单聊消息(参数)', description: '通过参数方式发送单聊消息', tags: ['即时通信', '消息发送'], icons: ['fa-paper-plane', 'fa-comment'] },
+                    { method: 'POST', endpoint: '/single/send', title: '发送单聊消息(实体)', description: '通过实体方式发送单聊消息', tags: ['即时通信', '消息发送'], icons: ['fa-paper-plane', 'fa-comment'] },
+                    { method: 'POST', endpoint: '/group/send/param', title: '发送群聊消息(参数)', description: '通过参数方式发送群聊消息', tags: ['即时通信', '消息发送'], icons: ['fa-paper-plane', 'fa-comments'] },
+                    { method: 'POST', endpoint: '/group/send', title: '发送群聊消息(实体)', description: '通过实体方式发送群聊消息', tags: ['即时通信', '消息发送'], icons: ['fa-paper-plane', 'fa-comments'] },
+                    { method: 'GET', endpoint: '/single/history', title: '获取单聊历史消息', description: '获取两个用户之间的单聊历史消息', tags: ['即时通信', '历史消息'], icons: ['fa-history', 'fa-comment'] },
+                    { method: 'GET', endpoint: '/group/history', title: '获取群聊历史消息', description: '获取群组的聊天历史消息', tags: ['即时通信', '历史消息'], icons: ['fa-history', 'fa-comments'] },
+                    { method: 'POST', endpoint: '/friend/request/param', title: '发送好友申请(参数)', description: '通过参数方式发送好友申请', tags: ['好友管理', '申请发送'], icons: ['fa-user-plus', 'fa-envelope'] },
+                    { method: 'POST', endpoint: '/friend/request', title: '发送好友申请(实体)', description: '通过实体方式发送好友申请', tags: ['好友管理', '申请发送'], icons: ['fa-user-plus', 'fa-envelope'] },
+                    { method: 'PUT', endpoint: '/friend/request/handle', title: '处理好友申请', description: '处理收到的好友申请', tags: ['好友管理', '申请处理'], icons: ['fa-check', 'fa-user-check'] },
+                    { method: 'GET', endpoint: '/friend/list', title: '获取好友列表', description: '获取用户的好友列表', tags: ['好友管理', '列表查询'], icons: ['fa-list', 'fa-users'] },
+                    { method: 'DELETE', endpoint: '/friend/delete', title: '删除好友', description: '删除好友关系', tags: ['好友管理', '关系删除'], icons: ['fa-user-times', 'fa-trash'] },
+                    { method: 'GET', endpoint: '/friend/request/pending', title: '获取待处理申请', description: '获取待处理的好友申请列表', tags: ['好友管理', '申请查询'], icons: ['fa-clock', 'fa-envelope-open'] },
+                    { method: 'POST', endpoint: '/message/read', title: '标记消息已读', description: '将消息标记为已读状态', tags: ['消息管理', '状态更新'], icons: ['fa-check-square', 'fa-eye'] },
+                    { method: 'GET', endpoint: '/message/unread/count', title: '获取未读消息数', description: '获取用户的未读消息数量', tags: ['消息管理', '数量统计'], icons: ['fa-bell', 'fa-hashtag'] }
                 ]
             }
         };

@@ -1,0 +1,363 @@
+<template>
+	<view class="container">
+		<!-- 搜索栏 -->
+		<view class="search-bar">
+			<uni-icons type="search" size="20" color="#999"></uni-icons>
+			<input 
+				class="search-input" 
+				placeholder="搜索美食、餐厅" 
+				placeholder-class="placeholder"
+				v-model="searchKeyword"
+				@confirm="handleSearch"
+			/>
+		</view>
+
+		<!-- 筛选条件 -->
+		<scroll-view class="filter-scroll" scroll-x="true">
+			<view 
+				class="filter-item" 
+				:class="{ active: activeCategory === '' }"
+				@click="changeCategory('')"
+			>全部</view>
+			<view 
+				class="filter-item" 
+				:class="{ active: activeCategory === '中餐' }"
+				@click="changeCategory('中餐')"
+			>中餐</view>
+			<view 
+				class="filter-item" 
+				:class="{ active: activeCategory === '西餐' }"
+				@click="changeCategory('西餐')"
+			>西餐</view>
+			<view 
+				class="filter-item" 
+				:class="{ active: activeCategory === '日料' }"
+				@click="changeCategory('日料')"
+			>日料</view>
+			<view 
+				class="filter-item" 
+				:class="{ active: activeCategory === '火锅' }"
+				@click="changeCategory('火锅')"
+			>火锅</view>
+			<view 
+				class="filter-item" 
+				:class="{ active: activeCategory === '烧烤' }"
+				@click="changeCategory('烧烤')"
+			>烧烤</view>
+			<view 
+				class="filter-item" 
+				:class="{ active: activeCategory === '小吃' }"
+				@click="changeCategory('小吃')"
+			>小吃</view>
+			<view 
+				class="filter-item" 
+				:class="{ active: activeCategory === '甜点' }"
+				@click="changeCategory('甜点')"
+			>甜点</view>
+		</scroll-view>
+
+		<!-- 加载状态 -->
+		<view v-if="loading" class="loading-container">
+			<uni-load-more status="loading"></uni-load-more>
+		</view>
+
+		<!-- 空状态 -->
+		<view v-else-if="foodList.length === 0" class="empty-container">
+			<uni-icons type="search" size="60" color="#ccc"></uni-icons>
+			<text class="empty-text">暂无美食数据</text>
+		</view>
+
+		<!-- 美食列表 -->
+		<scroll-view 
+			class="food-list" 
+			scroll-y="true"
+			v-else
+			@scrolltolower="loadMore"
+		>
+			<view class="food-card" v-for="(item, index) in foodList" :key="index" @click="navigateToDetail(item)">
+				<image class="food-image" :src="item.image || '/static/food/default.jpg'" mode="aspectFill"></image>
+				<view class="food-info">
+					<text class="food-name">{{ item.name }}</text>
+					<text class="food-desc">{{ item.description }}</text>
+					<view class="food-meta">
+						<text class="food-price">¥{{ item.price }}</text>
+						<text class="food-rating">
+							<uni-icons type="star-filled" size="14" color="#FFB800"></uni-icons>
+							{{ item.rating || 0 }}
+						</text>
+						<text class="food-sales">月售{{ item.sales || 0 }}</text>
+					</view>
+					<view class="food-tags">
+						<text class="tag" v-if="item.category">{{ item.category }}</text>
+						<text class="tag" v-if="item.location">{{ item.location }}</text>
+						<text class="tag" v-if="item.status">{{ item.status }}</text>
+					</view>
+				</view>
+			</view>
+
+			<!-- 加载更多 -->
+			<uni-load-more 
+				:status="loadMoreStatus" 
+				:icon-size="16" 
+				:content-text="{ contentdown: '上拉加载更多', contentrefresh: '正在加载...', contentnomore: '没有更多数据了' }"
+			></uni-load-more>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { foodApi } from '../../api/food.js'
+
+const foodList = ref([])
+const loading = ref(true)
+const searchKeyword = ref('')
+const activeCategory = ref('')
+const currentPage = ref(1)
+const pageSize = ref(10)
+const hasMore = ref(true)
+const loadMoreStatus = ref('more')
+
+// 获取美食列表
+const fetchFoodList = async (reset = false) => {
+  if (reset) {
+    currentPage.value = 1
+    hasMore.value = true
+    loadMoreStatus.value = 'more'
+  }
+
+  if (!hasMore.value) return
+
+  try {
+    if (reset) {
+      loading.value = true
+    } else {
+      loadMoreStatus.value = 'loading'
+    }
+
+    const params = {
+      page: currentPage.value,
+      size: pageSize.value,
+      keyword: searchKeyword.value,
+      category: activeCategory.value
+    }
+
+    const response = await foodApi.getList(params)
+    const data = response.data.list || []
+
+    if (reset) {
+      foodList.value = data
+    } else {
+      foodList.value = [...foodList.value, ...data]
+    }
+
+    // 判断是否还有更多数据
+    hasMore.value = data.length === pageSize.value
+    loadMoreStatus.value = hasMore.value ? 'more' : 'noMore'
+    
+    if (data.length > 0) {
+      currentPage.value++
+    }
+
+  } catch (error) {
+    console.error('获取美食列表失败:', error)
+    uni.showToast({
+      title: '获取数据失败',
+      icon: 'none'
+    })
+  } finally {
+    loading.value = false
+    loadMoreStatus.value = 'more'
+  }
+}
+
+// 搜索美食
+const handleSearch = () => {
+  fetchFoodList(true)
+}
+
+// 切换分类
+const changeCategory = (category) => {
+  activeCategory.value = category
+  fetchFoodList(true)
+}
+
+// 加载更多
+const loadMore = () => {
+  if (!loading.value && hasMore.value) {
+    fetchFoodList(false)
+  }
+}
+
+// 跳转到详情页
+const navigateToDetail = (item) => {
+  const data = encodeURIComponent(JSON.stringify(item))
+  uni.navigateTo({
+    url: `/pages/food/detail?data=${data}`
+  })
+}
+
+// 页面加载时获取数据
+onMounted(() => {
+  fetchFoodList(true)
+})
+</script>
+
+<style>
+.container {
+	padding: 20rpx;
+	background-color: #f8f9fa;
+}
+
+.search-bar {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	background: #fff;
+	border-radius: 30rpx;
+	padding: 20rpx 30rpx;
+	margin-bottom: 20rpx;
+	box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.search-input {
+	
+	flex: 1;
+	margin-left: 20rpx;
+	font-size: 28rpx;
+}
+
+.placeholder {
+	color: #999;
+}
+
+.filter-scroll {
+	display: flex;
+	flex-direction: row;
+	white-space: nowrap;
+	margin-bottom: 20rpx;
+	overflow-x: auto;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+.filter-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-item {
+	display: inline-block;
+	padding: 16rpx 32rpx;
+	background: #fff;
+	border-radius: 30rpx;
+	margin-right: 20rpx;
+	font-size: 26rpx;
+	color: #666;
+}
+
+.filter-item.active {
+	background: #4A90E2;
+	color: #fff;
+}
+
+.loading-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 100rpx 0;
+}
+
+.empty-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 100rpx 0;
+}
+
+.empty-text {
+	font-size: 28rpx;
+	color: #999;
+	margin-top: 20rpx;
+}
+
+.food-list {
+	height: calc(100vh - 200rpx);
+}
+
+.food-card {
+	background: #fff;
+	border-radius: 20rpx;
+	margin-bottom: 20rpx;
+	padding: 20rpx;
+	display: flex;
+	box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.food-image {
+	width: 100%;
+	border-radius: 12rpx;
+	margin-bottom: 20rpx;
+}
+
+.food-info {
+	flex: 1;
+}
+
+.food-name {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 8rpx;
+}
+
+.food-desc {
+	font-size: 24rpx;
+	color: #666;
+	display: block;
+	margin-bottom: 12rpx;
+}
+
+.food-meta {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	margin-bottom: 12rpx;
+}
+
+.food-price {
+	font-size: 28rpx;
+	color: #FF6B00;
+	font-weight: bold;
+	margin-right: 20rpx;
+}
+
+.food-rating {
+	font-size: 24rpx;
+	color: #FFB800;
+	margin-right: 20rpx;
+	display: flex;
+	align-items: center;
+}
+
+.food-sales {
+	font-size: 24rpx;
+	color: #999;
+}
+
+.food-tags {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.tag {
+	font-size: 20rpx;
+	color: #4A90E2;
+	background: #E8F4FF;
+	padding: 4rpx 12rpx;
+	border-radius: 12rpx;
+	margin-right: 12rpx;
+	margin-bottom: 8rpx;
+}
+</style>

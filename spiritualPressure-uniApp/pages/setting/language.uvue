@@ -1,0 +1,298 @@
+<template>
+	<view class="language-page">
+		<!-- 顶部导航栏 -->
+		<view class="nav-bar">
+			<view class="nav-left" @click="navigateBack">
+				<uni-icons type="arrowleft" size="24" color="#333"></uni-icons>
+			</view>
+			<view class="nav-title">语言设置</view>
+			<view class="nav-right"></view>
+		</view>
+
+		<view class="content">
+			<!-- 语言设置列表 -->
+			<view class="language-list">
+				<view 
+					class="language-item" 
+					:class="{ active: currentLanguage === 'zh-CN' }"
+					@click="changeLanguage('zh-CN')"
+				>
+					<view class="language-info">
+						<view class="language-name">简体中文</view>
+						<view class="language-desc">Simplified Chinese</view>
+					</view>
+					<view class="language-check" v-if="currentLanguage === 'zh-CN'">
+						<uni-icons type="checkmarkempty" size="20" color="#4A90E2"></uni-icons>
+					</view>
+				</view>
+
+				<view 
+					class="language-item" 
+					:class="{ active: currentLanguage === 'zh-TW' }"
+					@click="changeLanguage('zh-TW')"
+				>
+					<view class="language-info">
+						<view class="language-name">繁体中文</view>
+						<view class="language-desc">Traditional Chinese</view>
+					</view>
+					<view class="language-check" v-if="currentLanguage === 'zh-TW'">
+						<uni-icons type="checkmarkempty" size="20" color="#4A90E2"></uni-icons>
+					</view>
+				</view>
+
+				<view 
+					class="language-item" 
+					:class="{ active: currentLanguage === 'en' }"
+					@click="changeLanguage('en')"
+				>
+					<view class="language-info">
+						<view class="language-name">English</view>
+						<view class="language-desc">英语</view>
+					</view>
+					<view class="language-check" v-if="currentLanguage === 'en'">
+						<uni-icons type="checkmarkempty" size="20" color="#4A90E2"></uni-icons>
+					</view>
+				</view>
+
+				<view 
+					class="language-item" 
+					:class="{ active: currentLanguage === 'ja' }"
+					@click="changeLanguage('ja')"
+				>
+					<view class="language-info">
+						<view class="language-name">日本語</view>
+						<view class="language-desc">Japanese</view>
+					</view>
+					<view class="language-check" v-if="currentLanguage === 'ja'">
+						<uni-icons type="checkmarkempty" size="20" color="#4A90E2"></uni-icons>
+					</view>
+				</view>
+
+				<view 
+					class="language-item" 
+					:class="{ active: currentLanguage === 'ko' }"
+					@click="changeLanguage('ko')"
+				>
+					<view class="language-info">
+						<view class="language-name">한국어</view>
+						<view class="language-desc">Korean</view>
+					</view>
+					<view class="language-check" v-if="currentLanguage === 'ko'">
+						<uni-icons type="checkmarkempty" size="20" color="#4A90E2"></uni-icons>
+					</view>
+				</view>
+
+				<view 
+					class="language-item" 
+					:class="{ active: currentLanguage === 'fr' }"
+					@click="changeLanguage('fr')"
+				>
+					<view class="language-info">
+						<view class="language-name">Français</view>
+						<view class="language-desc">French</view>
+					</view>
+					<view class="language-check" v-if="currentLanguage === 'fr'">
+						<uni-icons type="checkmarkempty" size="20" color="#4A90E2"></uni-icons>
+					</view>
+				</view>
+
+				<view 
+					class="language-item" 
+					:class="{ active: currentLanguage === 'de' }"
+					@click="changeLanguage('de')"
+				>
+					<view class="language-info">
+						<view class="language-name">Deutsch</view>
+						<view class="language-desc">German</view>
+					</view>
+					<view class="language-check" v-if="currentLanguage === 'de'">
+						<uni-icons type="checkmarkempty" size="20" color="#4A90E2"></uni-icons>
+					</view>
+				</view>
+
+				<view 
+					class="language-item" 
+					:class="{ active: currentLanguage === 'es' }"
+					@click="changeLanguage('es')"
+				>
+					<view class="language-info">
+						<view class="language-name">Español</view>
+						<view class="language-desc">Spanish</view>
+					</view>
+					<view class="language-check" v-if="currentLanguage === 'es'">
+						<uni-icons type="checkmarkempty" size="20" color="#4A90E2"></uni-icons>
+					</view>
+				</view>
+			</view>
+
+			<!-- 保存按钮 -->
+			<view class="save-btn" @click="saveLanguage">
+				<text>保存设置</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+
+const currentLanguage = ref('zh-CN')
+const languages = [
+	{ value: 'zh-CN', name: '简体中文', desc: 'Simplified Chinese' },
+	{ value: 'zh-TW', name: '繁体中文', desc: 'Traditional Chinese' },
+	{ value: 'ja', name: '日本語', desc: 'Japanese' },
+	{ value: 'ko', name: '한국어', desc: 'Korean' },
+	{ value: 'fr', name: 'Français', desc: 'French' },
+	{ value: 'de', name: 'Deutsch', desc: 'German' },
+	{ value: 'es', name: 'Español', desc: 'Spanish' }
+]
+
+// 返回上一页
+const navigateBack = () => {
+	uni.navigateBack()
+}
+
+// 切换语言
+const changeLanguage = (lang) => {
+	currentLanguage.value = lang
+}
+
+// 保存语言设置
+const saveLanguage = () => {
+	// 保存到本地存储
+	uni.setStorageSync('appLanguage', currentLanguage.value)
+	
+	// 这里可以添加语言切换的逻辑，比如重新加载页面或发送事件
+	uni.showToast({
+		title: '语言设置已保存',
+		icon: 'success',
+		duration: 2000
+	})
+
+	// 延迟返回
+	setTimeout(() => {
+		uni.navigateBack()
+	}, 1500)
+}
+
+// 加载语言设置
+const loadLanguage = () => {
+	const savedLanguage = uni.getStorageSync('appLanguage')
+	if (savedLanguage) {
+		currentLanguage.value = savedLanguage
+	}
+}
+
+onMounted(() => {
+	loadLanguage()
+})
+</script>
+
+<style>
+	.language-page {
+		min-height: 100vh;
+		background-color: #f5f5f5;
+	}
+
+	.nav-bar {
+		height: 88rpx;
+		background-color: #fff;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 32rpx;
+		border-bottom: 1rpx solid #eee;
+		position: sticky;
+		top: 0;
+		z-index: 100;
+	}
+
+	.nav-bar .nav-left {
+		width: 80rpx;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+	}
+
+	.nav-bar .nav-title {
+		font-size: 36rpx;
+		font-weight: 600;
+		color: #333;
+	}
+
+	.nav-bar .nav-right {
+		width: 80rpx;
+	}
+
+	.content {
+		padding: 32rpx;
+	}
+
+	.language-list {
+		background-color: #fff;
+		border-radius: 16rpx;
+		overflow: hidden;
+		margin-bottom: 48rpx;
+	}
+
+	.language-item {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-direction: row;
+		padding: 32rpx;
+		border-bottom: 1rpx solid #f5f5f5;
+		cursor: pointer;
+	}
+
+	.language-item:last-child {
+		border-bottom: none;
+	}
+
+	.language-item.active {
+		background-color: #f8f9ff;
+	}
+
+	.language-item .language-info {
+		flex: 1;
+		margin-right: 32rpx;
+	}
+
+	.language-item .language-name {
+		font-size: 32rpx;
+		color: #333;
+		margin-bottom: 8rpx;
+	}
+
+	.language-item .language-desc {
+		font-size: 24rpx;
+		color: #999;
+	}
+
+	.language-item .language-check {
+		width: 40rpx;
+		height: 40rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		background-color: #f0f7ff;
+	}
+
+	.save-btn {
+		height: 96rpx;
+		background: linear-gradient(135deg, #4A90E2, #357ABD);
+		border-radius: 48rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: #fff;
+		font-size: 32rpx;
+		font-weight: 500;
+	}
+
+	.save-btn:active {
+		opacity: 0.8;
+	}
+</style>

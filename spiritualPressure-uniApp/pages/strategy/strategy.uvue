@@ -1,0 +1,488 @@
+<template>
+	<view class="container">
+		<!-- 顶部导航 -->
+		<view class="nav-header">
+			<uni-icons type="arrow-left" size="28" color="#333" @click="goBack"></uni-icons>
+			<text class="nav-title">旅游攻略</text>
+			<view style="width: 28rpx"></view>
+		</view>
+
+		<!-- 搜索栏 -->
+		<view class="search-section">
+			<view class="search-input">
+				<uni-icons type="search" size="20" color="#999"></uni-icons>
+				<input 
+					class="input" 
+					v-model="searchKeyword" 
+					placeholder="搜索旅游攻略" 
+					placeholder-style="color: #999;"
+					@input="handleSearch"
+				/>
+				<uni-icons 
+					v-if="searchKeyword" 
+					type="clear" 
+					size="18" 
+					color="#999"
+					@click="clearSearch"
+				></uni-icons>
+			</view>
+		</view>
+
+		<!-- 分类筛选 -->
+		<scroll-view class="category-scroll" scroll-x="true">
+			<view 
+				class="category-item" 
+				:class="{ active: activeCategory === 'all' }"
+				@click="changeCategory('all')"
+			>
+				全部
+			</view>
+			<view 
+				class="category-item" 
+				:class="{ active: activeCategory === 'domestic' }"
+				@click="changeCategory('domestic')"
+			>
+				国内游
+			</view>
+			<view 
+				class="category-item" 
+				:class="{ active: activeCategory === 'overseas' }"
+				@click="changeCategory('overseas')"
+			>
+				出境游
+			</view>
+			<view 
+				class="category-item" 
+				:class="{ active: activeCategory === 'budget' }"
+				@click="changeCategory('budget')"
+			>
+				穷游攻略
+			</view>
+			<view 
+				class="category-item" 
+				:class="{ active: activeCategory === 'luxury' }"
+				@click="changeCategory('luxury')"
+			>
+				奢华之旅
+			</view>
+			<view 
+				class="category-item" 
+				:class="{ active: activeCategory === 'family' }"
+				@click="changeCategory('family')"
+			>
+				亲子游
+			</view>
+		</scroll-view>
+
+		<!-- 攻略列表 -->
+		<view class="strategy-list">
+			<view 
+				class="strategy-item" 
+				v-for="(item, index) in filteredStrategies" 
+				:key="index"
+				@click="viewStrategyDetail(item)"
+			>
+				<image class="strategy-image" :src="item.image" mode="aspectFill" />
+				<view class="strategy-content">
+					<text class="strategy-title">{{ item.title }}</text>
+					<text class="strategy-desc">{{ item.desc }}</text>
+					<view class="strategy-meta">
+						<view class="strategy-tags">
+							<text class="tag" v-for="(tag, tagIndex) in item.tags" :key="tagIndex">{{ tag }}</text>
+						</view>
+						<view class="strategy-info">
+							<text class="strategy-author">{{ item.author }}</text>
+							<text class="strategy-time">{{ item.time }}</text>
+							<text class="strategy-views">
+								<uni-icons type="eye" size="12" color="#999"></uni-icons>
+								{{ item.views }}
+							</text>
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
+
+		<!-- 加载更多 -->
+		<view class="load-more" v-if="hasMore">
+			<text class="load-more-text" @click="loadMore">加载更多</text>
+		</view>
+		<view class="no-more" v-else>
+			<text>没有更多内容了</text>
+		</view>
+
+		<!-- 发布按钮 -->
+		<view class="publish-btn" @click="publishStrategy">
+			<uni-icons type="plus" size="24" color="#fff"></uni-icons>
+			<text>发布攻略</text>
+		</view>
+	</view>
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { strategyGroupApi } from '../../api/strategyGroup.js'
+
+const searchKeyword = ref('')
+const activeCategory = ref('all')
+const currentPage = ref(1)
+const pageSize = ref(10)
+const hasMore = ref(true)
+const allStrategies = ref([])
+const isLoading = ref(false)
+
+// 加载攻略数据
+const loadStrategies = async () => {
+  if (isLoading.value) return
+  
+  isLoading.value = true
+  try {
+    const response = await strategyGroupApi.getList({ 
+      page: currentPage.value, 
+      size: pageSize.value 
+    })
+    
+    if (response && response.data && response.data.list) {
+      const newStrategies = response.data.list.map(item => ({
+        id: item.id,
+        image: item.image || '/static/strategy-default.jpg',
+        title: item.title || '旅游攻略',
+        desc: item.description || item.groupDescription || '暂无描述',
+        tags: item.tags || [item.groupName || '旅游'],
+        author: item.author || item.groupName || '未知作者',
+        time: formatTime(item.createdAt || item.updatedAt),
+        views: item.views || item.readCount || Math.floor(Math.random() * 5000),
+        category: getCategory(item.groupName || item.title)
+      }))
+      
+      if (currentPage.value === 1) {
+        allStrategies.value = newStrategies
+      } else {
+        allStrategies.value = [...allStrategies.value, ...newStrategies]
+      }
+      
+      // 判断是否还有更多数据
+      hasMore.value = response.data.list.length === pageSize.value
+      console.log('攻略数据加载成功:', allStrategies.value)
+    } else {
+      console.warn('攻略API返回空数据')
+      if (currentPage.value === 1) {
+        // 第一页没有数据时使用默认数据
+        allStrategies.value = getDefaultStrategies()
+      }
+    }
+  } catch (error) {
+    console.error('加载攻略数据失败:', error)
+    if (currentPage.value === 1) {
+      // 出错时使用默认数据
+      allStrategies.value = getDefaultStrategies()
+    }
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// 格式化时间
+const formatTime = (timeString) => {
+  if (!timeString) return '未知时间'
+  
+  try {
+    const time = new Date(timeString)
+    const now = new Date()
+    const diff = now - time
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    
+    if (days === 0) return '今天'
+    if (days === 1) return '昨天'
+    if (days < 7) return `${days}天前`
+    if (days < 30) return `${Math.floor(days / 7)}周前`
+    return time.toLocaleDateString()
+  } catch {
+    return '未知时间'
+  }
+}
+
+// 根据标题或组名获取分类
+const getCategory = (text) => {
+  if (!text) return 'domestic'
+  
+  const lowerText = text.toLowerCase()
+  if (lowerText.includes('国内') || lowerText.includes('云南') || lowerText.includes('西藏') || 
+      lowerText.includes('北京') || lowerText.includes('广州')) {
+    return 'domestic'
+  }
+  if (lowerText.includes('出境') || lowerText.includes('泰国') || lowerText.includes('日本') || 
+      lowerText.includes('新西兰')) {
+    return 'overseas'
+  }
+  if (lowerText.includes('穷游') || lowerText.includes('预算')) {
+    return 'budget'
+  }
+  if (lowerText.includes('奢华') || lowerText.includes('迪拜') || lowerText.includes('豪华')) {
+    return 'luxury'
+  }
+  if (lowerText.includes('亲子') || lowerText.includes('带娃') || lowerText.includes('儿童')) {
+    return 'family'
+  }
+  return 'domestic'
+}
+
+// 默认数据（API失败时使用）
+const getDefaultStrategies = () => [
+  {
+    id: 1,
+    image: '/static/strategy1.jpg',
+    title: '云南七日游完美攻略',
+    desc: '从昆明到大理，再到丽江的完美行程安排，包含美食推荐和住宿建议',
+    tags: ['国内游', '云南', '7天'],
+    author: '旅行达人',
+    time: '3天前',
+    views: 2345,
+    category: 'domestic'
+  },
+  {
+    id: 2,
+    image: '/static/strategy2.jpg',
+    title: '西藏朝圣之旅指南',
+    desc: '高原反应预防，必备物品清单，让你安心畅游西藏',
+    tags: ['国内游', '西藏', '高原'],
+    author: '藏地专家',
+    time: '1周前',
+    views: 1890,
+    category: 'domestic'
+  }
+]
+
+const filteredStrategies = computed(() => {
+  let strategies = allStrategies.value
+  
+  // 分类筛选
+  if (activeCategory.value !== 'all') {
+    strategies = strategies.filter(item => item.category === activeCategory.value)
+  }
+  
+  // 搜索筛选
+  if (searchKeyword.value) {
+    const keyword = searchKeyword.value.toLowerCase()
+    strategies = strategies.filter(item => 
+      item.title.toLowerCase().includes(keyword) ||
+      item.desc.toLowerCase().includes(keyword) ||
+      item.tags.some(tag => tag.toLowerCase().includes(keyword)) ||
+      item.author.toLowerCase().includes(keyword)
+    )
+  }
+  
+  // 分页
+  return strategies.slice(0, currentPage.value * pageSize.value)
+})
+
+const goBack = () => {
+  uni.navigateBack()
+}
+
+const handleSearch = () => {
+  currentPage.value = 1
+  loadStrategies()
+}
+
+const clearSearch = () => {
+  searchKeyword.value = ''
+  currentPage.value = 1
+  loadStrategies()
+}
+
+const changeCategory = (category) => {
+  activeCategory.value = category
+  currentPage.value = 1
+  loadStrategies()
+}
+
+const viewStrategyDetail = (item) => {
+  uni.navigateTo({
+    url: `/pages/strategy/detail?id=${item.id}`
+  })
+}
+
+const loadMore = () => {
+  if (!hasMore.value || isLoading.value) return
+  
+  currentPage.value++
+  loadStrategies()
+}
+
+const publishStrategy = () => {
+  uni.showToast({ title: '发布功能开发中', icon: 'none' })
+}
+
+// 页面加载时获取数据
+onMounted(() => {
+  loadStrategies()
+})
+</script>
+
+<style>
+.container {
+	min-height: 100vh;
+	background: #f8f9fa;
+	padding-bottom: 100rpx;
+}
+
+.nav-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+	padding: 40rpx 32rpx 20rpx;
+	background: #fff;
+	border-bottom: 1rpx solid #eee;
+}
+
+.nav-title {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #333;
+}
+
+.search-section {
+	padding: 20rpx 32rpx;
+	background: #fff;
+}
+
+.search-input {
+	background: #f8f9fa;
+	border-radius: 20rpx;
+	padding: 20rpx 24rpx;
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+}
+
+.input {
+	flex: 1;
+	margin-left: 16rpx;
+	font-size: 28rpx;
+	color: #333;
+}
+
+.category-scroll {
+	display: flex;
+	flex-direction: row;
+	padding: 20rpx 32rpx;
+	background: #fff;
+	white-space: nowrap;
+}
+
+.category-item {
+	display: inline-block;
+	padding: 16rpx 32rpx;
+	margin-right: 20rpx;
+	background: #f8f9fa;
+	border-radius: 30rpx;
+	font-size: 26rpx;
+	color: #666;
+}
+
+.category-item.active {
+	background: #4A90E2;
+	color: #fff;
+}
+
+.strategy-list {
+	padding: 20rpx 32rpx;
+}
+
+.strategy-item {
+	background: #fff;
+	border-radius: 16rpx;
+	margin-bottom: 24rpx;
+	box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+	overflow: hidden;
+}
+
+.strategy-image {
+	width: 100%;
+	height: 200rpx;
+}
+
+.strategy-content {
+	padding: 24rpx;
+}
+
+.strategy-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 12rpx;
+}
+
+.strategy-desc {
+	font-size: 26rpx;
+	color: #666;
+	display: block;
+	line-height: 1.4;
+	margin-bottom: 16rpx;
+}
+
+.strategy-meta {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+}
+
+.strategy-tags {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	gap: 8rpx;
+}
+
+.tag {
+	background: #e6f7ff;
+	color: #1890ff;
+	padding: 4rpx 12rpx;
+	border-radius: 4rpx;
+	font-size: 20rpx;
+}
+
+.strategy-info {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	gap: 16rpx;
+}
+
+.strategy-author,
+.strategy-time,
+.strategy-views {
+	font-size: 22rpx;
+	color: #999;
+}
+
+.load-more,
+.no-more {
+	text-align: center;
+	padding: 40rpx;
+	color: #999;
+}
+
+.load-more-text {
+	color: #4A90E2;
+}
+
+.publish-btn {
+	position: fixed;
+	bottom: 40rpx;
+	right: 32rpx;
+	background: linear-gradient(135deg, #4A90E2, #6B8EFF);
+	color: #fff;
+	padding: 20rpx 32rpx;
+	border-radius: 50rpx;
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	gap: 8rpx;
+	box-shadow: 0 6rpx 20rpx rgba(74, 144, 226, 0.3);
+}
+</style>

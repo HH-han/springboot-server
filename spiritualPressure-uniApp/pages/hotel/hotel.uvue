@@ -1,0 +1,538 @@
+<template>
+	<view class="container">
+		<!-- 搜索栏 -->
+		<view class="search-bar">
+			<view class="search-input">
+				<uni-icons type="search" size="18" color="#999"></uni-icons>
+				<input 
+					class="input" 
+					v-model="searchKeyword" 
+					placeholder="搜索酒店名称" 
+					placeholder-style="color: #999;"
+					@confirm="handleSearch"
+				/>
+			</view>
+			<view class="filter-btn" @click="showFilter = !showFilter">
+				<uni-icons type="filter" size="18" color="#4A90E2"></uni-icons>
+			</view>
+		</view>
+
+		<!-- 筛选面板 -->
+		<view class="filter-panel" v-if="showFilter">
+			<view class="filter-section">
+				<text class="filter-title">价格区间</text>
+				<view class="price-range">
+					<input class="price-input" v-model="minPrice" placeholder="最低价" type="number" />
+					<text class="range-separator">-</text>
+					<input class="price-input" v-model="maxPrice" placeholder="最高价" type="number" />
+				</view>
+			</view>
+			<view class="filter-section">
+				<text class="filter-title">评分</text>
+				<view class="rating-options">
+					<text 
+						class="rating-option" 
+						:class="{ active: selectedRating === 4 }"
+						@click="selectedRating = selectedRating === 4 ? null : 4"
+					>4.0分以上</text>
+					<text 
+						class="rating-option" 
+						:class="{ active: selectedRating === 4.5 }"
+						@click="selectedRating = selectedRating === 4.5 ? null : 4.5"
+					>4.5分以上</text>
+				</view>
+			</view>
+			<view class="filter-actions">
+				<button class="reset-btn" @click="resetFilters">重置</button>
+				<button class="apply-btn" @click="applyFilters">应用</button>
+			</view>
+		</view>
+
+		<!-- 日期选择 -->
+		<view class="date-picker">
+			<view class="date-item">
+				<text class="date-label">入住</text>
+				<text class="date-value">今天</text>
+			</view>
+			<view class="date-separator">—</view>
+			<view class="date-item">
+				<text class="date-label">离店</text>
+				<text class="date-value">明天</text>
+			</view>
+		</view>
+
+		<!-- 酒店列表 -->
+		<view class="hotel-list">
+			<!-- 加载状态 -->
+			<view class="loading-state" v-if="loading">
+				<uni-load-more status="loading"></uni-load-more>
+			</view>
+
+			<!-- 空状态 -->
+			<view class="empty-state" v-else-if="hotelList.length === 0">
+				<uni-icons type="search" size="48" color="#CCC"></uni-icons>
+				<text class="empty-text">暂无酒店数据</text>
+			</view>
+
+			<!-- 酒店列表 -->
+			<view 
+				class="hotel-card" 
+				v-for="(item, index) in hotelList" 
+				:key="index" 
+				@click="navigateToDetail(item)"
+			>
+				<image class="hotel-image" :src="item.image || '/static/hotel/default.jpg'" mode="aspectFill" />
+				<view class="hotel-content">
+					<text class="hotel-name">{{ item.name }}</text>
+					<text class="hotel-location">
+						<uni-icons type="location" size="12" color="#999"></uni-icons>
+						{{ item.location || '位置信息' }}
+					</text>
+					<view class="hotel-tags">
+						<text class="hotel-tag" v-if="item.category">{{ item.category }}</text>
+						<text class="hotel-tag" v-if="item.starLevel">{{ item.starLevel }}星级</text>
+						<text class="hotel-tag" v-if="item.facilities">{{ item.facilities }}</text>
+					</view>
+					<view class="hotel-footer">
+						<text class="hotel-price">¥{{ item.price || 0 }}</text>
+						<text class="hotel-unit">起/晚</text>
+						<text class="hotel-rating" v-if="item.rating">
+							<uni-icons type="star-filled" size="12" color="#FFA726"></uni-icons>
+							{{ item.rating }}
+						</text>
+					</view>
+				</view>
+			</view>
+
+			<!-- 加载更多 -->
+			<view class="load-more" v-if="hasMore && !loading">
+				<uni-load-more 
+					:status="loadMoreStatus" 
+					:icon-size="16" 
+					:content-text="{ contentdown: '上拉加载更多', contentrefresh: '正在加载...', contentnomore: '没有更多数据了' }"
+					:show-text="true"
+					@click="loadMore"
+				></uni-load-more>
+			</view>
+
+			<!-- 没有更多数据 -->
+			<view class="no-more" v-if="!hasMore && hotelList.length > 0">
+				<text class="no-more-text">没有更多数据了</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { hotelApi } from '@/api/index.js'
+
+// 酒店列表数据
+const hotelList = ref([])
+// 搜索关键词
+const searchKeyword = ref('')
+// 筛选面板显示状态
+const showFilter = ref(false)
+// 最低价格
+const minPrice = ref('')
+// 最高价格
+const maxPrice = ref('')
+// 选中评分
+const selectedRating = ref(null)
+// 加载状态
+const loading = ref(false)
+// 是否有更多数据
+const hasMore = ref(true)
+// 加载更多状态
+const loadMoreStatus = ref('more')
+// 当前页码
+const currentPage = ref(1)
+// 每页数量
+const pageSize = ref(10)
+
+// 获取酒店列表
+const fetchHotelList = async (reset = false) => {
+	if (loading.value) return
+	
+	loading.value = true
+	
+	try {
+		const page = reset ? 1 : currentPage.value
+		const params = {
+			page: page,
+			pageSize: pageSize.value,
+			keyword: searchKeyword.value || undefined
+		}
+
+		// 过滤掉undefined参数
+		Object.keys(params).forEach(key => {
+			if (params[key] === undefined) {
+				delete params[key]
+			}
+		})
+
+		const response = await hotelApi.getList(params)
+		const data = response.data || {}
+		const apiList = data.list || []
+		const total = data.total || 0
+
+		// 映射API字段到页面字段
+		const mappedList = apiList.map(item => ({
+			id: item.id,
+			name: item.hotelName || '',
+			location: item.hotelAddress || '',
+			description: item.hotelDescription || '',
+			evaluation: item.evaluation || '',
+			category: item.hotelCategory || '',
+			image: item.hotelImage || '',
+			price: item.hotelPrice || 0,
+			rating: item.sales || 0,
+			rooms: item.hotelType ? [{ name: item.hotelType, price: item.hotelPrice || 0 }] : [], // 添加rooms字段
+			starLevel: item.hotelStar || '',
+			hotelFacility: item.hotelFacility ? item.hotelFacility.split(',') : []
+		}))
+
+		// 应用前端筛选
+		let filteredList = mappedList
+		
+		// 价格筛选
+		if (minPrice.value) {
+			filteredList = filteredList.filter(item => item.price >= parseFloat(minPrice.value))
+		}
+		if (maxPrice.value) {
+			filteredList = filteredList.filter(item => item.price <= parseFloat(maxPrice.value))
+		}
+		
+		// 评分筛选
+		if (selectedRating.value) {
+			filteredList = filteredList.filter(item => item.rating >= selectedRating.value)
+		}
+
+		if (reset) {
+			hotelList.value = filteredList
+		} else {
+			hotelList.value = [...hotelList.value, ...filteredList]
+		}
+
+		// 更新分页状态
+		hasMore.value = hotelList.value.length < total
+		loadMoreStatus.value = hasMore.value ? 'more' : 'noMore'
+		currentPage.value = page + 1
+	} catch (error) {
+		console.error('获取酒店列表失败:', error)
+		uni.showToast({
+			title: '获取数据失败',
+			icon: 'none'
+		})
+	} finally {
+		loading.value = false
+	}
+}
+
+// 搜索处理
+const handleSearch = () => {
+	currentPage.value = 1
+	fetchHotelList(true)
+}
+
+// 应用筛选
+const applyFilters = () => {
+	showFilter.value = false
+	currentPage.value = 1
+	fetchHotelList(true)
+}
+
+// 重置筛选
+const resetFilters = () => {
+	minPrice.value = ''
+	maxPrice.value = ''
+	selectedRating.value = null
+}
+
+// 加载更多
+const loadMore = () => {
+	if (hasMore.value && !loading.value) {
+		loadMoreStatus.value = 'loading'
+		fetchHotelList()
+	}
+}
+
+// 跳转到详情页
+const navigateToDetail = (hotel) => {
+	uni.navigateTo({
+		url: `/pages/hotel/detail?data=${encodeURIComponent(JSON.stringify(hotel))}`
+	})
+}
+
+// 页面加载时获取数据
+onMounted(() => {
+	fetchHotelList(true)
+})
+</script>
+
+<style>
+	.container {
+		background: #F6F9FE;
+		min-height: 100vh;
+		padding-bottom: 20px;
+	}
+
+	.search-bar {
+		padding: 15px;
+		background: #FFFFFF;
+		border-bottom: 1px solid #EEE;
+		display: flex;
+		align-items: center;
+		flex-direction: row;
+		gap: 12px;
+	}
+
+	.search-input {
+		flex: 1;
+		background: #F8F9FA;
+		border-radius: 20px;
+		padding: 10px 15px;
+		display: flex;
+		align-items: center;
+		flex-direction: row;
+	}
+
+	.input {
+		flex: 1;
+		margin-left: 8px;
+		font-size: 14px;
+		color: #333;
+	}
+
+	.filter-btn {
+		padding: 8px;
+		background: #F8F9FA;
+		border-radius: 8px;
+	}
+
+	/* 筛选面板样式 */
+	.filter-panel {
+		background: #FFFFFF;
+		padding: 15px;
+		border-bottom: 1px solid #EEE;
+	}
+
+	.filter-section {
+		margin-bottom: 15px;
+	}
+
+	.filter-title {
+		font-size: 14px;
+		color: #333;
+		font-weight: bold;
+		display: block;
+		margin-bottom: 8px;
+	}
+
+	.price-range {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.price-input {
+		flex: 1;
+		border: 1px solid #EEE;
+		border-radius: 6px;
+		padding: 8px 12px;
+		font-size: 14px;
+	}
+
+	.range-separator {
+		color: #999;
+		font-size: 14px;
+	}
+
+	.rating-options {
+		display: flex;
+		gap: 10px;
+	}
+
+	.rating-option {
+		padding: 6px 12px;
+		border: 1px solid #EEE;
+		border-radius: 16px;
+		font-size: 12px;
+		color: #666;
+		background: #F8F9FA;
+	}
+
+	.rating-option.active {
+		border-color: #4A90E2;
+		color: #4A90E2;
+		background: #E8F4FF;
+	}
+
+	.filter-actions {
+		display: flex;
+		gap: 10px;
+		margin-top: 15px;
+	}
+
+	.reset-btn, .apply-btn {
+		flex: 1;
+		padding: 8px 0;
+		border-radius: 6px;
+		font-size: 14px;
+	}
+
+	.reset-btn {
+		border: 1px solid #DCDFE6;
+		color: #606266;
+		background: #FFFFFF;
+	}
+
+	.apply-btn {
+		border: none;
+		color: #FFFFFF;
+		background: #4A90E2;
+	}
+
+	.date-picker {
+		padding: 15px;
+		background: #FFFFFF;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-direction: row;
+		border-bottom: 1px solid #EEE;
+	}
+
+	.date-item {
+		text-align: center;
+	}
+
+	.date-label {
+		font-size: 12px;
+		color: #999;
+		display: block;
+		margin-bottom: 4px;
+	}
+
+	.date-value {
+		font-size: 14px;
+		color: #333;
+		font-weight: bold;
+	}
+
+	.date-separator {
+		color: #CCC;
+		font-size: 16px;
+		margin: 0 10px;
+	}
+
+	.hotel-list {
+		padding: 15px;
+	}
+
+	.hotel-card {
+		background: #FFFFFF;
+		border-radius: 12px;
+		overflow: hidden;
+		margin-bottom: 15px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	}
+
+	.hotel-image {
+		width: 100%;
+		height: 160px;
+	}
+
+	.hotel-content {
+		padding: 15px;
+	}
+
+	.hotel-name {
+		font-size: 16px;
+		font-weight: bold;
+		color: #333;
+		display: block;
+		margin-bottom: 8px;
+	}
+
+	.hotel-location {
+		font-size: 12px;
+		color: #666;
+		display: block;
+		margin-bottom: 12px;
+	}
+
+	.hotel-tags {
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: row;
+		gap: 6px;
+		margin-bottom: 12px;
+	}
+
+	.hotel-tag {
+		font-size: 10px;
+		color: #4A90E2;
+		background: #E8F4FF;
+		padding: 2px 8px;
+		border-radius: 8px;
+	}
+
+	.hotel-footer {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+    	flex-direction: row;
+	}
+
+	.hotel-price {
+		font-size: 18px;
+		color: #FF6B00;
+		font-weight: bold;
+	}
+
+	.hotel-unit {
+		font-size: 12px;
+		color: #999;
+		margin-left: 4px;
+	}
+
+	.hotel-rating {
+		font-size: 12px;
+		color: #FFA726;
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		margin-left: auto;
+	}
+
+	/* 加载状态 */
+	.loading-state {
+		padding: 30px 0;
+		text-align: center;
+	}
+
+	/* 空状态 */
+	.empty-state {
+		padding: 60px 0;
+		text-align: center;
+		color: #999;
+	}
+
+	.empty-text {
+		font-size: 14px;
+		margin-top: 12px;
+		display: block;
+	}
+
+	/* 加载更多 */
+	.load-more, .no-more {
+		padding: 20px 0;
+		text-align: center;
+	}
+
+	.no-more-text {
+		font-size: 12px;
+		color: #999;
+	}
+</style>

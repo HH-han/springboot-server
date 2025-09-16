@@ -1,147 +1,126 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.travel.dao.UserDao">
 
     <resultMap id="userResultMap" type="com.example.travel.entity.User">
-        <id column="id" property="id"/>
-        <result column="username" property="username"/>
-        <result column="email" property="email"/>
-        <result column="password" property="password"/>
-        <result column="phone" property="phone"/>
-        <result column="nickname" property="nickname"/>
-        <result column="image" property="image"/>
-        <result column="signature" property="signature"/>
-        <result column="travelmage" property="travelmage"/>
-        <result column="experience" property="experience"/>
-        <result column="userId" property="userId"/>
-        <result column="permissions" property="permissions"/>
-        <result column="status" property="status"/>
-        <result column="createTime" property="createTime"/>
-        <result column="updateTime" property="updateTime"/>
+        <id column="id" property="id" />
+        <result column="username" property="username" />
+        <result column="email" property="email" />
+        <result column="password" property="password" />
+        <result column="phone" property="phone" />
+        <result column="nickname" property="nickname" />
+        <result column="image" property="image" />
+        <result column="signature" property="signature" />
+        <result column="travelmage" property="travelmage" />
+        <result column="experience" property="experience" />
+        <result column="userId" property="userId" />
+        <result column="permissions" property="permissions" />
+        <result column="status" property="status" />
+        <result column="createTime" property="createTime" />
+        <result column="updateTime" property="updateTime" />
+        <!-- 即时通信相关字段 -->
+        <result column="last_login_time" property="lastLoginTime" />
+        <result column="online_status" property="onlineStatus" />
+        <result column="websocket_session_id" property="websocketSessionId" />
+        <result column="device_info" property="deviceInfo" />
+        <result column="ip_address" property="ipAddress" />
     </resultMap>
 
     <!-- 登录 -->
     <!-- 根据用户名查询用户 -->
-    <select id="findByUsername" resultMap="userResultMap">
-        SELECT * FROM users WHERE username = #{username} LIMIT 1
-    </select>
+    <select id="findByUsername" resultMap="userResultMap"> SELECT * FROM users WHERE username =
+        #{username} LIMIT 1 </select>
 
     <!-- 查询所有用户 -->
-    <select id="findAll" resultMap="userResultMap">
-        SELECT * FROM users
-    </select>
+    <select id="findAll" resultMap="userResultMap"> SELECT * FROM users </select>
 
     <!--  根据id查询  -->
-    <select id="findById" resultMap="userResultMap">
-        SELECT * FROM users WHERE id = #{id}
-    </select>
+    <select id="findById" resultMap="userResultMap"> SELECT * FROM users WHERE id = #{id} </select>
 
     <!-- 分页查询 -->
-    <select id="findAllUsers" resultMap="userResultMap">
-        SELECT * FROM users
-        <where>
-            <if test="keyword != null and keyword != ''">
-                AND (username LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
-            </if>
-        </where>
-        LIMIT #{offset}, #{pageSize}
-    </select>
+    <select id="findAllUsers" resultMap="userResultMap"> SELECT * FROM users <where>
+            <if test="keyword != null and keyword != ''"> AND (username LIKE CONCAT('%', #{keyword},
+        '%') OR id = #{keyword}) </if>
+        </where> LIMIT #{offset}, #{pageSize} </select>
 
     <!-- 查询总数（用于分页） -->
-    <select id="countUser" resultType="int">
-        SELECT COUNT(*) FROM users
-        <where>
-            <if test="keyword != null and keyword != ''">
-                AND (username LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
-            </if>
+    <select id="countUser" resultType="int"> SELECT COUNT(*) FROM users <where>
+            <if test="keyword != null and keyword != ''"> AND (username LIKE CONCAT('%', #{keyword},
+        '%') OR id = #{keyword}) </if>
         </where>
     </select>
 
-    <select id="userimage" resultMap="userResultMap">
-        SELECT id, username, image FROM users WHERE username = #{username}
-    </select>
+    <select id="userimage" resultMap="userResultMap"> SELECT id, username, image FROM users WHERE
+        username = #{username} </select>
 
     <!-- 删除 -->
-    <delete id="deleteUser" parameterType="java.lang.Long">
-        DELETE FROM users WHERE id = #{id}
-    </delete>
+    <delete id="deleteUser" parameterType="java.lang.Long"> DELETE FROM users WHERE id = #{id} </delete>
 
     <!-- 修改 -->
-    <update id="updateUser" parameterType="com.example.travel.entity.User">
-        UPDATE users
-        SET username = #{username},
-            email = #{email},
-            password = #{password},
-            phone = #{phone},
-            nickname = #{nickname},
-            image = #{image},
-            signature = #{signature},
-            travelmage = #{travelmage},
-            experience = #{experience},
-            userId = #{userId},
-            createTime = #{createTime},
-            updateTime = #{updateTime}
-        WHERE id = #{id}
-    </update>
+    <update id="updateUser" parameterType="com.example.travel.entity.User"> UPDATE users SET
+        username = #{username}, email = #{email}, password = #{password}, phone = #{phone}, nickname
+        = #{nickname}, image = #{image}, signature = #{signature}, travelmage = #{travelmage},
+        experience = #{experience}, userId = #{userId}, createTime = #{createTime}, updateTime =
+        #{updateTime}, last_login_time = #{lastLoginTime}, online_status = #{onlineStatus},
+        websocket_session_id = #{websocketSessionId}, device_info = #{deviceInfo}, ip_address = #{ipAddress}
+        WHERE id = #{id} </update>
     <!-- 修改权限 -->
-    <update id="updatePermissions">
-        UPDATE users
-        SET permissions = #{permissions}
-        WHERE id = #{id,jdbcType=BIGINT}
-    </update>
+    <update id="updatePermissions"> UPDATE users SET permissions = #{permissions} WHERE id =
+        #{id,jdbcType=BIGINT} </update>
     <!-- 修改状态 -->
-    <update id="updateStatus">
-        UPDATE users
-        SET status = #{status}
-        WHERE id = #{id,jdbcType=BIGINT}
-    </update>
+    <update id="updateStatus"> UPDATE users SET status = #{status} WHERE id = #{id,jdbcType=BIGINT} </update>
     <!-- 新增 -->
-    <insert id="insertUser" parameterType="com.example.travel.entity.User" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO users
-        (username, email, password, phone, nickname, image, signature,
-         travelmage, experience, userId, permissions, status, createTime)
-        VALUES
-            (#{username}, #{email}, #{password}, #{phone}, #{nickname}, #{image},
-             #{signature}, #{travelmage}, #{experience}, #{userId}, #{permissions},
-             #{status}, #{createTime})
-    </insert>
+    <insert id="insertUser" parameterType="com.example.travel.entity.User" useGeneratedKeys="true"
+        keyProperty="id"> INSERT INTO users (username, email, password, phone, nickname, image,
+        signature, travelmage, experience, userId, permissions, status, createTime,
+        last_login_time, online_status, websocket_session_id, device_info, ip_address) VALUES
+        (#{username}, #{email}, #{password}, #{phone}, #{nickname}, #{image}, #{signature},
+        #{travelmage}, #{experience}, #{userId}, #{permissions}, #{status}, #{createTime},
+        #{lastLoginTime}, #{onlineStatus}, #{websocketSessionId}, #{deviceInfo}, #{ipAddress}) </insert>
 
     <!-- 新增查询方法 -->
-    <select id="findByEmail" resultMap="userResultMap">
-        SELECT * FROM users WHERE email = #{email}
-    </select>
+    <select id="findByEmail" resultMap="userResultMap"> SELECT * FROM users WHERE email = #{email} </select>
 
-    <select id="findByPhone" resultMap="userResultMap">
-        SELECT * FROM users WHERE phone = #{phone}
-    </select>
-    
+    <select id="findByPhone" resultMap="userResultMap"> SELECT * FROM users WHERE phone = #{phone} </select>
+
     <!-- 多条件搜索用户 -->
-    <select id="searchUsers" resultMap="userResultMap">
-        SELECT * FROM users
-        <where>
-            <if test="id != null">
-                AND id = #{id}
-            </if>
-            <if test="username != null and username != ''">
-                AND username LIKE CONCAT('%', #{username}, '%')
-            </if>
-            <if test="nickname != null and nickname != ''">
-                AND nickname LIKE CONCAT('%', #{nickname}, '%')
-            </if>
-            <if test="email != null and email != ''">
-                AND email LIKE CONCAT('%', #{email}, '%')
-            </if>
-            <if test="phone != null and phone != ''">
-                AND phone LIKE CONCAT('%', #{phone}, '%')
-            </if>
-            <if test="userID != null">
-                AND userId = #{userID}
-            </if>
+    <select id="searchUsers" resultMap="userResultMap"> SELECT * FROM users <where>
+            <if test="id != null"> AND id = #{id} </if>
+            <if
+                test="username != null and username != ''"> AND username LIKE CONCAT('%',
+        #{username}, '%') </if>
+            <if test="nickname != null and nickname != ''"> AND nickname LIKE
+        CONCAT('%', #{nickname}, '%') </if>
+            <if test="email != null and email != ''"> AND email LIKE
+        CONCAT('%', #{email}, '%') </if>
+            <if test="phone != null and phone != ''"> AND phone LIKE
+        CONCAT('%', #{phone}, '%') </if>
+            <if test="userID != null"> AND userId = #{userID} </if>
         </where>
     </select>
+
+    <!-- 即时通信相关方法 -->
+    <!-- 更新用户最后登录时间 -->
+    <update id="updateLastLoginTime"> UPDATE users SET last_login_time = #{lastLoginTime} WHERE id = #{id} </update>
+
+    <!-- 更新用户在线状态 -->
+    <update id="updateOnlineStatus"> UPDATE users SET online_status = #{onlineStatus} WHERE id = #{id} </update>
+
+    <!-- 更新WebSocket会话ID -->
+    <update id="updateWebsocketSessionId"> UPDATE users SET websocket_session_id = #{websocketSessionId} WHERE id = #{id} </update>
+
+    <!-- 更新设备信息 -->
+    <update id="updateDeviceInfo"> UPDATE users SET device_info = #{deviceInfo} WHERE id = #{id} </update>
+
+    <!-- 更新IP地址 -->
+    <update id="updateIpAddress"> UPDATE users SET ip_address = #{ipAddress} WHERE id = #{id} </update>
+
+    <!-- 根据在线状态查询用户 -->
+    <select id="findByOnlineStatus" resultMap="userResultMap"> SELECT * FROM users WHERE online_status = #{onlineStatus} </select>
+
+    <!-- 根据WebSocket会话ID查询用户 -->
+    <select id="findByWebsocketSessionId" resultMap="userResultMap"> SELECT * FROM users WHERE websocket_session_id = #{websocketSessionId} LIMIT 1 </select>
 
 
 </mapper>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.travel.dao.GroupMemberDao">
+
+    <resultMap id="groupMemberResultMap" type="com.example.travel.entity.GroupMember">
+        <id column="id" property="id"/>
+        <result column="group_id" property="groupId"/>
+        <result column="user_id" property="userId"/>
+        <result column="role" property="role"/>
+        <result column="join_time" property="joinTime"/>
+        <result column="last_read_message_id" property="lastReadMessageId"/>
+        <result column="status" property="status"/>
+        <!-- 关联关系 -->
+        <association property="group" javaType="com.example.travel.entity.ChatGroup">
+            <id column="group_id" property="id"/>
+            <result column="group_name" property="name"/>
+            <result column="group_description" property="description"/>
+            <result column="group_avatar" property="avatar"/>
+        </association>
+        <association property="user" javaType="com.example.travel.entity.User">
+            <id column="user_id" property="id"/>
+            <result column="user_username" property="username"/>
+            <result column="user_nickname" property="nickname"/>
+            <result column="user_image" property="image"/>
+        </association>
+    </resultMap>
+
+    <!-- 根据ID查询群组成员 -->
+    <select id="findById" resultMap="groupMemberResultMap">
+        SELECT 
+            gm.*,
+            cg.name as group_name,
+            cg.description as group_description,
+            cg.avatar as group_avatar,
+            u.username as user_username,
+            u.nickname as user_nickname,
+            u.image as user_image
+        FROM group_members gm
+        LEFT JOIN chat_groups cg ON gm.group_id = cg.id
+        LEFT JOIN users u ON gm.user_id = u.id
+        WHERE gm.id = #{id}
+    </select>
+
+    <!-- 根据群组ID查询成员 -->
+    <select id="findByGroupId" resultMap="groupMemberResultMap">
+        SELECT 
+            gm.*,
+            cg.name as group_name,
+            cg.description as group_description,
+            cg.avatar as group_avatar,
+            u.username as user_username,
+            u.nickname as user_nickname,
+            u.image as user_image
+        FROM group_members gm
+        LEFT JOIN chat_groups cg ON gm.group_id = cg.id
+        LEFT JOIN users u ON gm.user_id = u.id
+        WHERE gm.group_id = #{groupId}
+        ORDER BY gm.join_time DESC
+    </select>
+
+    <!-- 根据用户ID查询加入的群组 -->
+    <select id="findByUserId" resultMap="groupMemberResultMap">
+        SELECT 
+            gm.*,
+            cg.name as group_name,
+            cg.description as group_description,
+            cg.avatar as group_avatar,
+            u.username as user_username,
+            u.nickname as user_nickname,
+            u.image as user_image
+        FROM group_members gm
+        LEFT JOIN chat_groups cg ON gm.group_id = cg.id
+        LEFT JOIN users u ON gm.user_id = u.id
+        WHERE gm.user_id = #{userId}
+        ORDER BY gm.join_time DESC
+    </select>
+
+    <!-- 查询用户是否在群组中 -->
+    <select id="findByGroupIdAndUserId" resultMap="groupMemberResultMap">
+        SELECT 
+            gm.*,
+            cg.name as group_name,
+            cg.description as group_description,
+            cg.avatar as group_avatar,
+            u.username as user_username,
+            u.nickname as user_nickname,
+            u.image as user_image
+        FROM group_members gm
+        LEFT JOIN chat_groups cg ON gm.group_id = cg.id
+        LEFT JOIN users u ON gm.user_id = u.id
+        WHERE gm.group_id = #{groupId} AND gm.user_id = #{userId}
+    </select>
+
+    <!-- 新增群组成员 -->
+    <insert id="insert" parameterType="com.example.travel.entity.GroupMember" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO group_members 
+            (group_id, user_id, role, join_time, last_read_message_id, status)
+        VALUES 
+            (#{groupId}, #{userId}, #{role}, #{joinTime}, #{lastReadMessageId}, #{status})
+    </insert>
+
+    <!-- 更新成员角色 -->
+    <update id="updateRole">
+        UPDATE group_members
+        SET 
+            role = #{role}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 更新最后读取消息ID -->
+    <update id="updateLastReadMessageId">
+        UPDATE group_members
+        SET 
+            last_read_message_id = #{lastReadMessageId}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 更新成员状态 -->
+    <update id="updateStatus">
+        UPDATE group_members
+        SET 
+            status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除群组成员 -->
+    <delete id="delete">
+        DELETE FROM group_members WHERE id = #{id}
+    </delete>
+
+    <!-- 统计群组成员数量 -->
+    <select id="countByGroupId" resultType="int">
+        SELECT COUNT(*) FROM group_members WHERE group_id = #{groupId}
+    </select>
+
+    <!-- 根据群组ID和用户ID删除成员 -->
+    <delete id="deleteByGroupIdAndUserId">
+        DELETE FROM group_members 
+        WHERE group_id = #{groupId} AND user_id = #{userId}
+    </delete>
+
+    <!-- 根据用户ID查询加入的群组信息 -->
+    <select id="findGroupsByUserId" resultMap="groupMemberResultMap">
+        SELECT 
+            gm.*,
+            cg.name as group_name,
+            cg.description as group_description,
+            cg.avatar as group_avatar,
+            u.username as user_username,
+            u.nickname as user_nickname,
+            u.image as user_image
+        FROM group_members gm
+        LEFT JOIN chat_groups cg ON gm.group_id = cg.id
+        LEFT JOIN users u ON gm.user_id = u.id
+        WHERE gm.user_id = #{userId}
+        ORDER BY gm.join_time DESC
+    </select>
+
+</mapper>

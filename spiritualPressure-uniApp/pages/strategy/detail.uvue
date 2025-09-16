@@ -1,0 +1,519 @@
+<template>
+	<view class="container">
+		<!-- 顶部导航 -->
+		<view class="nav-header">
+			<uni-icons type="arrow-left" size="28" color="#333" @click="goBack"></uni-icons>
+			<text class="nav-title">攻略详情</text>
+			<view style="width: 28rpx"></view>
+		</view>
+
+		<!-- 攻略内容 -->
+		<scroll-view class="content-scroll" scroll-y="true">
+			<!-- 封面图 -->
+			<image class="cover-image" :src="strategy.image" mode="aspectFill" />
+
+			<!-- 基本信息 -->
+			<view class="info-section">
+				<text class="title">{{ strategy.title }}</text>
+				<text class="desc">{{ strategy.desc }}</text>
+				
+				<view class="meta-info">
+					<view class="author-info">
+						<image class="avatar" :src="strategy.avatar" mode="aspectFill" />
+						<text class="author-name">{{ strategy.author }}</text>
+					</view>
+					<view class="stats">
+						<text class="time">{{ strategy.time }}</text>
+						<text class="views">
+							<uni-icons type="eye" size="14" color="#999"></uni-icons>
+							{{ strategy.views }}
+						</text>
+					</view>
+				</view>
+
+				<view class="tags">
+					<text 
+						class="tag" 
+						v-for="(tag, index) in strategy.tags" 
+						:key="index"
+					>{{ tag }}</text>
+				</view>
+			</view>
+
+			<!-- 攻略内容 -->
+			<view class="content-section">
+				<view class="section">
+					<text class="section-title">行程安排</text>
+					<text class="section-content">{{ strategy.itinerary }}</text>
+				</view>
+
+				<view class="section">
+					<text class="section-title">住宿推荐</text>
+					<text class="section-content">{{ strategy.accommodation }}</text>
+				</view>
+
+				<view class="section">
+					<text class="section-title">美食推荐</text>
+					<text class="section-content">{{ strategy.food }}</text>
+				</view>
+
+				<view class="section">
+					<text class="section-title">注意事项</text>
+					<text class="section-content">{{ strategy.notes }}</text>
+				</view>
+
+				<view class="section">
+					<text class="section-title">费用预算</text>
+					<text class="section-content">{{ strategy.budget }}</text>
+				</view>
+			</view>
+
+			<!-- 相关图片 -->
+			<view class="gallery-section">
+				<text class="section-title">旅行照片</text>
+				<scroll-view class="gallery-scroll" scroll-x="true">
+					<image 
+						class="gallery-image" 
+						v-for="(img, index) in strategy.gallery" 
+						:key="index"
+						:src="img" 
+						mode="aspectFill"
+						@click="previewImage(index)"
+					/>
+				</scroll-view>
+			</view>
+
+			<!-- 评论区域 -->
+			<view class="comments-section">
+				<text class="section-title">用户评论 ({{ strategy.comments.length }})</text>
+				<view class="comment-list">
+					<view 
+						class="comment-item" 
+						v-for="(comment, index) in strategy.comments" 
+						:key="index"
+					>
+						<image class="comment-avatar" :src="comment.avatar" mode="aspectFill" />
+						<view class="comment-content">
+							<text class="comment-author">{{ comment.author }}</text>
+							<text class="comment-text">{{ comment.content }}</text>
+							<text class="comment-time">{{ comment.time }}</text>
+						</view>
+					</view>
+				</view>
+			</view>
+		</scroll-view>
+
+		<!-- 底部操作栏 -->
+		<view class="action-bar">
+			<view class="action-left">
+				<view class="action-btn" @click="likeStrategy">
+					<uni-icons :type="isLiked ? 'heart-filled' : 'heart'" size="24" :color="isLiked ? '#FF6B6B' : '#666'"></uni-icons>
+					<text>{{ strategy.likes }}</text>
+				</view>
+				<view class="action-btn" @click="collectStrategy">
+					<uni-icons :type="isCollected ? 'star-filled' : 'star'" size="24" :color="isCollected ? '#FFA726' : '#666'"></uni-icons>
+					<text>{{ strategy.collections }}</text>
+				</view>
+				<view class="action-btn" @click="shareStrategy">
+					<uni-icons type="redo" size="24" color="#666"></uni-icons>
+					<text>分享</text>
+				</view>
+			</view>
+			<view class="comment-input" @click="focusComment">
+				<uni-icons type="compose" size="20" color="#999"></uni-icons>
+				<text>写评论...</text>
+			</view>
+		</view>
+
+		<!-- 评论输入框 -->
+		<view class="comment-editor" v-if="showCommentEditor">
+			<textarea 
+				class="comment-textarea" 
+				v-model="commentContent" 
+				placeholder="写下你的评论..."
+				maxlength="200"
+			></textarea>
+			<view class="editor-actions">
+				<text class="word-count">{{ commentContent.length }}/200</text>
+				<button class="submit-btn" @click="submitComment">发布</button>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const strategy = ref({
+	id: 1,
+	title: '北京三日游完美攻略',
+	author: '旅行达人小张',
+	avatar: '/static/images/avatar/avatar1.jpg',
+	publishTime: '2023-11-15',
+	readCount: 12345,
+	likeCount: 678,
+	collectionCount: 234,
+	content: `第一天：天安门广场 → 故宫博物院 → 景山公园
+早上8点到达天安门广场，观看升旗仪式（需提前查询升旗时间）。随后参观故宫博物院，建议提前网上购票，游览时间约3-4小时。下午登上景山公园，俯瞰故宫全景。
+
+第二天：颐和园 → 圆明园 → 清华大学
+上午游览颐和园，欣赏皇家园林美景。下午参观圆明园遗址，感受历史沧桑。傍晚时分可以到清华大学校园散步。
+
+第三天：八达岭长城 → 明十三陵
+全天包车或参加一日游团前往八达岭长城，攀登长城感受雄伟壮观。下午参观明十三陵，了解明代帝王陵墓文化。
+
+美食推荐：
+- 全聚德烤鸭（王府井店）
+- 东来顺涮羊肉
+- 护国寺小吃
+- 老北京炸酱面
+
+住宿推荐：
+- 王府井附近：交通便利，购物方便
+- 前门大街附近：老北京风情浓郁
+- 三里屯附近：时尚潮流区域
+
+Tips：
+1. 北京景点较大，建议穿舒适的运动鞋
+2. 提前网上购票可以避免排队
+3. 下载北京地铁APP方便出行
+4. 春秋季节是最佳旅游时间`,
+	tags: ['北京', '三日游', '攻略', '自由行'],
+	isLiked: false,
+	isCollected: false
+})
+
+const goBack = () => {
+	uni.navigateBack()
+}
+
+// 点赞
+const toggleLike = () => {
+	strategy.value.isLiked = !strategy.value.isLiked
+	if (strategy.value.isLiked) {
+		strategy.value.likeCount++
+		uni.showToast({ title: '点赞成功', icon: 'success' })
+	} else {
+		strategy.value.likeCount--
+	}
+}
+
+// 收藏
+const toggleCollect = () => {
+	strategy.value.isCollected = !strategy.value.isCollected
+	if (strategy.value.isCollected) {
+		strategy.value.collectionCount++
+		uni.showToast({ title: '收藏成功', icon: 'success' })
+	} else {
+		strategy.value.collectionCount--
+	}
+}
+
+// 分享
+const share = () => {
+	uni.showActionSheet({
+		itemList: ['微信好友', '朋友圈', 'QQ', '微博'],
+		success: (res) => {
+			uni.showToast({ title: '分享成功', icon: 'success' })
+		}
+	})
+}
+
+// 复制链接
+const copyLink = () => {
+	uni.setClipboardData({
+		data: 'https://travel.example.com/strategy/1',
+		success: () => {
+			uni.showToast({ title: '链接已复制', icon: 'success' })
+		}
+	})
+}
+</script>
+
+<style>
+.container {
+	min-height: 100vh;
+	background: #f8f9fa;
+}
+
+.nav-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+	padding: 40rpx 32rpx;
+	background: #fff;
+	border-bottom: 1rpx solid #eee;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
+.nav-title {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #333;
+}
+
+.content-scroll {
+	height: calc(100vh - 120rpx);
+}
+
+.cover-image {
+	width: 100%;
+	height: 400rpx;
+}
+
+.info-section {
+	background: #fff;
+	padding: 32rpx;
+	border-bottom: 1rpx solid #eee;
+}
+
+.title {
+	font-size: 40rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 16rpx;
+	line-height: 1.3;
+}
+
+.desc {
+	font-size: 28rpx;
+	color: #666;
+	display: block;
+	line-height: 1.4;
+	margin-bottom: 24rpx;
+}
+
+.meta-info {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+	margin-bottom: 24rpx;
+}
+
+.author-info {
+	display: flex;
+	align-items: center;
+	gap: 16rpx;
+}
+
+.avatar {
+	width: 60rpx;
+	height: 60rpx;
+	border-radius: 50%;
+}
+
+.author-name {
+	font-size: 26rpx;
+	color: #333;
+}
+
+.stats {
+	display: flex;
+	align-items: center;
+	gap: 24rpx;
+}
+
+.time,
+.views {
+	font-size: 24rpx;
+	color: #999;
+}
+
+.views {
+	display: flex;
+	align-items: center;
+	gap: 8rpx;
+}
+
+.tags {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 12rpx;
+}
+
+.tag {
+	background: #e6f7ff;
+	color: #1890ff;
+	padding: 8rpx 16rpx;
+	border-radius: 8rpx;
+	font-size: 22rpx;
+}
+
+.content-section {
+	background: #fff;
+	padding: 32rpx;
+}
+
+.section {
+	margin-bottom: 40rpx;
+}
+
+.section-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 16rpx;
+}
+
+.section-content {
+	font-size: 28rpx;
+	color: #666;
+	line-height: 1.6;
+	display: block;
+	white-space: pre-line;
+}
+
+.gallery-section {
+	background: #fff;
+	padding: 32rpx;
+	margin-top: 20rpx;
+}
+
+.gallery-scroll {
+	display: flex;
+	gap: 16rpx;
+	padding: 16rpx 0;
+}
+
+.gallery-image {
+	width: 200rpx;
+	height: 150rpx;
+	border-radius: 12rpx;
+}
+
+.comments-section {
+	background: #fff;
+	padding: 32rpx;
+	margin-top: 20rpx;
+}
+
+.comment-list {
+	margin-top: 24rpx;
+}
+
+.comment-item {
+	display: flex;
+	gap: 20rpx;
+	margin-bottom: 32rpx;
+}
+
+.comment-avatar {
+	width: 80rpx;
+	height: 80rpx;
+	border-radius: 50%;
+}
+
+.comment-content {
+	flex: 1;
+}
+
+.comment-author {
+	font-size: 26rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 8rpx;
+}
+
+.comment-text {
+	font-size: 26rpx;
+	color: #666;
+	display: block;
+	line-height: 1.4;
+	margin-bottom: 8rpx;
+}
+
+.comment-time {
+	font-size: 22rpx;
+	color: #999;
+}
+
+.action-bar {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: #fff;
+	padding: 20rpx 32rpx;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+	border-top: 1rpx solid #eee;
+	box-shadow: 0 -2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.action-left {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	gap: 32rpx;
+}
+
+.action-btn {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	gap: 8rpx;
+	font-size: 24rpx;
+	color: #666;
+}
+
+.comment-input {
+	flex: 1;
+	background: #f8f9fa;
+	border-radius: 30rpx;
+	padding: 16rpx 24rpx;
+	display: flex;
+	align-items: center;
+	gap: 12rpx;
+	margin-left: 32rpx;
+}
+
+.comment-editor {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: #fff;
+	padding: 32rpx;
+	border-top: 1rpx solid #eee;
+	box-shadow: 0 -4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.comment-textarea {
+	width: 100%;
+	height: 120rpx;
+	background: #f8f9fa;
+	border-radius: 12rpx;
+	padding: 20rpx;
+	font-size: 26rpx;
+	margin-bottom: 20rpx;
+}
+
+.editor-actions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.word-count {
+	font-size: 24rpx;
+	color: #999;
+}
+
+.submit-btn {
+	background: #4A90E2;
+	color: #fff;
+	padding: 12rpx 32rpx;
+	border-radius: 20rpx;
+	font-size: 26rpx;
+}
+</style>

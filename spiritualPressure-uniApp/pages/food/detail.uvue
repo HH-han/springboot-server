@@ -1,0 +1,350 @@
+<template>
+	<view class="container">
+		<!-- 顶部导航 -->
+		<view class="nav-header">
+			<uni-icons type="arrow-left" size="24" color="#333" @click="goBack"></uni-icons>
+			<text class="nav-title">美食详情</text>
+			<view style="width: 24rpx"></view>
+		</view>
+
+		<!-- 图片轮播 -->
+		<swiper class="image-swiper" :indicator-dots="true" :autoplay="true" :interval="3000" :duration="500">
+			<swiper-item v-for="(image, index) in food.images" :key="index">
+				<image class="swiper-image" :src="image" mode="aspectFill" />
+			</swiper-item>
+		</swiper>
+
+		<!-- 美食基本信息 -->
+		<view class="info-section">
+			<text class="food-name">{{ food.name }}</text>
+			<view class="rating-section">
+				<uni-rate :value="food.rating" :size="16" readonly></uni-rate>
+				<text class="rating-text">{{ food.rating }}分</text>
+				<text class="review-count">({{ food.reviews }}条评价)</text>
+			</view>
+			
+			<view class="location-section">
+				<uni-icons type="location" size="20" color="#666"></uni-icons>
+				<text class="location-text">{{ food.restaurant }}</text>
+			</view>
+			
+			<view class="price-section">
+				<text class="price">¥{{ food.price }}</text>
+				<text class="price-label">/份</text>
+			</view>
+		</view>
+
+		<!-- 美食特色 -->
+		<view class="feature-section">
+			<text class="section-title">美食特色</text>
+			<view class="feature-tags">
+				<view class="feature-tag" v-for="(feature, index) in food.features" :key="index">
+					{{ feature }}
+				</view>
+			</view>
+		</view>
+
+		<!-- 美食介绍 -->
+		<view class="description-section">
+			<text class="section-title">美食介绍</text>
+			<text class="description-text">{{ food.description }}</text>
+		</view>
+
+		<!-- 营业时间 -->
+		<view class="opening-section">
+			<text class="section-title">营业时间</text>
+			<text class="opening-text">{{ food.businessHours }}</text>
+		</view>
+
+		<!-- 推荐搭配 -->
+		<view class="recommendation-section">
+			<text class="section-title">推荐搭配</text>
+			<view class="recommendation-list">
+				<view class="recommendation-item" v-for="(item, index) in food.recommendations" :key="index">
+					<text class="recommendation-index">{{ index + 1 }}.</text>
+					<text class="recommendation-text">{{ item }}</text>
+				</view>
+			</view>
+		</view>
+
+		<!-- 底部操作栏 -->
+		<view class="action-bar">
+			<view class="price-info">
+				<text class="price-label">¥</text>
+				<text class="price-amount">{{ food.price }}</text>
+				<text class="price-unit">/份</text>
+			</view>
+			<button class="order-btn" @click="handleOrder">立即下单</button>
+		</view>
+	</view>
+</template>
+```
+<script setup>
+import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+
+const food = ref({})
+
+const goBack = () => {
+	uni.navigateBack()
+}
+
+const handleOrder = () => {
+	// 跳转到美食下单页面
+	const data = encodeURIComponent(JSON.stringify({
+		foodId: food.value.id,
+		foodName: food.value.name,
+		price: food.value.price,
+		restaurant: food.value.restaurant,
+		imageUrl: food.value.images && food.value.images.length > 0 ? food.value.images[0] : null
+	}))
+	uni.navigateTo({ url: `/pages/food/order?data=${data}` })
+}
+
+// 使用 uni-app 的 onLoad 生命周期
+onLoad((options) => {
+	if (options.data) {
+		// 从列表页传递的数据
+		const passedData = JSON.parse(decodeURIComponent(options.data))
+		
+		// 映射后端数据结构到前端展示结构
+		food.value = {
+			id: passedData.id,
+			name: passedData.name,
+			rating: passedData.rating || 0,
+			reviews: passedData.sales || 0, // 使用sales作为评价数量
+			restaurant: passedData.name + '餐厅', // 使用美食名称作为餐厅名
+			price: passedData.price || 0,
+			images: passedData.image ? [passedData.image] : ['/static/food/default.jpg'],
+			features: passedData.category ? [passedData.category, passedData.status].filter(Boolean) : [passedData.status].filter(Boolean),
+			description: passedData.description || '暂无描述',
+			businessHours: '10:00-22:00（全年无休）', // 默认营业时间
+			recommendations: [
+				`推荐搭配：${passedData.name} + 特色小菜`,
+				'最佳食用方式：趁热食用',
+				'饮品推荐：根据口味选择'
+			]
+		}
+		
+		// 调试输出，确认数据是否正确接收和映射
+		console.log('接收到的数据:', passedData)
+		console.log('映射后的food对象:', food.value)
+		
+	} else if (options.id) {
+		// 根据ID加载美食数据（备用方案）
+		console.warn('loadFoodData函数未实现，请传递完整数据')
+	}
+})
+</script>
+
+<style>
+.container {
+	padding-bottom: 120rpx;
+	background: #f8f9fa;
+}
+
+.nav-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+	padding: 30rpx;
+	background: #fff;
+	border-bottom: 1rpx solid #eee;
+}
+
+.nav-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+}
+
+.image-swiper {
+	height: 400rpx;
+	width: 100%;
+}
+
+.swiper-image {
+	width: 100%;
+	height: 100%;
+}
+
+.info-section {
+	background: #fff;
+	padding: 30rpx;
+	border-bottom: 1rpx solid #eee;
+}
+
+.food-name {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 20rpx;
+}
+
+.rating-section {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	margin-bottom: 20rpx;
+}
+
+.rating-text {
+	font-size: 28rpx;
+	color: #FF9500;
+	font-weight: bold;
+	margin-left: 12rpx;
+}
+
+.review-count {
+	font-size: 24rpx;
+	color: #999;
+	margin-left: 12rpx;
+}
+
+.location-section {
+	display: flex;
+	align-items: flex-start;
+	margin-bottom: 20rpx;
+}
+
+.location-text {
+	font-size: 28rpx;
+	color: #666;
+	margin-left: 8rpx;
+}
+
+.price-section {
+	display: flex;
+	align-items: baseline;
+	flex-direction: row;
+}
+
+.price {
+	font-size: 36rpx;
+	color: #FF6B00;
+	font-weight: bold;
+}
+
+.price-label {
+	font-size: 24rpx;
+	color: #999;
+	margin-left: 8rpx;
+}
+
+.feature-section,
+.description-section,
+.opening-section,
+.recommendation-section {
+	background: #fff;
+	padding: 30rpx;
+	margin-top: 20rpx;
+}
+
+.section-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 20rpx;
+}
+
+.feature-tags {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	gap: 16rpx;
+}
+
+.feature-tag {
+	background: #FFEDED;
+	color: #FF6B6B;
+	padding: 12rpx 20rpx;
+	border-radius: 20rpx;
+	font-size: 24rpx;
+}
+
+.description-text {
+	font-size: 28rpx;
+	color: #666;
+	line-height: 1.6;
+}
+
+.opening-text {
+	font-size: 28rpx;
+	color: #666;
+}
+
+.recommendation-list {
+	margin-top: 16rpx;
+}
+
+.recommendation-item {
+	display: flex;
+	align-items: flex-start;
+	flex-direction: row;
+	margin-bottom: 16rpx;
+}
+
+.recommendation-index {
+	font-size: 28rpx;
+	color: #FF6B6B;
+	font-weight: bold;
+	min-width: 40rpx;
+}
+
+.recommendation-text {
+	font-size: 28rpx;
+	color: #666;
+	line-height: 1.4;
+	flex: 1;
+}
+
+.action-bar {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: #fff;
+	padding: 20rpx 30rpx;
+	border-top: 1rpx solid #eee;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-direction: row;
+}
+
+.price-info {
+	display: flex;
+	align-items: baseline;
+	flex-direction: row;
+}
+
+.price-label {
+	font-size: 24rpx;
+	color: #FF6B00;
+	font-weight: bold;
+}
+
+.price-amount {
+	font-size: 36rpx;
+	color: #FF6B00;
+	font-weight: bold;
+	margin: 0 4rpx;
+}
+
+.price-unit {
+	font-size: 24rpx;
+	color: #999;
+}
+
+.order-btn {
+	background: #FF6B6B;
+	color: #fff;
+	border-radius: 40rpx;
+	padding: 20rpx 40rpx;
+	font-size: 28rpx;
+	font-weight: bold;
+}
+</style>

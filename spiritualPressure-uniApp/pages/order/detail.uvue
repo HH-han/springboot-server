@@ -1,0 +1,517 @@
+<template>
+	<view class="container">
+		<!-- 顶部导航 -->
+		<view class="nav-header">
+			<uni-icons type="arrow-left" size="28" color="#333" @click="goBack"></uni-icons>
+			<text class="nav-title">订单详情</text>
+			<view style="width: 28rpx"></view>
+		</view>
+
+		<scroll-view class="content" scroll-y="true">
+			<!-- 订单状态 -->
+			<view class="status-card">
+				<view class="status-info">
+					<uni-icons :type="statusIcon" :color="statusColor" size="40"></uni-icons>
+					<view class="status-text">
+						<text class="status">{{ orderInfo.statusText }}</text>
+						<text class="status-desc">{{ orderInfo.statusDesc }}</text>
+					</view>
+				</view>
+				<view class="order-time">
+					<text>下单时间：{{ orderInfo.createTime }}</text>
+				</view>
+			</view>
+
+			<!-- 订单信息 -->
+			<view class="info-card">
+				<text class="card-title">订单信息</text>
+				<view class="info-item">
+					<text class="label">订单编号</text>
+					<text class="value">{{ orderInfo.orderNo }}</text>
+				</view>
+				<view class="info-item">
+					<text class="label">订单类型</text>
+					<text class="value">{{ orderInfo.orderType }}</text>
+				</view>
+				<view class="info-item">
+					<text class="label">支付方式</text>
+					<text class="value">{{ orderInfo.paymentMethod }}</text>
+				</view>
+				<view class="info-item">
+					<text class="label">支付时间</text>
+					<text class="value">{{ orderInfo.payTime || '--' }}</text>
+				</view>
+			</view>
+
+			<!-- 商品信息 -->
+			<view class="product-card">
+				<text class="card-title">商品信息</text>
+				<view class="product-item">
+					<image class="product-image" :src="orderInfo.productImage" mode="aspectFill"></image>
+					<view class="product-info">
+						<text class="product-name">{{ orderInfo.productName }}</text>
+						<text class="product-spec">{{ orderInfo.productSpec }}</text>
+						<view class="product-price">
+							<text class="price">¥{{ orderInfo.productPrice }}</text>
+							<text class="quantity">x{{ orderInfo.quantity }}</text>
+						</view>
+					</view>
+				</view>
+			</view>
+
+			<!-- 价格信息 -->
+			<view class="price-card">
+				<text class="card-title">价格明细</text>
+				<view class="price-item">
+					<text class="label">商品金额</text>
+					<text class="value">¥{{ orderInfo.productPrice * orderInfo.quantity }}</text>
+				</view>
+				<view class="price-item" v-if="orderInfo.discount > 0">
+					<text class="label">优惠金额</text>
+					<text class="value discount">-¥{{ orderInfo.discount }}</text>
+				</view>
+				<view class="price-item">
+					<text class="label">运费</text>
+					<text class="value">¥{{ orderInfo.shippingFee }}</text>
+				</view>
+				<view class="price-total">
+					<text class="label">实付款</text>
+					<text class="total-price">¥{{ orderInfo.totalAmount }}</text>
+				</view>
+			</view>
+
+			<!-- 收货信息 -->
+			<view class="address-card" v-if="orderInfo.address">
+				<text class="card-title">收货信息</text>
+				<view class="address-info">
+					<text class="name">{{ orderInfo.address.name }}</text>
+					<text class="phone">{{ orderInfo.address.phone }}</text>
+					<text class="address-detail">{{ orderInfo.address.province }}{{ orderInfo.address.city }}{{ orderInfo.address.district }}{{ orderInfo.address.detail }}</text>
+				</view>
+			</view>
+
+			<!-- 操作按钮 -->
+			<view class="action-buttons">
+				<button 
+					class="action-btn secondary" 
+					v-if="orderInfo.status === 'pending_payment'"
+					@click="cancelOrder"
+				>取消订单</button>
+				<button 
+					class="action-btn primary" 
+					v-if="orderInfo.status === 'pending_payment'"
+					@click="payOrder"
+				>立即支付</button>
+				<button 
+					class="action-btn secondary" 
+					v-if="orderInfo.status === 'completed'"
+					@click="applyRefund"
+				>申请退款</button>
+				<button 
+					class="action-btn primary" 
+					v-if="orderInfo.status === 'shipped'"
+					@click="confirmReceipt"
+				>确认收货</button>
+				<button 
+					class="action-btn secondary" 
+					v-if="['completed', 'cancelled'].includes(orderInfo.status)"
+					@click="deleteOrder"
+				>删除订单</button>
+				<button 
+					class="action-btn primary" 
+					v-if="orderInfo.status === 'completed'"
+					@click="buyAgain"
+				>再次购买</button>
+			</view>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+
+const orderId = ref('')
+const orderInfo = ref({
+	orderNo: '20231213003',
+	status: 'pending_payment',
+	statusText: '待支付',
+	statusDesc: '请在30分钟内完成支付',
+	createTime: '2023-12-13 14:30:25',
+	orderType: '酒店预订',
+	paymentMethod: '微信支付',
+	payTime: '',
+	productImage: '/static/hotel/hotel1.jpg',
+	productName: '豪华大床房',
+	productSpec: '1间，入住日期：2023-12-15，离店日期：2023-12-17',
+	productPrice: 299,
+	quantity: 1,
+	discount: 30,
+	shippingFee: 0,
+	totalAmount: 269,
+	address: {
+		name: '张三',
+		phone: '13800138000',
+		province: '北京市',
+		city: '北京市',
+		district: '朝阳区',
+		detail: '建国门外大街1号国贸大厦A座'
+	}
+})
+
+const statusIcon = computed(() => {
+	const iconMap = {
+		pending_payment: 'wallet',
+		pending_shipment: 'cart',
+		shipped: 'car',
+		completed: 'checkmark-circle',
+		cancelled: 'close-circle',
+		refunded: 'refresh'
+	}
+	return iconMap[orderInfo.value.status] || 'help'
+})
+
+const statusColor = computed(() => {
+	const colorMap = {
+		pending_payment: '#FFB800',
+		pending_shipment: '#4A90E2',
+		shipped: '#52C41A',
+		completed: '#52C41A',
+		cancelled: '#FF6B6B',
+		refunded: '#FA8C16'
+	}
+	return colorMap[orderInfo.value.status] || '#666'
+})
+
+const goBack = () => {
+	uni.navigateBack()
+}
+
+const loadOrderDetail = () => {
+	// 模拟加载订单详情
+	uni.showLoading({ title: '加载中...' })
+	setTimeout(() => {
+		uni.hideLoading()
+		// 这里可以根据orderId从API获取订单详情
+		orderInfo.value.orderNo = orderId.value
+	}, 500)
+}
+
+const payOrder = () => {
+	uni.showModal({
+		title: '确认支付',
+		content: `确定要支付订单 ${orderInfo.value.orderNo} 吗？`,
+		success: (res) => {
+			if (res.confirm) {
+				// 模拟支付成功
+				orderInfo.value.status = 'pending_shipment'
+				orderInfo.value.statusText = '待发货'
+				orderInfo.value.statusDesc = '商家正在准备商品'
+				orderInfo.value.payTime = new Date().toLocaleString()
+				uni.showToast({ title: '支付成功', icon: 'success' })
+			}
+		}
+	})
+}
+
+const cancelOrder = () => {
+	uni.showModal({
+		title: '取消订单',
+		content: '确定要取消这个订单吗？',
+		success: (res) => {
+			if (res.confirm) {
+				// 模拟取消订单
+				orderInfo.value.status = 'cancelled'
+				orderInfo.value.statusText = '已取消'
+				orderInfo.value.statusDesc = '订单已取消'
+				uni.showToast({ title: '订单已取消', icon: 'success' })
+			}
+		}
+	})
+}
+
+const confirmReceipt = () => {
+	uni.showModal({
+		title: '确认收货',
+		content: '请确认您已收到商品',
+		success: (res) => {
+			if (res.confirm) {
+				// 模拟确认收货
+				orderInfo.value.status = 'completed'
+				orderInfo.value.statusText = '已完成'
+				orderInfo.value.statusDesc = '订单已完成'
+				uni.showToast({ title: '确认收货成功', icon: 'success' })
+			}
+		}
+	})
+}
+
+const applyRefund = () => {
+	uni.navigateTo({
+		url: '/pages/order/refund?orderId=' + orderId.value
+	})
+}
+
+const deleteOrder = () => {
+	uni.showModal({
+		title: '删除订单',
+		content: '确定要删除这个订单吗？',
+		success: (res) => {
+			if (res.confirm) {
+				uni.showToast({ title: '订单已删除', icon: 'success' })
+				setTimeout(() => {
+					uni.navigateBack()
+				}, 1500)
+			}
+		}
+	})
+}
+
+const buyAgain = () => {
+	uni.showToast({ title: '已加入购物车', icon: 'success' })
+}
+
+onLoad((options) => {
+	orderId.value = options.id
+	loadOrderDetail()
+})
+</script>
+
+<style>
+.container {
+	min-height: 100vh;
+	background: #f8f9fa;
+}
+
+.nav-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+	padding: 40rpx 32rpx;
+	background: #fff;
+	border-bottom: 1rpx solid #eee;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
+.nav-title {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #333;
+}
+
+.content {
+	height: calc(100vh - 120rpx);
+	padding: 20rpx 32rpx;
+}
+
+.status-card,
+.info-card,
+.product-card,
+.price-card,
+.address-card {
+	background: #fff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 20rpx;
+	box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 20rpx;
+	border-bottom: 1rpx solid #eee;
+	padding-bottom: 16rpx;
+}
+
+.status-info {
+	display: flex;
+	align-items: flex-start;
+	flex-direction: row;
+	margin-bottom: 16rpx;
+}
+
+.status-text {
+	margin-left: 20rpx;
+}
+
+.status {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 4rpx;
+}
+
+.status-desc {
+	font-size: 24rpx;
+	color: #666;
+}
+
+.order-time {
+	text-align: right;
+	font-size: 24rpx;
+	color: #999;
+}
+
+.info-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+	padding: 16rpx 0;
+	border-bottom: 1rpx solid #f5f5f5;
+}
+
+.info-item:last-child {
+	border-bottom: none;
+}
+
+.label {
+	font-size: 28rpx;
+	color: #666;
+}
+
+.value {
+	font-size: 28rpx;
+	color: #333;
+	font-weight: 500;
+}
+
+.discount {
+	color: #FF6B6B;
+}
+
+.product-item {
+	display: flex;
+	align-items: center;
+}
+
+.product-image {
+	width: 120rpx;
+	height: 120rpx;
+	border-radius: 12rpx;
+	margin-right: 20rpx;
+}
+
+.product-info {
+	flex: 1;
+}
+
+.product-name {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 8rpx;
+}
+
+.product-spec {
+	font-size: 24rpx;
+	color: #666;
+	display: block;
+	margin-bottom: 12rpx;
+}
+
+.product-price {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+}
+
+.price {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #FF6B6B;
+}
+
+.quantity {
+	font-size: 24rpx;
+	color: #999;
+}
+
+.price-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+	padding: 12rpx 0;
+}
+
+.price-total {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+	padding: 20rpx 0;
+	border-top: 1rpx solid #eee;
+	margin-top: 12rpx;
+}
+
+.total-price {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #FF6B6B;
+}
+
+.address-info {
+	padding: 16rpx 0;
+}
+
+.name {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333;
+	margin-right: 20rpx;
+}
+
+.phone {
+	font-size: 26rpx;
+	color: #666;
+	margin-right: 20rpx;
+}
+
+.address-detail {
+	font-size: 26rpx;
+	color: #666;
+	line-height: 1.5;
+	margin-top: 12rpx;
+	display: block;
+}
+
+.action-buttons {
+	display: flex;
+	justify-content: flex-end;
+	gap: 16rpx;
+	margin: 30rpx 0;
+}
+
+.action-btn {
+	padding: 16rpx 32rpx;
+	border-radius: 20rpx;
+	font-size: 26rpx;
+	min-width: 120rpx;
+}
+
+.action-btn.primary {
+	background: #4A90E2;
+	color: #fff;
+	border: none;
+}
+
+.action-btn.secondary {
+	background: #fff;
+	color: #666;
+	border: 1rpx solid #ddd;
+}
+
+.action-btn:active {
+	opacity: 0.8;
+}
+</style>

@@ -1,0 +1,510 @@
+<template>
+	<view class="container">
+		<!-- 顶部搜索栏 -->
+		<view class="search-bar">
+			<view class="search-input">
+				<uni-icons type="search" size="18" color="#999"></uni-icons>
+				<input class="input" placeholder="搜索景点、酒店、美食" placeholder-style="color: #999;" />
+			</view>
+		</view>
+
+		<!-- 轮播图 -->
+		<swiper v-if="banners.length > 0" class="banner-swiper" :autoplay="true" :interval="3000" :circular="true">
+			<swiper-item v-for="(item, index) in banners" :key="index">
+				<image class="banner-image" :src="item.image" mode="aspectFill" />
+				<view class="banner-title">{{ item.title }}</view>
+			</swiper-item>
+		</swiper>
+		<view v-else class="banner-placeholder">
+			<text>加载中...</text>
+		</view>
+
+		<!-- 功能导航 -->
+		<view class="nav-grid">
+			<view class="nav-item" v-for="(item, index) in navItems" :key="index" @click="navigateTo(item.path)">
+				<view class="nav-icon">
+					<uni-icons :type="item.icon" size="28" :color="item.color"></uni-icons>
+				</view>
+				<text class="nav-text">{{ item.text }}</text>
+			</view>
+		</view>
+
+		<!-- 推荐景点 -->
+		<view class="section">
+			<view class="section-header">
+				<text class="section-title">热门景点</text>
+				<text class="section-more" @click="navigateTo('/pages/attraction/attraction')">查看更多 ></text>
+			</view>
+			<scroll-view class="attraction-scroll" scroll-x="true">
+				<view class="attraction-item" v-for="(item, index) in attractions" :key="index">
+					<image class="attraction-image" :src="item.image" mode="aspectFill" />
+					<view class="attraction-info">
+						<text class="attraction-name">{{ item.name }}</text>
+						<text class="attraction-location">{{ item.location }}</text>
+						<text class="attraction-price">¥{{ item.price }}</text>
+					</view>
+				</view>
+			</scroll-view>
+		</view>
+
+		<!-- 旅游攻略 -->
+		<view class="section">
+			<view class="section-header">
+				<text class="section-title">旅游攻略</text>
+				<text class="section-more" @click="navigateTo('/pages/strategy/strategy')">查看更多 ></text>
+			</view>
+			<view class="strategy-list">
+				<view class="strategy-item" v-for="(item, index) in strategies" :key="index">
+					<image class="strategy-image" :src="item.image" mode="aspectFill" />
+					<view class="strategy-content">
+						<text class="strategy-title">{{ item.title }}</text>
+						<text class="strategy-desc">{{ item.desc }}</text>
+						<view class="strategy-meta">
+							<text class="strategy-author">{{ item.author }}</text>
+							<text class="strategy-time">{{ item.time }}</text>
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import { carouselApi } from '../../api/carousel.js';
+import { strategyGroupApi } from '../../api/strategyGroup.js';
+import { scenicApi } from '../../api/scenic.js';
+
+const banners = ref([])
+const strategies = ref([])
+const attractions = ref([])
+
+const navItems = ref([
+	{ icon: 'images-filled', text: '景点', path: '/pages/attraction/attraction', color: '#4A90E2' },
+	{ icon: 'home-filled', text: '酒店', path: '/pages/hotel/hotel', color: '#FF6B6B' },
+	{ icon: 'shop-filled', text: '美食', path: '/pages/food/food', color: '#FFA726' },
+	{ icon: 'cart-filled', text: '订单', path: '/pages/order/order', color: '#66BB6A' }
+])
+
+
+const navigateTo = (path) => {
+	// 检查是否是tabbar页面
+	const tabbarPages = [
+		'/pages/index/index',
+		'/pages/attraction/attraction',
+		'/pages/hotel/hotel',
+		'/pages/food/food',
+		'/pages/user/user'
+	]
+	
+	if (tabbarPages.includes(path)) {
+		// 如果是tabbar页面，使用switchTab
+		uni.switchTab({
+			url: path
+		})
+	} else {
+		// 如果是普通页面，使用navigateTo
+		uni.navigateTo({
+			url: path
+		})
+	}
+}
+
+// 加载轮播图数据
+const loadBanners = async () => {
+	try {
+		const response = await carouselApi.getList({})
+		if (response && response.data && response.data.list) {
+			// 映射API返回的数据到前端需要的格式
+			banners.value = response.data.list.map(item => ({
+				image: item.image || '/static/banner-default.jpg',
+				title: item.title || '旅游推荐'
+			}))
+			console.log('轮播图数据加载成功:', banners.value)
+		} else {
+			// 如果API没有返回数据，使用默认数据
+			banners.value = [
+				{ image: '/static/banner1.jpg', title: '桂林山水甲天下' },
+				{ image: '/static/banner2.jpg', title: '丽江古城慢生活' },
+				{ image: '/static/banner3.jpg', title: '西藏圣洁之旅' }
+			]
+			console.warn('轮播图API返回空数据，使用默认数据')
+		}
+	} catch (error) {
+		console.error('加载轮播图数据失败:', error)
+		// 出错时使用默认数据
+		banners.value = [
+			{ image: '/static/banner1.jpg', title: '桂林山水甲天下' },
+			{ image: '/static/banner2.jpg', title: '丽江古城慢生活' },
+			{ image: '/static/banner3.jpg', title: '西藏圣圣之旅' }
+		]
+	}
+}
+
+// 加载旅游攻略数据
+const loadStrategies = async () => {
+	try {
+		const response = await strategyGroupApi.getList({ page: 1, size: 3 })
+		if (response && response.data && response.data.list) {
+			// 取前3条数据并映射到前端格式
+			strategies.value = response.data.list.slice(0, 3).map(item => ({
+				image: item.image || '/static/strategy-default.jpg',
+				title: item.title || '旅游攻略',
+				desc: item.description || item.groupDescription || '暂无描述',
+				author: item.groupName || '未知作者',
+				time: item.dates || '未知时间'
+			}))
+			console.log('旅游攻略数据加载成功:', strategies.value)
+		} else {
+			// 如果API没有返回数据，使用默认数据
+			strategies.value = [
+				{
+					image: '/static/strategy1.jpg',
+					title: '云南七日游完美攻略',
+					desc: '从昆明到大理，再到丽江的完美行程安排',
+					author: '旅行达人',
+					time: '3天前'
+				},
+				{
+					image: '/static/strategy2.jpg',
+					title: '西藏朝圣之旅指南',
+					desc: '高原反应预防 и 必备物品清单',
+					author: '藏地专家',
+					time: '1周前'
+				}
+			]
+			console.warn('旅游攻略API返回空数据，使用默认数据')
+		}
+	} catch (error) {
+		console.error('加载旅游攻略数据失败:', error)
+		// 出错时使用默认数据
+		strategies.value = [
+			{
+				image: '/static/strategy1.jpg',
+				title: '云南七日游完美攻略',
+				desc: '从昆明到大理，再到丽江的完美行程安排',
+				author: '旅行达人',
+				time: '3天前'
+			},
+			{
+				image: '/static/strategy2.jpg',
+				title: '西藏朝圣之旅指南',
+				desc: '高原反应预防 и 必备物品清单',
+				author: '藏地专家',
+				time: '1周前'
+			}
+		]
+	}
+}
+
+// 格式化时间函数
+const formatTime = (timeString) => {
+	const time = new Date(timeString)
+	const now = new Date()
+	const diff = now - time
+	const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+	
+	if (days === 0) return '今天'
+	if (days === 1) return '昨天'
+	if (days < 7) return `${days}天前`
+	if (days < 30) return `${Math.floor(days / 7)}周前`
+	return time.toLocaleDateString()
+}
+
+// 加载推荐景点数据
+const loadAttractions = async () => {
+	try {
+		const response = await scenicApi.getList({ page: 1, size: 3 })
+		if (response && response.data && response.data.list) {
+			// 取前3条数据并映射到前端格式
+			attractions.value = response.data.list.slice(0, 3).map(item => ({
+				image: item.image || '/static/attraction-default.jpg',
+				name: item.title || '景点名称',
+				location: item.location || '未知地点',
+				price: item.price || 0
+			}))
+			console.log('推荐景点数据加载成功:', attractions.value)
+		} else {
+			// 如果API没有返回数据，使用默认数据
+			attractions.value = [
+				{ 
+					image: '/static/attraction1.jpg', 
+					name: '张家界国家森林公园', 
+					location: '湖南张家界', 
+					price: 248 
+				},
+				{ 
+					image: '/static/attraction2.jpg', 
+					name: '九寨沟风景区', 
+					location: '四川阿坝', 
+					price: 169 
+				},
+				{ 
+					image: '/static/attraction3.jpg', 
+					name: '黄山风景区', 
+					location: '安徽黄山', 
+					price: 190 
+				}
+			]
+			console.warn('推荐景点API返回空数据，使用默认数据')
+		}
+	} catch (error) {
+		console.error('加载推荐景点数据失败:', error)
+		// 出错时使用默认数据
+		attractions.value = [
+			{ 
+				image: '/static/attraction1.jpg', 
+				name: '张家界国家森林公园', 
+				location: '湖南张家界', 
+				price: 248 
+			},
+			{ 
+				image: '/static/attraction2.jpg', 
+				name: '九寨沟风景区', 
+				location: '四川阿坝', 
+				price: 169 
+			},
+			{ 
+				image: '/static/attraction3.jpg', 
+				name: '黄山风景区', 
+				location: '安徽黄山', 
+				price: 190 
+			}
+		]
+	}
+}
+
+// 页面加载时获取数据
+onMounted(() => {
+	loadBanners()
+	loadStrategies()
+	loadAttractions()
+})
+</script>
+
+<style>
+	.container {
+		background: linear-gradient(180deg, #4A90E2 0%, #F6F9FE 100%);
+		min-height: 100vh;
+		padding-bottom: 20px;
+	}
+
+	.search-bar {
+		padding: 15px;
+		background: #4A90E2;
+	}
+
+	.search-input {
+		background: #FFFFFF;
+		border-radius: 20px;
+		padding: 10px 15px;
+		display: flex;
+		align-items: center;
+		flex-direction: row;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	}
+
+	.input {
+		flex: 1;
+		margin-left: 8px;
+		font-size: 14px;
+		color: #333;
+	}
+
+	.banner-swiper {
+		height: 180px;
+		margin: 0 15px;
+		border-radius: 12px;
+		overflow: hidden;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	}
+
+	.banner-image {
+		width: 100%;
+		height: 100%;
+	}
+
+	.banner-title {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+		color: white;
+		padding: 10px;
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+	.nav-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 15px;
+		padding: 20px 15px;
+		background: #FFFFFF;
+		margin: 15px;
+		border-radius: 12px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	}
+
+	.nav-item {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.nav-icon {
+		width: 50px;
+		height: 50px;
+		border-radius: 50%;
+		background: #F8F9FA;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-bottom: 8px;
+	}
+
+	.nav-text {
+		font-size: 12px;
+		color: #666;
+	}
+
+	.section {
+		margin: 15px;
+		background: #FFFFFF;
+		border-radius: 12px;
+		padding: 15px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	}
+
+	.section-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-direction: row;
+		margin-bottom: 15px;
+	}
+
+	.section-title {
+		font-size: 18px;
+		font-weight: bold;
+		color: #333;
+	}
+
+	.section-more {
+		font-size: 12px;
+		color: #999;
+	}
+
+	.attraction-scroll {
+		display: flex;
+		flex-direction: row;
+		white-space: nowrap;
+	}
+
+	.attraction-item {
+		display: inline-block;
+		width: 120px;
+		margin-right: 12px;
+		background: #F8F9FA;
+		border-radius: 8px;
+		overflow: hidden;
+	}
+
+	.attraction-image {
+		width: 120px;
+		height: 80px;
+	}
+
+	.attraction-info {
+		padding: 8px;
+	}
+
+	.attraction-name {
+		font-size: 12px;
+		font-weight: bold;
+		color: #333;
+		display: block;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.attraction-location {
+		font-size: 10px;
+		color: #666;
+		display: block;
+		margin-top: 2px;
+	}
+
+	.attraction-price {
+		font-size: 12px;
+		color: #FF6B6B;
+		font-weight: bold;
+		display: block;
+		margin-top: 4px;
+	}
+
+	.strategy-list {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.strategy-item {
+		display: flex;
+		gap: 12px;
+	}
+
+	.strategy-image {
+		width: 100%;
+		height: 160px;
+		border-radius: 6px;
+	}
+
+	.strategy-content {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+
+	.strategy-title {
+		font-size: 14px;
+		font-weight: bold;
+		color: #333;
+		line-height: 1.2;
+	}
+
+	.strategy-desc {
+		font-size: 12px;
+		color: #666;
+		line-height: 1.2;
+		margin-top: 4px;
+	}
+
+	.strategy-meta {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 4px;
+	}
+
+	.strategy-author,
+	.strategy-time {
+		font-size: 10px;
+		color: #999;
+	}
+
+.banner-placeholder {
+	height: 180px;
+	margin: 0 15px;
+	border-radius: 12px;
+	background: #f0f0f0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #999;
+	font-size: 16px;
+}
+</style>

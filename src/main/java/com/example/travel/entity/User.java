@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
+@Entity
 @Table(name = "users")
 @EqualsAndHashCode(callSuper = false)
 public class User {
@@ -72,6 +73,32 @@ public class User {
     @ExcelProperty("状态")
     @ColumnWidth(20)
     private int status;
+
+    // 即时通信相关字段
+    @Column(name = "last_login_time")
+    @ExcelProperty("最后登录时间")
+    @ColumnWidth(20)
+    private LocalDateTime lastLoginTime;
+
+    @Column(name = "online_status")
+    @ExcelProperty("在线状态")
+    @ColumnWidth(20)
+    private Integer onlineStatus;
+
+    @Column(name = "websocket_session_id")
+    @ExcelProperty("WebSocket会话ID")
+    @ColumnWidth(20)
+    private String websocketSessionId;
+
+    @Column(name = "device_info")
+    @ExcelProperty("设备信息")
+    @ColumnWidth(20)
+    private String deviceInfo;
+
+    @Column(name = "ip_address")
+    @ExcelProperty("IP地址")
+    @ColumnWidth(20)
+    private String ipAddress;
 
     public Integer getId() {
         return id;
@@ -189,6 +216,46 @@ public class User {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public LocalDateTime getLastLoginTime() {
+        return lastLoginTime;
+    }
+
+    public void setLastLoginTime(LocalDateTime lastLoginTime) {
+        this.lastLoginTime = lastLoginTime;
+    }
+
+    public Integer getOnlineStatus() {
+        return onlineStatus;
+    }
+
+    public void setOnlineStatus(Integer onlineStatus) {
+        this.onlineStatus = onlineStatus;
+    }
+
+    public String getWebsocketSessionId() {
+        return websocketSessionId;
+    }
+
+    public void setWebsocketSessionId(String websocketSessionId) {
+        this.websocketSessionId = websocketSessionId;
+    }
+
+    public String getDeviceInfo() {
+        return deviceInfo;
+    }
+
+    public void setDeviceInfo(String deviceInfo) {
+        this.deviceInfo = deviceInfo;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 }
 

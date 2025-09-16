@@ -1,0 +1,229 @@
+<template>
+	<view class="container">
+		<!-- 顶部导航栏 -->
+		<uni-nav-bar 
+			left-icon="back" 
+			title="安全中心" 
+			:border="false"
+			@clickLeft="goBack">
+		</uni-nav-bar>
+
+		<!-- 安全状态 -->
+		<view class="security-status">
+			<uni-icons type="checkmark" size="48" color="#52C41A"></uni-icons>
+			<text class="status-text">账户安全</text>
+			<text class="status-desc">您的账户目前处于安全状态</text>
+		</view>
+
+		<!-- 安全选项列表 -->
+		<view class="security-list">
+			<!-- 修改密码 -->
+			<view class="security-item" @click="navigateTo('/pages/security/change-password')">
+				<uni-icons type="locked" size="24" color="#666"></uni-icons>
+				<text>修改密码</text>
+				<uni-icons type="forward" size="20" color="#ccc"></uni-icons>
+			</view>
+
+			<!-- 绑定手机 -->
+			<view class="security-item" @click="navigateTo('/pages/security/bind-phone')">
+				<uni-icons type="phone" size="24" color="#666"></uni-icons>
+				<text>绑定手机</text>
+				<text class="phone-number">138****8888</text>
+				<uni-icons type="forward" size="20" color="#ccc"></uni-icons>
+			</view>
+
+			<!-- 实名认证 -->
+			<view class="security-item" @click="navigateTo('/pages/security/real-name')">
+				<uni-icons type="person" size="24" color="#666"></uni-icons>
+				<text>实名认证</text>
+				<text class="auth-status">已认证</text>
+				<uni-icons type="forward" size="20" color="#ccc"></uni-icons>
+			</view>
+
+			<!-- 登录设备管理 -->
+			<view class="security-item" @click="navigateTo('/pages/security/devices')">
+				<uni-icons type="settings" size="24" color="#666"></uni-icons>
+				<text>登录设备管理</text>
+				<text class="device-count">3台设备</text>
+				<uni-icons type="forward" size="20" color="#ccc"></uni-icons>
+			</view>
+
+			<!-- 账户保护 -->
+			<view class="security-item" @click="navigateTo('/pages/security/protection')">
+				<uni-icons type="shield" size="24" color="#666"></uni-icons>
+				<text>账户保护</text>
+				<uni-icons type="forward" size="20" color="#ccc"></uni-icons>
+			</view>
+
+			<!-- 安全通知 -->
+			<view class="security-item" @click="navigateTo('/pages/security/notifications')">
+				<uni-icons type="notification" size="24" color="#666"></uni-icons>
+				<text>安全通知</text>
+				<uni-icons type="forward" size="20" color="#ccc"></uni-icons>
+			</view>
+		</view>
+
+		<!-- 安全提示 -->
+		<view class="security-tips">
+			<text class="tips-title">安全提示</text>
+			<text class="tips-content">• 定期修改密码，确保账户安全</text>
+			<text class="tips-content">• 不要将密码告知他人</text>
+			<text class="tips-content">• 在公共设备上使用后请及时退出</text>
+		</view>
+	</view>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const securitySettings = ref({
+	phone: '138****8888',
+	email: 'user@example.com',
+	loginPassword: true,
+	paymentPassword: false,
+	faceID: false,
+	fingerprint: false,
+	loginReminder: true
+})
+
+const goBack = () => {
+	uni.navigateBack()
+}
+
+const navigateTo = (url) => {
+	uni.navigateTo({ url })
+}
+
+// 修改手机号
+const changePhone = () => {
+	uni.navigateTo({ url: '/pages/security/change-phone' })
+}
+
+// 修改邮箱
+const changeEmail = () => {
+	uni.navigateTo({ url: '/pages/security/change-email' })
+}
+
+// 修改登录密码
+const changeLoginPassword = () => {
+	uni.navigateTo({ url: '/pages/security/change-password' })
+}
+
+// 设置支付密码
+const setPaymentPassword = () => {
+	uni.navigateTo({ url: '/pages/security/set-payment-password' })
+}
+
+// 切换生物识别设置
+const toggleBiometric = (type, value) => {
+	securitySettings.value[type] = value
+	uni.showToast({ 
+		title: value ? '已开启' : '已关闭', 
+		icon: 'success' 
+	})
+}
+
+// 切换登录提醒
+const toggleLoginReminder = (value) => {
+	securitySettings.value.loginReminder = value
+	uni.showToast({ 
+		title: value ? '已开启登录提醒' : '已关闭登录提醒', 
+		icon: 'success' 
+	})
+}
+
+// 查看登录记录
+const viewLoginHistory = () => {
+	uni.navigateTo({ url: '/pages/security/login-history' })
+}
+
+// 账号注销
+const accountCancellation = () => {
+	uni.navigateTo({ url: '/pages/security/account-cancellation' })
+}
+</script>
+
+<style>
+.container {
+	background-color: #f8f9fa;
+	min-height: 100vh;
+}
+
+.security-status {
+	background: #fff;
+	margin: 20rpx;
+	border-radius: 20rpx;
+	padding: 40rpx;
+	text-align: center;
+}
+
+.status-text {
+	display: block;
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #52C41A;
+	margin-top: 20rpx;
+}
+
+.status-desc {
+	display: block;
+	font-size: 24rpx;
+	color: #999;
+	margin-top: 10rpx;
+}
+
+.security-list {
+	background: #fff;
+	margin: 20rpx;
+	border-radius: 20rpx;
+	overflow: hidden;
+}
+
+.security-item {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	padding: 30rpx;
+	border-bottom: 1rpx solid #eee;
+	position: relative;
+}
+
+.security-item:last-child {
+	border-bottom: none;
+}
+
+.security-item text {
+	font-size: 28rpx;
+	color: #333;
+	margin-left: 20rpx;
+}
+
+.phone-number, .auth-status, .device-count {
+	font-size: 24rpx;
+	color: #999;
+	margin-right: 10rpx;
+}
+
+.security-tips {
+	background: #E6F7FF;
+	margin: 20rpx;
+	border-radius: 12rpx;
+	padding: 30rpx;
+	border: 1rpx solid #91D5FF;
+}
+
+.tips-title {
+	display: block;
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #1890FF;
+	margin-bottom: 15rpx;
+}
+
+.tips-content {
+	display: block;
+	font-size: 24rpx;
+	color: #666;
+	margin-bottom: 8rpx;
+}
+</style>

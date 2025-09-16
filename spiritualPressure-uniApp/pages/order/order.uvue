@@ -1,0 +1,330 @@
+<template>
+	<view class="container">
+		<!-- 订单状态筛选 -->
+		<view class="status-tabs">
+			<view 
+				class="status-tab" 
+				:class="{ active: activeStatus === 'all' }"
+				@click="changeStatus('all')"
+			>全部</view>
+			<view 
+				class="status-tab" 
+				:class="{ active: activeStatus === 'unpaid' }"
+				@click="changeStatus('unpaid')"
+			>待支付</view>
+			<view 
+				class="status-tab" 
+				:class="{ active: activeStatus === 'paid' }"
+				@click="changeStatus('paid')"
+			>待使用</view>
+			<view 
+				class="status-tab" 
+				:class="{ active: activeStatus === 'completed' }"
+				@click="changeStatus('completed')"
+			>已完成</view>
+		</view>
+
+		<!-- 订单列表 -->
+		<scroll-view class="order-list" scroll-y="true">
+			<view class="order-card" v-for="(order, index) in filteredOrders" :key="index">
+				<view class="order-header">
+					<text class="order-no">订单号: {{ order.orderNo }}</text>
+					<text class="order-status" :class="order.status">
+						{{ getStatusText(order.status) }}
+					</text>
+				</view>
+				
+				<view class="order-content">
+					<image class="order-image" :src="order.image" mode="aspectFill"></image>
+					<view class="order-info">
+						<text class="order-title">{{ order.title }}</text>
+						<text class="order-date">{{ order.date }}</text>
+						<text class="order-quantity">数量: {{ order.quantity }}</text>
+						<text class="order-price">¥{{ order.totalPrice }}</text>
+					</view>
+				</view>
+
+				<view class="order-footer">
+					<button 
+						class="action-btn" 
+						v-if="order.status === 'unpaid'" 
+						@click="payOrder(order)"
+					>立即支付</button>
+					<button 
+						class="action-btn" 
+						v-if="order.status === 'paid'" 
+						@click="useOrder(order)"
+					>立即使用</button>
+					<button 
+						class="action-btn secondary" 
+						v-if="order.status === 'completed'" 
+						@click="viewDetail(order)"
+					>查看详情</button>
+					<button 
+						class="action-btn secondary" 
+						v-if="order.status === 'unpaid'" 
+						@click="cancelOrder(order)"
+					>取消订单</button>
+				</view>
+			</view>
+
+			<view class="empty-state" v-if="filteredOrders.length === 0">
+				<uni-icons type="list" size="60" color="#ccc"></uni-icons>
+				<text class="empty-text">暂无订单</text>
+			</view>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const activeStatus = ref('all')
+const orders = ref([
+	{
+		orderNo: '20231215001',
+		title: '张家界国家森林公园门票',
+		date: '2023-12-20',
+		quantity: 2,
+		totalPrice: 456,
+		status: 'unpaid',
+		image: '/static/attraction/zhangjiajie.jpg'
+	},
+	{
+		orderNo: '20231214002',
+		title: '希尔顿大酒店豪华套房',
+		date: '2023-12-18 至 2023-12-20',
+		quantity: 1,
+		totalPrice: 1299,
+		status: 'paid',
+		image: '/static/hotel/hilton.jpg'
+	},
+	{
+		orderNo: '20231213003',
+		title: '四川火锅双人套餐',
+		date: '2023-12-15',
+		quantity: 1,
+		totalPrice: 256,
+		status: 'completed',
+		image: '/static/food/hotpot.jpg'
+	},
+	{
+		orderNo: '20231212004',
+		title: '九寨沟门票+观光车',
+		date: '2023-12-22',
+		quantity: 3,
+		totalPrice: 684,
+		status: 'completed',
+		image: '/static/attraction/jiuzhaigou.jpg'
+	}
+])
+
+const filteredOrders = computed(() => {
+	if (activeStatus.value === 'all') {
+		return orders.value
+	}
+	return orders.value.filter(order => order.status === activeStatus.value)
+})
+
+const changeStatus = (status) => {
+	activeStatus.value = status
+}
+
+const getStatusText = (status) => {
+	const statusMap = {
+		'unpaid': '待支付',
+		'paid': '待使用',
+		'completed': '已完成',
+		'cancelled': '已取消'
+	}
+	return statusMap[status] || '未知状态'
+}
+
+const payOrder = (order) => {
+	uni.showModal({
+		title: '支付确认',
+		content: `确认支付订单 ${order.orderNo} 金额 ¥${order.totalPrice} 吗？`,
+		success: (res) => {
+			if (res.confirm) {
+				uni.showToast({ title: '支付成功', icon: 'success' })
+				order.status = 'paid'
+			}
+		}
+	})
+}
+
+const useOrder = (order) => {
+	uni.showToast({ title: '使用成功', icon: 'success' })
+	order.status = 'completed'
+}
+
+const cancelOrder = (order) => {
+	uni.showModal({
+		title: '取消确认',
+		content: '确定要取消此订单吗？',
+		success: (res) => {
+			if (res.confirm) {
+				uni.showToast({ title: '订单已取消', icon: 'success' })
+				order.status = 'cancelled'
+			}
+		}
+	})
+}
+
+const viewDetail = (order) => {
+	uni.navigateTo({
+		url: `/pages/order/detail?id=${order.orderNo}`
+	})
+}
+</script>
+
+<style>
+.container {
+	padding: 20rpx;
+	background-color: #f8f9fa;
+}
+
+.status-tabs {
+	display: flex;
+	flex-direction: row;
+	background: #fff;
+	border-radius: 12rpx;
+	margin-bottom: 20rpx;
+	padding: 20rpx;
+}
+
+.status-tab {
+	flex: 1;
+	text-align: center;
+	padding: 16rpx 0;
+	font-size: 28rpx;
+	color: #666;
+	border-radius: 8rpx;
+}
+
+.status-tab.active {
+	background: #4A90E2;
+	color: #fff;
+}
+
+.order-list {
+	height: calc(100vh - 160rpx);
+}
+
+.order-card {
+	background: #fff;
+	border-radius: 20rpx;
+	margin-bottom: 20rpx;
+	padding: 24rpx;
+	box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.order-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+	margin-bottom: 20rpx;
+	padding-bottom: 16rpx;
+	border-bottom: 1rpx solid #eee;
+}
+
+.order-no {
+	font-size: 24rpx;
+	color: #999;
+}
+
+.order-status {
+	font-size: 24rpx;
+	font-weight: bold;
+}
+
+.order-status.unpaid {
+	color: #FF6B00;
+}
+
+.order-status.paid {
+	color: #4A90E2;
+}
+
+.order-status.completed {
+	color: #52C41A;
+}
+
+.order-status.cancelled {
+	color: #999;
+}
+
+.order-content {
+	display: flex;
+	margin-bottom: 20rpx;
+}
+
+.order-image {
+	width: 160rpx;
+	height: 120rpx;
+	border-radius: 12rpx;
+	margin-right: 20rpx;
+}
+
+.order-info {
+	flex: 1;
+}
+
+.order-title {
+	font-size: 30rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 8rpx;
+}
+
+.order-date, .order-quantity {
+	font-size: 24rpx;
+	color: #666;
+	display: block;
+	margin-bottom: 4rpx;
+}
+
+.order-price {
+	font-size: 28rpx;
+	color: #FF6B00;
+	font-weight: bold;
+	display: block;
+	margin-top: 8rpx;
+}
+
+.order-footer {
+	display: flex;
+	justify-content: flex-end;
+	flex-direction: row;
+	gap: 16rpx;
+}
+
+.action-btn {
+	padding: 12rpx 24rpx;
+	font-size: 24rpx;
+	border-radius: 20rpx;
+	border: none;
+	background: #4A90E2;
+	color: #fff;
+}
+
+.action-btn.secondary {
+	background: #fff;
+	color: #4A90E2;
+	border: 1rpx solid #4A90E2;
+}
+
+.empty-state {
+	text-align: center;
+	padding: 100rpx 0;
+	color: #999;
+}
+
+.empty-text {
+	font-size: 28rpx;
+	margin-top: 20rpx;
+	display: block;
+}
+</style>

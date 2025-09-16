@@ -1,0 +1,522 @@
+<template>
+	<view class="container">
+		<!-- 顶部导航 -->
+		<view class="nav-header">
+			<uni-icons type="arrow-left" size="28" color="#333" @click="goBack"></uni-icons>
+			<text class="nav-title">收货地址</text>
+			<view style="width: 28rpx"></view>
+		</view>
+
+		<!-- 地址列表 -->
+		<scroll-view class="address-list" scroll-y="true">
+			<view class="empty-state" v-if="addressList.length === 0">
+				<uni-icons type="map-pin" size="80" color="#ccc"></uni-icons>
+				<text class="empty-text">暂无收货地址</text>
+				<text class="empty-desc">添加收货地址，方便购物时使用</text>
+			</view>
+
+			<view 
+				class="address-item" 
+				v-for="(address, index) in addressList" 
+				:key="index"
+				@click="selectAddress(address)"
+			>
+				<view class="address-info">
+					<view class="address-header">
+						<text class="name">{{ address.name }}</text>
+						<text class="phone">{{ address.phone }}</text>
+						<text class="default-tag" v-if="address.isDefault">默认</text>
+					</view>
+					<text class="address-detail">{{ address.province }}{{ address.city }}{{ address.district }}{{ address.detail }}</text>
+				</view>
+				
+				<view class="address-actions">
+					<view class="action-item" @click.stop="setDefault(address)">
+						<uni-icons 
+							:type="address.isDefault ? 'check-circle-filled' : 'circle'" 
+							:color="address.isDefault ? '#4A90E2' : '#ccc'"
+							size="20"
+						></uni-icons>
+						<text>设为默认</text>
+					</view>
+					
+					<view class="action-item" @click.stop="editAddress(address)">
+						<uni-icons type="compose" size="20" color="#666"></uni-icons>
+						<text>编辑</text>
+					</view>
+					
+					<view class="action-item" @click.stop="deleteAddress(address)">
+						<uni-icons type="trash" size="20" color="#FF6B6B"></uni-icons>
+						<text>删除</text>
+					</view>
+				</view>
+			</view>
+		</scroll-view>
+
+		<!-- 添加地址按钮 -->
+		<view class="add-address-btn" @click="addAddress">
+			<uni-icons type="plus" size="20" color="#fff"></uni-icons>
+			<text>添加收货地址</text>
+		</view>
+
+		<!-- 地址编辑弹窗 -->
+		<view class="popup-mask" v-if="showPopup" @click="closePopup">
+			<view class="popup-content" @click.stop>
+				<view class="popup-header">
+					<text class="popup-title">{{ isEditing ? '编辑地址' : '添加地址' }}</text>
+					<uni-icons type="close" size="24" color="#999" @click="closePopup"></uni-icons>
+				</view>
+				
+				<view class="form">
+					<view class="form-item">
+						<text class="label">收货人</text>
+						<input 
+							class="input" 
+							v-model="formData.name" 
+							placeholder="请输入收货人姓名"
+						/>
+					</view>
+					
+					<view class="form-item">
+						<text class="label">手机号码</text>
+						<input 
+							class="input" 
+							v-model="formData.phone" 
+							placeholder="请输入手机号码"
+							type="number"
+						/>
+					</view>
+					
+					<view class="form-item">
+						<text class="label">所在地区</text>
+						<picker 
+							mode="region" 
+							@change="onRegionChange"
+							:value="[formData.province, formData.city, formData.district]"
+						>
+							<view class="picker">
+								<text class="picker-text" v-if="formData.province">{{ formData.province }}{{ formData.city }}{{ formData.district }}</text>
+								<text class="picker-placeholder" v-else>请选择所在地区</text>
+							</view>
+						</picker>
+					</view>
+					
+					<view class="form-item">
+						<text class="label">详细地址</text>
+						<textarea 
+							class="textarea" 
+							v-model="formData.detail" 
+							placeholder="请输入详细地址"
+							maxlength="100"
+						/>
+					</view>
+					
+					<view class="form-item">
+						<view class="checkbox-item" @click="formData.isDefault = !formData.isDefault">
+							<uni-icons 
+								:type="formData.isDefault ? 'check-circle-filled' : 'circle'" 
+								:color="formData.isDefault ? '#4A90E2' : '#ccc'"
+								size="20"
+							></uni-icons>
+							<text>设为默认地址</text>
+						</view>
+					</view>
+					
+					<button class="submit-btn" @click="submitAddress">保存地址</button>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const addressList = ref([
+	{
+		id: 1,
+		name: '张三',
+		phone: '13800138000',
+		province: '北京市',
+		city: '北京市',
+		district: '朝阳区',
+		detail: '建国门外大街1号国贸大厦A座',
+		isDefault: true
+	},
+	{
+		id: 2,
+		name: '李四',
+		phone: '13900139000',
+		province: '上海市',
+		city: '上海市',
+		district: '浦东新区',
+		detail: '陆家嘴环路1000号',
+		isDefault: false
+	}
+])
+
+const formData = ref({
+	id: null,
+	name: '',
+	phone: '',
+	province: '',
+	city: '',
+	district: '',
+	detail: '',
+	isDefault: false
+})
+
+const isEditing = ref(false)
+const editingIndex = ref(-1)
+const showPopup = ref(false)
+
+const goBack = () => {
+	uni.navigateBack()
+}
+
+const selectAddress = (address) => {
+	// 选择地址逻辑，可以用于订单确认页面
+	uni.$emit('addressSelected', address)
+	uni.navigateBack()
+}
+
+const setDefault = (address) => {
+	addressList.value.forEach(item => {
+		item.isDefault = item.id === address.id
+	})
+	uni.showToast({ title: '设置默认地址成功', icon: 'success' })
+}
+
+const editAddress = (address) => {
+	isEditing.value = true
+	editingIndex.value = addressList.value.findIndex(item => item.id === address.id)
+	formData.value = { ...address }
+	showPopup.value = true
+}
+
+const deleteAddress = (address) => {
+	uni.showModal({
+		title: '删除地址',
+				content: '确定要删除这个收货地址吗？',
+					success: (res) => {
+						if (res.confirm) {
+							addressList.value = addressList.value.filter(item => item.id !== address.id)
+							uni.showToast({ title: '删除成功', icon: 'success' })
+						}
+					}
+				})
+			}
+			
+const addAddress = () => {
+	isEditing.value = false
+	editingIndex.value = -1
+	formData.value = {
+		id: null,
+		name: '',
+		phone: '',
+		province: '',
+		city: '',
+		district: '',
+		detail: '',
+		isDefault: false
+	}
+	showPopup.value = true
+}
+
+const closePopup = () => {
+	showPopup.value = false
+}
+
+const onRegionChange = (e) => {
+	const [province, city, district] = e.detail.value
+	formData.value.province = province
+	formData.value.city = city
+	formData.value.district = district
+}
+
+const submitAddress = () => {
+	if (!formData.value.name) {
+		uni.showToast({ title: '请输入收货人姓名', icon: 'none' })
+		return
+	}
+	
+	if (!formData.value.phone || !/^1[3-9]\d{9}$/.test(formData.value.phone)) {
+		uni.showToast({ title: '请输入正确的手机号码', icon: 'none' })
+		return
+	}
+	
+	if (!formData.value.province) {
+		uni.showToast({ title: '请选择所在地区', icon: 'none' })
+		return
+	}
+	
+	if (!formData.value.detail) {
+		uni.showToast({ title: '请输入详细地址', icon: 'none' })
+		return
+	}
+	
+	if (isEditing.value) {
+		// 编辑模式
+		addressList.value[editingIndex.value] = { ...formData.value }
+		uni.showToast({ title: '地址修改成功', icon: 'success' })
+	} else {
+		// 新增模式
+		const newAddress = {
+			...formData.value,
+			id: Date.now()
+		}
+		addressList.value.unshift(newAddress)
+		uni.showToast({ title: '地址添加成功', icon: 'success' })
+	}
+	
+	// 如果设置为默认地址，取消其他默认
+	if (formData.value.isDefault) {
+		addressList.value.forEach(item => {
+			if (item.id !== formData.value.id) {
+				item.isDefault = false
+			}
+		})
+	}
+	
+	closePopup()
+}
+</script>
+
+<style>
+.container {
+	min-height: 100vh;
+	background: #f8f9fa;
+	padding-bottom: 120rpx;
+}
+
+.nav-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 40rpx 32rpx;
+	background: #fff;
+	border-bottom: 1rpx solid #eee;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
+.nav-title {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #333;
+}
+
+.address-list {
+	height: calc(100vh - 200rpx);
+	padding: 20rpx 32rpx;
+}
+
+.empty-state {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 100rpx 0;
+}
+
+.empty-text {
+	font-size: 32rpx;
+	color: #999;
+	margin-top: 20rpx;
+}
+
+.empty-desc {
+	font-size: 24rpx;
+	color: #ccc;
+	margin-top: 12rpx;
+}
+
+.address-item {
+	background: #fff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 20rpx;
+	box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.address-header {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	margin-bottom: 16rpx;
+}
+
+.name {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333;
+	margin-right: 20rpx;
+}
+
+.phone {
+	font-size: 26rpx;
+	color: #666;
+	margin-right: 20rpx;
+}
+
+.default-tag {
+	background: #4A90E2;
+	color: #fff;
+	font-size: 20rpx;
+	padding: 4rpx 12rpx;
+	border-radius: 12rpx;
+}
+
+.address-detail {
+	font-size: 26rpx;
+	color: #666;
+	line-height: 1.5;
+}
+
+.address-actions {
+	display: flex;
+	justify-content: space-between;
+	flex-direction: row;
+	margin-top: 24rpx;
+	padding-top: 20rpx;
+	border-top: 1rpx solid #eee;
+}
+
+.action-item {
+	display: flex;
+	align-items: center;
+	gap: 8rpx;
+	font-size: 24rpx;
+	color: #666;
+}
+
+.add-address-btn {
+	position: fixed;
+	bottom: 40rpx;
+	left: 32rpx;
+	right: 32rpx;
+	background: #4A90E2;
+	color: #fff;
+	padding: 24rpx;
+	border-radius: 30rpx;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 12rpx;
+	box-shadow: 0 4rpx 12rpx rgba(74, 144, 226, 0.3);
+}
+
+.popup-content {
+	background: #fff;
+	border-radius: 24rpx 24rpx 0 0;
+	padding: 40rpx 32rpx;
+}
+
+.popup-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 32rpx;
+}
+
+.popup-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+}
+
+.form-item {
+	margin-bottom: 24rpx;
+}
+
+.label {
+	display: block;
+	font-size: 28rpx;
+	color: #333;
+	margin-bottom: 12rpx;
+	font-weight: 500;
+}
+
+.input, .textarea {
+	background: #f8f9fa;
+	border: 1rpx solid #ddd;
+	border-radius: 12rpx;
+	padding: 20rpx;
+	font-size: 28rpx;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.textarea {
+	height: 120rpx;
+}
+
+.picker {
+	background: #f8f9fa;
+	border: 1rpx solid #ddd;
+	border-radius: 12rpx;
+	padding: 20rpx;
+}
+
+.picker-text {
+	font-size: 28rpx;
+	color: #333;
+}
+
+.picker-placeholder {
+	font-size: 28rpx;
+	color: #999;
+}
+
+.checkbox-item {
+	display: flex;
+	align-items: center;
+	gap: 12rpx;
+	font-size: 26rpx;
+	color: #666;
+}
+
+.submit-btn {
+	background: #4A90E2;
+	color: #fff;
+	padding: 24rpx;
+	border-radius: 12rpx;
+	font-size: 28rpx;
+	margin-top: 20rpx;
+	border: none;
+}
+
+.popup-mask {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	z-index: 999;
+}
+
+.popup-content {
+	background: #fff;
+	border-radius: 24rpx 24rpx 0 0;
+	padding: 40rpx 32rpx;
+	width: 100%;
+	max-height: 80vh;
+	overflow-y: auto;
+	animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+	from {
+		transform: translateY(100%);
+	}
+	to {
+		transform: translateY(0);
+	}
+}
+</style>

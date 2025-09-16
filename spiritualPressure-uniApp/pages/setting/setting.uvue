@@ -1,0 +1,158 @@
+<template>
+	<view class="container">
+		<!-- 顶部导航栏 -->
+		<uni-nav-bar 
+			left-icon="back" 
+			title="设置" 
+			:border="false"
+			@clickLeft="goBack">
+		</uni-nav-bar>
+
+		<!-- 设置选项列表 -->
+		<view class="setting-list">
+			<!-- 通知设置 -->
+			<view class="setting-item" @click="navigateTo('/pages/setting/notification')">
+				<uni-icons type="notification" size="24" color="#666"></uni-icons>
+				<text>通知设置</text>
+				<uni-icons type="forward" size="20" color="#ccc"></uni-icons>
+			</view>
+
+			<!-- 隐私设置 -->
+			<view class="setting-item" @click="navigateTo('/pages/setting/privacy')">
+				<uni-icons type="locked" size="24" color="#666"></uni-icons>
+				<text>隐私设置</text>
+				<uni-icons type="forward" size="20" color="#ccc"></uni-icons>
+			</view>
+
+			<!-- 语言设置 -->
+			<view class="setting-item" @click="navigateTo('/pages/setting/language')">
+				<uni-icons type="compose" size="24" color="#666"></uni-icons>
+				<text>语言设置</text>
+				<uni-icons type="forward" size="20" color="#ccc"></uni-icons>
+			</view>
+
+			<!-- 清除缓存 -->
+			<view class="setting-item" @click="clearCache">
+				<uni-icons type="trash" size="24" color="#666"></uni-icons>
+				<text>清除缓存</text>
+				<text class="cache-size">102.4MB</text>
+			</view>
+
+			<!-- 关于我们 -->
+			<view class="setting-item" @click="navigateTo('/pages/setting/about')">
+				<uni-icons type="info" size="24" color="#666"></uni-icons>
+				<text>关于我们</text>
+				<uni-icons type="forward" size="20" color="#ccc"></uni-icons>
+			</view>
+
+			<!-- 版本信息 -->
+			<view class="setting-item">
+				<uni-icons type="gear" size="24" color="#666"></uni-icons>
+				<text>版本信息</text>
+				<text class="version">v1.0.0</text>
+			</view>
+		</view>
+
+		<!-- 退出登录 -->
+		<view class="logout-section">
+			<button class="logout-btn" @click="logout">退出登录</button>
+		</view>
+	</view>
+</template>
+
+<script setup>
+
+const goBack = () => {
+	uni.navigateBack()
+}
+
+const navigateTo = (url) => {
+	uni.navigateTo({ url })
+}
+
+const clearCache = () => {
+	uni.showModal({
+		title: '清除缓存',
+		content: '确定要清除所有缓存数据吗？',
+		success: (res) => {
+			if (res.confirm) {
+				uni.showLoading({ title: '清除中...' })
+				setTimeout(() => {
+					uni.hideLoading()
+					uni.showToast({ title: '清除成功', icon: 'success' })
+				}, 1500)
+			}
+		}
+	})
+}
+
+const logout = () => {
+	uni.showModal({
+		title: '确认退出',
+		content: '确定要退出登录吗？',
+		success: (res) => {
+			if (res.confirm) {
+				uni.removeStorageSync('token')
+				uni.removeStorageSync('userInfo')
+				uni.showToast({ title: '退出成功', icon: 'success' })
+				uni.reLaunch({ url: '/pages/login/login' })
+			}
+		}
+	})
+}
+</script>
+
+<style>
+.container {
+	background-color: #f8f9fa;
+	min-height: 100vh;
+}
+
+.setting-list {
+	background: #fff;
+	margin: 20rpx;
+	border-radius: 20rpx;
+	overflow: hidden;
+}
+
+.setting-item {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	padding: 30rpx;
+	border-bottom: 1rpx solid #eee;
+	position: relative;
+}
+
+.setting-item:last-child {
+	border-bottom: none;
+}
+
+.setting-item text {
+	font-size: 28rpx;
+	color: #333;
+	margin-left: 20rpx;
+}
+
+.cache-size, .version {
+	font-size: 24rpx;
+	color: #999;
+	margin-right: 10rpx;
+}
+
+.logout-section {
+	margin: 40rpx 20rpx;
+}
+
+.logout-btn {
+	background: #fff;
+	color: #FF6B6B;
+	border: 1rpx solid #FF6B6B;
+	border-radius: 12rpx;
+	font-size: 28rpx;
+}
+
+.logout-btn:active {
+	background: #FFF5F5;
+}
+</style>

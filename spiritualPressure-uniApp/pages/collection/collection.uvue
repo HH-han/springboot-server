@@ -1,0 +1,327 @@
+<template>
+	<view class="container">
+		<!-- 顶部导航 -->
+		<view class="nav-header">
+			<uni-icons type="arrow-left" size="28" color="#333" @click="goBack"></uni-icons>
+			<text class="nav-title">我的收藏</text>
+			<view style="width: 28rpx"></view>
+		</view>
+
+		<!-- 收藏分类 -->
+		<view class="category-tabs">
+			<view 
+				class="tab-item" 
+				:class="{ active: activeTab === 'attraction' }"
+				@click="switchTab('attraction')"
+			>
+				<text>景点</text>
+			</view>
+			<view 
+				class="tab-item" 
+				:class="{ active: activeTab === 'hotel' }"
+				@click="switchTab('hotel')"
+			>
+				<text>酒店</text>
+			</view>
+			<view 
+				class="tab-item" 
+				:class="{ active: activeTab === 'food' }"
+				@click="switchTab('food')"
+			>
+				<text>美食</text>
+			</view>
+			<view 
+				class="tab-item" 
+				:class="{ active: activeTab === 'strategy' }"
+				@click="switchTab('strategy')"
+			>
+				<text>攻略</text>
+			</view>
+		</view>
+
+		<!-- 收藏列表 -->
+		<scroll-view class="collection-list" scroll-y="true">
+			<view class="empty-state" v-if="currentCollections.length === 0">
+				<uni-icons type="heart" size="80" color="#ccc"></uni-icons>
+				<text class="empty-text">暂无收藏内容</text>
+				<text class="empty-desc">快去发现你喜欢的内容吧</text>
+			</view>
+
+			<view class="collection-item" v-for="(item, index) in currentCollections" :key="index">
+				<image class="item-image" :src="item.image" mode="aspectFill" />
+				<view class="item-content">
+					<text class="item-title">{{ item.name }}</text>
+					<text class="item-desc">{{ item.location }}</text>
+					<view class="item-meta">
+						<text class="item-price" v-if="item.price">¥{{ item.price }}</text>
+						<text class="item-rating">{{ item.rating }}分</text>
+					</view>
+				</view>
+				<uni-icons 
+					class="delete-btn" 
+					type="close" 
+					size="20" 
+					color="#999"
+					@click="removeCollection(activeTab, item.id)"
+				></uni-icons>
+			</view>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const activeTab = ref('attraction')
+const collections = ref({
+	attraction: [
+		{
+			id: 1,
+			name: '故宫博物院',
+			image: '/static/images/attraction/gugong.jpg',
+			location: '北京',
+			price: 60,
+			rating: 4.8
+		},
+		{
+			id: 2,
+			name: '长城',
+			image: '/static/images/attraction/changcheng.jpg',
+			location: '北京',
+			price: 45,
+			rating: 4.9
+		}
+	],
+	hotel: [
+		{
+			id: 1,
+			name: '北京王府井希尔顿酒店',
+			image: '/static/images/hotel/hilton.jpg',
+			location: '北京',
+			price: 888,
+			rating: 4.7
+		},
+		{
+			id: 2,
+			name: '上海外滩茂悦大酒店',
+			image: '/static/images/hotel/hyatt.jpg',
+			location: '上海',
+			price: 1200,
+			rating: 4.8
+		}
+	],
+	food: [
+		{
+			id: 1,
+			name: '全聚德烤鸭',
+			image: '/static/images/food/quanjude.jpg',
+			location: '北京',
+			price: 198,
+			rating: 4.6
+		},
+		{
+			id: 2,
+			name: '小杨生煎',
+			image: '/static/images/food/xiaoyang.jpg',
+			location: '上海',
+			price: 25,
+			rating: 4.5
+		}
+	],
+	strategy: []
+})
+
+// 获取当前激活分类的收藏数据
+const currentCollections = computed(() => {
+	return collections.value[activeTab.value] || []
+})
+
+const goBack = () => {
+	uni.navigateBack()
+}
+
+const switchTab = (tab) => {
+	activeTab.value = tab
+}
+
+// 取消收藏
+const removeCollection = (type, id) => {
+	uni.showModal({
+		title: '取消收藏',
+		content: '确定要取消收藏吗？',
+		success: (res) => {
+			if (res.confirm) {
+				collections.value[type] = collections.value[type].filter(item => item.id !== id)
+				uni.showToast({ title: '已取消收藏', icon: 'success' })
+			}
+		}
+	})
+}
+
+// 查看详情
+const viewDetail = (type, item) => {
+	let url = ''
+	switch (type) {
+		case 'attraction':
+			url = `/pages/attraction/detail?id=${item.id}`
+			break
+		case 'hotel':
+			url = `/pages/hotel/detail?id=${item.id}`
+			break
+		case 'food':
+			url = `/pages/food/detail?id=${item.id}`
+			break
+	}
+	uni.navigateTo({ url })
+}
+</script>
+
+<style>
+.container {
+	min-height: 100vh;
+	background: #f8f9fa;
+}
+
+.nav-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+	padding: 40rpx 32rpx;
+	background: #fff;
+	border-bottom: 1rpx solid #eee;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
+.nav-title {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #333;
+}
+
+.category-tabs {
+	display: flex;
+	flex-direction: row;
+	background: #fff;
+	padding: 0 32rpx;
+	border-bottom: 1rpx solid #eee;
+}
+
+.tab-item {
+	flex: 1;
+	text-align: center;
+	padding: 24rpx 0;
+	font-size: 28rpx;
+	color: #666;
+	position: relative;
+}
+
+.tab-item.active {
+	color: #4A90E2;
+	font-weight: bold;
+}
+
+.tab-item.active::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	transform: translateX(-50%);
+	width: 110rpx;
+	height: 4rpx;
+	background: #4A90E2;
+	border-radius: 2rpx;
+}
+
+.collection-list {
+	height: calc(100vh - 200rpx);
+	padding: 20rpx 32rpx;
+}
+
+.empty-state {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 100rpx 0;
+}
+
+.empty-text {
+	font-size: 32rpx;
+	color: #999;
+	margin-top: 20rpx;
+}
+
+.empty-desc {
+	font-size: 24rpx;
+	color: #ccc;
+	margin-top: 12rpx;
+}
+
+.collection-item {
+	display: flex;
+	align-items: center;
+	background: #fff;
+	border-radius: 16rpx;
+	padding: 24rpx;
+	margin-bottom: 20rpx;
+	box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+	position: relative;
+}
+
+.item-image {
+	width: 120rpx;
+	height: 120rpx;
+	border-radius: 12rpx;
+	margin-right: 20rpx;
+}
+
+.item-content {
+	width: 100%;
+	display: flex;
+	flex: 1;
+}
+
+.item-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 8rpx;
+}
+
+.item-desc {
+	font-size: 24rpx;
+	color: #666;
+	display: block;
+	margin-bottom: 12rpx;
+}
+
+.item-meta {
+	display: flex;
+	justify-content: space-between;
+	flex-direction: row;
+	align-items: center;
+}
+
+.item-price {
+	font-size: 26rpx;
+	color: #FF6B6B;
+	font-weight: bold;
+}
+
+.item-time {
+	font-size: 22rpx;
+	color: #999;
+}
+
+.delete-btn {
+	position: absolute;
+	top: 20rpx;
+	right: 20rpx;
+	padding: 8rpx;
+	border-radius: 50%;
+	background: #f8f9fa;
+}
+</style>

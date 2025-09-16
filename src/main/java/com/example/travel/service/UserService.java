@@ -101,4 +101,59 @@ public interface UserService {
     User getById(Long id);
 
     List<User> searchUsers(Long id, String username, String nickname, String email, String phone, Long userID);
+
+    // 即时通信相关方法
+    /**
+     * 更新用户最后登录时间
+     * @param id 用户ID
+     * @param lastLoginTime 最后登录时间
+     * @return 更新结果
+     */
+    int updateLastLoginTime(Long id, java.time.LocalDateTime lastLoginTime);
+
+    /**
+     * 更新用户在线状态
+     * @param id 用户ID
+     * @param onlineStatus 在线状态
+     * @return 更新结果
+     */
+    int updateOnlineStatus(Long id, Integer onlineStatus);
+
+    /**
+     * 更新WebSocket会话ID
+     * @param id 用户ID
+     * @param websocketSessionId WebSocket会话ID
+     * @return 更新结果
+     */
+    int updateWebsocketSessionId(Long id, String websocketSessionId);
+
+    /**
+     * 更新设备信息
+     * @param id 用户ID
+     * @param deviceInfo 设备信息
+     * @return 更新结果
+     */
+    int updateDeviceInfo(Long id, String deviceInfo);
+
+    /**
+     * 更新IP地址
+     * @param id 用户ID
+     * @param ipAddress IP地址
+     * @return 更新结果
+     */
+    int updateIpAddress(Long id, String ipAddress);
+
+    /**
+     * 根据在线状态查询用户
+     * @param onlineStatus 在线状态
+     * @return 用户列表
+     */
+    List<User> findByOnlineStatus(Integer onlineStatus);
+
+    /**
+     * 根据WebSocket会话ID查询用户
+     * @param websocketSessionId WebSocket会话ID
+     * @return 用户对象
+     */
+    User findByWebsocketSessionId(String websocketSessionId);
 }
