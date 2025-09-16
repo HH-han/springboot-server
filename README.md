@@ -11,6 +11,7 @@ SpiritualPressure 是一个基于 Spring Boot 3.4.3 和 Vue 3 的全栈旅游管
 - **安全**: Spring Security + JWT
 - **数据库**: MySQL + MyBatis + MyBatis通用Mapper
 - **缓存**: Redis + Spring Data Redis
+- **实时通信**: WebSocket + STOMP协议
 - **API文档**: Springdoc OpenAPI (Swagger)
 - **验证**: Spring Boot Validation
 - **Excel处理**: EasyExcel
@@ -36,7 +37,7 @@ spiritualPressure/
 ├── src/main/java/com/example/travel/
 │   ├── aspect/           # AOP切面（日志、限流）
 │   ├── common/           # 通用类（结果封装、支付方式）
-│   ├── config/          # 配置类（安全、Redis、MyBatis、Swagger）
+│   ├── config/          # 配置类（安全、Redis、MyBatis、Swagger、WebSocket）
 │   ├── controller/      # 控制器层（20+个业务控制器）
 │   ├── dao/             # 数据访问层
 │   ├── dto/             # 数据传输对象
@@ -46,7 +47,8 @@ spiritualPressure/
 │   ├── handler/         # 类型处理器
 │   ├── listener/        # 监听器
 │   ├── service/         # 服务层接口和实现
-│   └── utils/           # 工具类（JWT、Redis、文件、邮件等）
+│   ├── utils/           # 工具类（JWT、Redis、文件、邮件等）
+│   └── websocket/       # WebSocket相关（配置、处理器、拦截器）
 ├── src/main/resources/
 │   ├── static/          # 静态资源（Bootstrap、错误页面）
 │   └── mapper/          # MyBatis映射文件
@@ -104,6 +106,14 @@ spiritualPressure/
 - 接口限流保护
 - 数据加密传输
 - 自定义错误页面（401、403）
+
+### 8. 实时通信 (WebSocket)
+- **即时消息**: 用户间实时聊天和群组聊天
+- **通知推送**: 订单状态变更、系统通知实时推送
+- **在线状态**: 用户在线/离线状态实时更新
+- **会话管理**: WebSocket连接建立、维护和关闭
+- **消息持久化**: 聊天消息的存储和检索
+- **心跳检测**: 连接健康状态监测和重连机制
 
 ### 小程序技术
 
