@@ -439,4 +439,20 @@ jwt.expiration=86400000
 如有问题或建议，请提交Issue或联系开发团队。
 
 ## 项目运行截图
+--  登录页面
+![login.png](/src/main/resources/static/image/login.png)
+
+--  注册页面
+![registered.png](/src/main/resources/static/image/registered.png)
+
+--  项目首页
 ![home.png](/src/main/resources/static/image/home.png)
+
+--  支付页面
+![payment.png](/src/main/resources/static/image/payment.png)
+
+--  个人中心
+![personalCenter.png](/src/main/resources/static/image/personalCenter.png)
+
+--  后台管理
+![systemBackground.png](/src/main/resources/static/image/systemBackground.png)
