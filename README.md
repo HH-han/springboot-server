@@ -415,6 +415,27 @@ jwt.secret=your-secret-key
 jwt.expiration=86400000
 ```
 
+### WebSocket配置
+```properties
+# WebSocket端点配置
+websocket.endpoint=/ws
+websocket.allowed-origins=*
+
+# STOMP代理中继配置（如果使用RabbitMQ或ActiveMQ）
+# spring.rabbitmq.host=localhost
+# spring.rabbitmq.port=5672
+# spring.rabbitmq.username=guest
+# spring.rabbitmq.password=guest
+
+# 心跳配置
+websocket.heartbeat.interval=10000
+websocket.heartbeat.timeout=30000
+
+# 消息大小限制
+spring.websocket.max-text-message-size=8192
+spring.websocket.max-binary-message-size=8192
+```
+
 ## 部署说明
 
 ### 后端部署
