@@ -437,3 +437,6 @@ jwt.expiration=86400000
 ## 支持与反馈
 
 如有问题或建议，请提交Issue或联系开发团队。
+
+## 项目运行截图
+![home.png](/src/main/resources/static/image/home.png)
