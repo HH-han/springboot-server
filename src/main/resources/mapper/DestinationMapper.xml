@@ -9,8 +9,14 @@
         <result column="image" property="image"/>
         <result column="price" property="price"/>
         <result column="description" property="description"/>
-        <result column="created_at" property="created_at"></result>
+        <result column="created_at" property="created_at" />
         <result column="cities" property="cities" typeHandler="com.example.travel.handler.TypeHandler"/>
+        <result column="rating" property="rating"/>
+        <result column="badgeText" property="badgeText"/>
+        <result column="status" property="status"/>
+        <result column="isDiscounted" property="isDiscounted"/>
+        <result column="update_at" property="updated_at"/>
+        <result column="isFeatured" property="isFeatured"/>
     </resultMap>
 
     <select id="findBySearchAndCategory" resultMap="destinationResultMap">
@@ -45,14 +51,20 @@
     </select>
     <!-- 新增 -->
     <insert id="insertDestination" parameterType="com.example.travel.entity.Destination">
-        INSERT INTO travel_destination (name, category, image, price, cities, description)
+        INSERT INTO travel_destination (name, category, image, price, cities, description, rating, badgeText, status, isDiscounted, update_at, isFeatured)
         VALUES (
                     #{name},
                     #{category},
-                    #{image},
+                    #{image,jdbcType=VARCHAR},
                     #{price},
                     #{cities, typeHandler=com.example.travel.handler.TypeHandler},
-                    #{description}
+                    #{description,jdbcType=VARCHAR},
+                    #{rating,jdbcType=VARCHAR},
+                    #{badgeText,jdbcType=VARCHAR},
+                    #{status,jdbcType=VARCHAR},
+                    #{isDiscounted,jdbcType=VARCHAR},
+                    #{updated_at,jdbcType=TIMESTAMP},
+                    #{isFeatured,jdbcType=VARCHAR}
                )
     </insert>
 
@@ -62,10 +74,16 @@
         SET
             name = #{name},
             category = #{category},
-            image = #{image},
+            image = #{image,jdbcType=VARCHAR},
             price = #{price,jdbcType=DECIMAL},
             cities = #{cities, typeHandler=com.example.travel.handler.TypeHandler},
-            description = #{description}
+            description = #{description,jdbcType=VARCHAR},
+            rating = #{rating,jdbcType=VARCHAR},
+            badgeText = #{badgeText,jdbcType=VARCHAR},
+            status = #{status,jdbcType=VARCHAR},
+            isDiscounted = #{isDiscounted,jdbcType=VARCHAR},
+            update_at = #{updated_at,jdbcType=TIMESTAMP},
+            isFeatured = #{isFeatured,jdbcType=VARCHAR}
         WHERE id = #{id}
     </update>
 

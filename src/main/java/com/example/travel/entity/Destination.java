@@ -17,6 +17,12 @@ public class Destination {
     private String image;
     private int price;
     private LocalDateTime created_at;
+    private String rating;
+    private String badgeText;
+    private String status;
+    private String isDiscounted;
+    private LocalDateTime updated_at;
+    private String isFeatured;
 
     public Integer getId() {
         return id;
@@ -80,5 +86,53 @@ public class Destination {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public String getBadgeText() {
+        return badgeText;
+    }
+
+    public void setBadgeText(String badgeText) {
+        this.badgeText = badgeText;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getIsDiscounted() {
+        return isDiscounted;
+    }
+
+    public void setIsDiscounted(String isDiscounted) {
+        this.isDiscounted = isDiscounted;
+    }
+
+    public LocalDateTime getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(LocalDateTime updated_at) {
+        this.updated_at = updated_at;
+    }
+
+    public String getIsFeatured() {
+        return isFeatured;
+    }
+
+    public void setIsFeatured(String isFeatured) {
+        this.isFeatured = isFeatured;
     }
 }
