@@ -46,11 +46,19 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
+            .headers(headers -> headers
+                .frameOptions(frameOptions -> frameOptions.disable())
+            )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/public/user/login").permitAll()
                 .requestMatchers("/api/public/user/register").permitAll()
+                .requestMatchers("/voice/**").permitAll()
                 .requestMatchers("/image/**").permitAll()
                 .requestMatchers("/api/public/user/info").authenticated()
+                // 允许OPTIONS请求用于CORS预检
+                .requestMatchers("/voice/info").permitAll()
+                // 允许SockJS静态资源访问
+                .requestMatchers("/websocket/**").permitAll()
                 .anyRequest().permitAll()
             )
             .addFilterBefore(new JwtAuthenticationFilter(userDetailsService(), jwtUtils()), UsernamePasswordAuthenticationFilter.class)
@@ -84,9 +92,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

@@ -53,6 +53,14 @@ public class ConsoleUtils {
                 "│   │   ├── stores/      # 状态管理\n" +
                 "│   │   └── views/       # 页面视图\n" +
                 "│   └── vite.config.js   # Vite配置\n" +
+                "├── spiritualPressure-uniApp/ # 小程序项目\n" +
+                "│   ├── api/      # API接口\n" +
+                "│   ├── components/      # 组件\n" +
+                "│   ├── pages/      # 页面\n" +
+                "│   ├── static/      # 静态资源\n" +
+                "│   ├── store/      # 状态管理\n" +
+                "│   ├── utils/      # 工具类\n" +
+                "│   └── App.vue      # 应用入口\n" +
                 "└── spiritualPressure-db # 数据库脚本\n" +
                 "```");
         System.out.println("🌍" + "后端" + "地址:" + "http://localhost:2025/");

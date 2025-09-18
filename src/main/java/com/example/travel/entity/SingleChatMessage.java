@@ -46,6 +46,9 @@ public class SingleChatMessage {
     @Column(name = "status")
     private Integer status = 0;
     
+    @Column(name = "image")
+    private String image;
+    
     // 关联关系
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id", insertable = false, updatable = false)
@@ -54,6 +57,8 @@ public class SingleChatMessage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id", insertable = false, updatable = false)
     private User receiver;
+
+
 
     public Long getId() {
         return id;
@@ -157,5 +162,33 @@ public class SingleChatMessage {
 
     public void setReceiver(User receiver) {
         this.receiver = receiver;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    // 便捷方法：获取发送者头像
+    public String getSenderAvatar() {
+        return sender != null ? sender.getImage() : null;
+    }
+
+    // 便捷方法：获取接收者头像
+    public String getReceiverAvatar() {
+        return receiver != null ? receiver.getImage() : null;
+    }
+
+    // 便捷方法：获取发送者昵称
+    public String getSenderNickname() {
+        return sender != null ? sender.getNickname() : null;
+    }
+
+    // 便捷方法：获取接收者昵称
+    public String getReceiverNickname() {
+        return receiver != null ? receiver.getNickname() : null;
     }
 }

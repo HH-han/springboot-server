@@ -12,6 +12,23 @@
         <result column="send_time" property="sendTime" />
         <result column="read_time" property="readTime" />
         <result column="status" property="status" />
+        <result column="image" property="image" />
+        
+        <!-- 发送者信息 -->
+        <association property="sender" javaType="com.example.travel.entity.User">
+            <id column="sender_user_id" property="id" />
+            <result column="sender_avatar" property="image" />
+            <result column="sender_nickname" property="nickname" />
+            <result column="sender_username" property="username" />
+        </association>
+        
+        <!-- 接收者信息 -->
+        <association property="receiver" javaType="com.example.travel.entity.User">
+            <id column="receiver_user_id" property="id" />
+            <result column="receiver_avatar" property="image" />
+            <result column="receiver_nickname" property="nickname" />
+            <result column="receiver_username" property="username" />
+        </association>
     </resultMap>
 
     <!-- 根据ID查询消息 -->
@@ -19,9 +36,27 @@
         WHERE id = #{id} </select>
 
     <!-- 根据发送者和接收者查询消息 -->
-    <select id="findByUsers" resultMap="singleChatMessageResultMap"> SELECT * FROM
-        single_chat_messages WHERE (sender_id = #{userId1} AND receiver_id = #{userId2}) OR
-        (sender_id = #{userId2} AND receiver_id = #{userId1}) ORDER BY send_time DESC LIMIT #{limit} </select>
+    <select id="findByUsers" resultMap="singleChatMessageResultMap">
+        SELECT 
+            m.*,
+            sender.id as sender_user_id,
+            sender.avatar_url as sender_avatar,
+            sender.display_name as sender_nickname,
+            sender.username as sender_username,
+            receiver.id as receiver_user_id,
+            receiver.avatar_url as receiver_avatar,
+            receiver.display_name as receiver_nickname,
+            receiver.username as receiver_username
+        FROM single_chat_messages m
+        LEFT JOIN users sender ON m.sender_id = sender.id
+        LEFT JOIN users receiver ON m.receiver_id = receiver.id
+        WHERE (m.sender_id = #{userId1} AND m.receiver_id = #{userId2})
+           OR (m.sender_id = #{userId2} AND m.receiver_id = #{userId1})
+        ORDER BY m.send_time DESC
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
 
     <!-- 根据发送者ID查询消息 -->
     <select id="findBySenderId" resultMap="singleChatMessageResultMap"> SELECT * FROM
@@ -34,8 +69,8 @@
     <!-- 新增消息 -->
     <insert id="insert" parameterType="com.example.travel.entity.SingleChatMessage"
         useGeneratedKeys="true" keyProperty="id"> INSERT INTO single_chat_messages (sender_id,
-        receiver_id, content, message_type, send_time, read_time, status) VALUES (#{senderId},
-        #{receiverId}, #{content}, #{messageType}, #{sendTime}, #{readTime}, #{status}) </insert>
+        receiver_id, content, message_type, send_time, read_time, status, image) VALUES (#{senderId},
+        #{receiverId}, #{content}, #{messageType}, #{sendTime}, #{readTime}, #{status}, #{image}) </insert>
 
     <!-- 更新消息状态 -->
     <update id="updateStatus"> UPDATE single_chat_messages SET status = #{status} WHERE id = #{id} </update>

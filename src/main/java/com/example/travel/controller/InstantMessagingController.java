@@ -1,8 +1,10 @@
 package com.example.travel.controller;
 
 import com.example.travel.common.Result;
+import com.example.travel.dto.FriendRequestWithPhoneDTO;
 import com.example.travel.entity.*;
 import com.example.travel.service.InstantMessagingService;
+import com.example.travel.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,7 @@ import java.util.Map;
 public class InstantMessagingController {
 
     private final InstantMessagingService instantMessagingService;
+    private final UserService userService;
     private final Logger logger = LoggerFactory.getLogger(InstantMessagingController.class);
 
     /**
@@ -34,12 +37,13 @@ public class InstantMessagingController {
             Long receiverId = Long.parseLong(params.get("receiverId").toString());
             String content = params.get("content").toString();
             String messageType = params.getOrDefault("messageType", "text").toString();
+            String image = params.getOrDefault("image", "").toString();
 
             if (content == null || content.trim().isEmpty()) {
                 return Result.error("消息内容不能为空");
             }
 
-            instantMessagingService.sendPrivateMessage(senderId, receiverId, content, messageType);
+            instantMessagingService.sendPrivateMessage(senderId, receiverId, content, messageType ,image);
             logger.info("单聊消息发送成功: {} -> {}", senderId, receiverId);
             return Result.success("消息发送成功");
         } catch (Exception e) {
@@ -88,7 +92,8 @@ public class InstantMessagingController {
                 return Result.error("消息内容不能为空");
             }
 
-            instantMessagingService.sendGroupMessage(groupId, senderId, content, messageType);
+            String image = params.containsKey("image") ? params.get("image").toString() : null;
+            instantMessagingService.sendGroupMessage(senderId, groupId, content, messageType, image);
             logger.info("群聊消息发送成功: 群组{} -> 用户{}", groupId, senderId);
             return Result.success("消息发送成功");
         } catch (Exception e) {
@@ -113,8 +118,12 @@ public class InstantMessagingController {
                 return Result.error("消息内容不能为空");
             }
 
+            // GroupChatMessage实体没有image字段，无法通过实体方式接收图片参数
+            // 请使用参数方式发送群聊图片消息：/im/group/send/param
+            String image = null;
+            
             instantMessagingService.sendGroupMessage(message.getSenderId(), message.getGroupId(), message.getContent(),
-                    message.getMessageType());
+                    message.getMessageType(), image);
             logger.info("群聊消息发送成功: 群组{} -> 用户{}", message.getGroupId(), message.getSenderId());
             return Result.success("消息发送成功", message);
         } catch (Exception e) {
@@ -165,13 +174,28 @@ public class InstantMessagingController {
 
     /**
      * 发送好友申请（参数方式）
+     * 支持通过手机号查找接收者
      */
     @PostMapping("/friend/request/param")
     public Result sendFriendRequestParam(@RequestBody Map<String, Object> params) {
         try {
             Long senderId = Long.parseLong(params.get("senderId").toString());
-            Long receiverId = Long.parseLong(params.get("receiverId").toString());
             String message = params.getOrDefault("message", "").toString();
+            
+            // 支持通过receiverId或receiverPhone查找接收者
+            Long receiverId = null;
+            if (params.containsKey("receiverId")) {
+                receiverId = Long.parseLong(params.get("receiverId").toString());
+            } else if (params.containsKey("receiverPhone")) {
+                String receiverPhone = params.get("receiverPhone").toString();
+                User receiver = userService.findByPhone(receiverPhone);
+                if (receiver == null) {
+                    return Result.error("未找到该手机号对应的用户");
+                }
+                receiverId = receiver.getId().longValue();
+            } else {
+                return Result.error("请提供接收者ID或手机号");
+            }
 
             instantMessagingService.sendFriendRequest(senderId, receiverId, message);
             logger.info("好友申请发送成功: {} -> {}", senderId, receiverId);
@@ -184,20 +208,32 @@ public class InstantMessagingController {
 
     /**
      * 发送好友申请（实体方式）
+     * 支持通过手机号查找接收者
      */
     @PostMapping("/friend/request")
-    public Result sendFriendRequest(@RequestBody FriendRequest friendRequest) {
+    public Result sendFriendRequest(@RequestBody FriendRequestWithPhoneDTO friendRequest) {
         try {
             if (friendRequest.getSenderId() == null) {
                 return Result.error("发送者ID不能为空");
             }
-            if (friendRequest.getReceiverId() == null) {
-                return Result.error("接收者ID不能为空");
+            
+            Long receiverId = null;
+            if (friendRequest.getReceiverId() != null) {
+                receiverId = friendRequest.getReceiverId();
+            } else if (friendRequest.getReceiverPhone() != null && !friendRequest.getReceiverPhone().trim().isEmpty()) {
+                // 通过手机号查找接收者
+                User receiver = userService.findByPhone(friendRequest.getReceiverPhone());
+                if (receiver == null) {
+                    return Result.error("未找到该手机号对应的用户");
+                }
+                receiverId = receiver.getId().longValue();
+            } else {
+                return Result.error("请提供接收者ID或手机号");
             }
 
-            instantMessagingService.sendFriendRequest(friendRequest.getSenderId(), friendRequest.getReceiverId(),
+            instantMessagingService.sendFriendRequest(friendRequest.getSenderId(), receiverId,
                     friendRequest.getMessage());
-            logger.info("好友申请发送成功: {} -> {}", friendRequest.getSenderId(), friendRequest.getReceiverId());
+            logger.info("好友申请发送成功: {} -> {}", friendRequest.getSenderId(), receiverId);
             return Result.success("好友申请发送成功", friendRequest);
         } catch (Exception e) {
             logger.error("发送好友申请失败: {}", e.getMessage(), e);
@@ -220,6 +256,40 @@ public class InstantMessagingController {
         } catch (Exception e) {
             logger.error("处理好友申请失败: {}", e.getMessage(), e);
             return Result.error("处理好友申请失败");
+        }
+    }
+
+    /**
+     * 接受好友申请
+     */
+    @PutMapping("/friend/request/accept")
+    public Result acceptFriendRequest(@RequestBody Map<String, Object> params) {
+        try {
+            Long requestId = Long.parseLong(params.get("requestId").toString());
+
+            instantMessagingService.handleFriendRequest(requestId, 1); // 1表示接受
+            logger.info("好友申请接受成功: 申请ID{}", requestId);
+            return Result.success("好友申请已接受");
+        } catch (Exception e) {
+            logger.error("接受好友申请失败: {}", e.getMessage(), e);
+            return Result.error("接受好友申请失败");
+        }
+    }
+
+    /**
+     * 拒绝好友申请
+     */
+    @PutMapping("/friend/request/reject")
+    public Result rejectFriendRequest(@RequestBody Map<String, Object> params) {
+        try {
+            Long requestId = Long.parseLong(params.get("requestId").toString());
+
+            instantMessagingService.handleFriendRequest(requestId, 2); // 2表示拒绝
+            logger.info("好友申请拒绝成功: 申请ID{}", requestId);
+            return Result.success("好友申请已拒绝");
+        } catch (Exception e) {
+            logger.error("拒绝好友申请失败: {}", e.getMessage(), e);
+            return Result.error("拒绝好友申请失败");
         }
     }
 

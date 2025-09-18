@@ -4,6 +4,7 @@ import com.example.travel.dao.*;
 import com.example.travel.dto.ChatMessage;
 import com.example.travel.entity.*;
 import com.example.travel.service.InstantMessagingService;
+import com.example.travel.utils.ImageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -50,14 +51,55 @@ public class InstantMessagingServiceImpl implements InstantMessagingService {
     
     @Override
     @Transactional
-    public void sendPrivateMessage(Long senderId, Long receiverId, String content, String messageType) {
+    public void sendPrivateMessage(Long senderId, Long receiverId, String content, String messageType ,String image) {
+        // 验证接收者是否存在
+        User receiver = userDao.findById(receiverId);
+        if (receiver == null) {
+            throw new IllegalArgumentException("接收者不存在，ID: " + receiverId);
+        }
+        
+        String finalContent = content;
+        String finalImage = null; // 默认设为null，避免存储原始base64数据
+        
+        // 处理图片消息 - 无论通过content还是image参数传递，都只存储处理后的URL
+        if ("IMAGE".equals(messageType)) {
+            String imageData = null;
+            
+            // 检查是否通过image参数传递图片
+            if (image != null && image.startsWith("data:image")) {
+                imageData = image;
+            }
+            // 检查是否通过content参数传递图片
+            else if (content != null && content.startsWith("data:image")) {
+                imageData = content;
+            }
+            
+            if (imageData != null) {
+                try {
+                    String imageUrl = ImageUtils.processBase64Image(imageData);
+                    finalContent = imageUrl; // 将content设置为图片URL
+                    finalImage = imageUrl; // 将image也设置为图片URL
+                } catch (Exception e) {
+                    throw new RuntimeException("图片处理失败: " + e.getMessage());
+                }
+            }
+        } else {
+            // 对于非图片消息，如果image参数包含base64数据，则忽略它
+            if (image != null && image.startsWith("data:image")) {
+                finalImage = null; // 不存储base64数据到数据库
+            } else {
+                finalImage = image; // 对于普通文本或其他类型的image参数，正常存储
+            }
+        }
+        
         // 保存消息到数据库
         SingleChatMessage message = new SingleChatMessage();
         message.setSenderId(senderId);
         message.setReceiverId(receiverId);
-        message.setContent(content);
+        message.setContent(finalContent);
         message.setMessageType(messageType);
         message.setSendTime(LocalDateTime.now());
+        message.setImage(finalImage);
         message.setStatus(1); // 已发送
         
         singleChatMessageDao.insert(message);
@@ -72,18 +114,43 @@ public class InstantMessagingServiceImpl implements InstantMessagingService {
     
     @Override
     @Transactional
-    public void sendGroupMessage(Long senderId, Long groupId, String content, String messageType) {
+    public void sendGroupMessage(Long senderId, Long groupId, String content, String messageType, String image) {
         // 检查用户是否在群组中
         GroupMember member = groupMemberDao.findByGroupIdAndUserId(groupId, senderId);
         if (member == null || member.getStatus() != 1) {
             throw new IllegalArgumentException("User is not a member of this group");
         }
         
+        String finalContent = content;
+        
+        // 处理图片消息 - 无论通过content还是image参数传递，都只存储处理后的URL
+        if ("IMAGE".equals(messageType)) {
+            String imageData = null;
+            
+            // 检查是否通过image参数传递图片
+            if (image != null && image.startsWith("data:image")) {
+                imageData = image;
+            }
+            // 检查是否通过content参数传递图片
+            else if (content != null && content.startsWith("data:image")) {
+                imageData = content;
+            }
+            
+            if (imageData != null) {
+                try {
+                    String imageUrl = ImageUtils.processBase64Image(imageData);
+                    finalContent = imageUrl; // 将content设置为图片URL
+                } catch (Exception e) {
+                    throw new RuntimeException("图片处理失败: " + e.getMessage());
+                }
+            }
+        }
+        
         // 保存消息到数据库
         GroupChatMessage message = new GroupChatMessage();
         message.setGroupId(groupId);
         message.setSenderId(senderId);
-        message.setContent(content);
+        message.setContent(finalContent);
         message.setMessageType(messageType);
         message.setSendTime(LocalDateTime.now());
         message.setStatus(1); // 正常
@@ -136,6 +203,12 @@ public class InstantMessagingServiceImpl implements InstantMessagingService {
     @Override
     @Transactional
     public void sendFriendRequest(Long senderId, Long receiverId, String message) {
+        // 验证接收者是否存在
+        User receiver = userDao.findById(receiverId);
+        if (receiver == null) {
+            throw new IllegalArgumentException("接收者不存在，ID: " + receiverId);
+        }
+        
         FriendRequest request = new FriendRequest();
         request.setSenderId(senderId);
         request.setReceiverId(receiverId);
@@ -164,23 +237,32 @@ public class InstantMessagingServiceImpl implements InstantMessagingService {
             friendRequestDao.update(request);
             
             if (status == 1) { // 同意好友申请
-                // 建立双向好友关系
-                UserFriend friendship1 = new UserFriend();
-                friendship1.setUserId(request.getSenderId());
-                friendship1.setFriendId(request.getReceiverId());
-                friendship1.setRelationStatus(1);
-                friendship1.setCreatedAt(LocalDateTime.now());
-                friendship1.setUpdatedAt(LocalDateTime.now());
+                // 检查是否已存在好友关系，避免重复插入
+                UserFriend existingFriendship1 = userFriendDao.findByUserIdAndFriendId(
+                    request.getSenderId(), request.getReceiverId());
+                UserFriend existingFriendship2 = userFriendDao.findByUserIdAndFriendId(
+                    request.getReceiverId(), request.getSenderId());
                 
-                UserFriend friendship2 = new UserFriend();
-                friendship2.setUserId(request.getReceiverId());
-                friendship2.setFriendId(request.getSenderId());
-                friendship2.setRelationStatus(1);
-                friendship2.setCreatedAt(LocalDateTime.now());
-                friendship2.setUpdatedAt(LocalDateTime.now());
+                // 建立双向好友关系（如果不存在）
+                if (existingFriendship1 == null) {
+                    UserFriend friendship1 = new UserFriend();
+                    friendship1.setUserId(request.getSenderId());
+                    friendship1.setFriendId(request.getReceiverId());
+                    friendship1.setRelationStatus(1);
+                    friendship1.setCreatedAt(LocalDateTime.now());
+                    friendship1.setUpdatedAt(LocalDateTime.now());
+                    userFriendDao.insert(friendship1);
+                }
                 
-                userFriendDao.insert(friendship1);
-                userFriendDao.insert(friendship2);
+                if (existingFriendship2 == null) {
+                    UserFriend friendship2 = new UserFriend();
+                    friendship2.setUserId(request.getReceiverId());
+                    friendship2.setFriendId(request.getSenderId());
+                    friendship2.setRelationStatus(1);
+                    friendship2.setCreatedAt(LocalDateTime.now());
+                    friendship2.setUpdatedAt(LocalDateTime.now());
+                    userFriendDao.insert(friendship2);
+                }
             }
             
             // 通知申请方处理结果
@@ -255,8 +337,28 @@ public class InstantMessagingServiceImpl implements InstantMessagingService {
             throw new IllegalArgumentException("消息参数不完整");
         }
         
+        // 验证接收者是否存在
+        User receiver = userDao.findById(message.getReceiverId());
+        if (receiver == null) {
+            throw new IllegalArgumentException("接收者不存在，ID: " + message.getReceiverId());
+        }
+        
         message.setSendTime(LocalDateTime.now());
         message.setStatus(1); // 已发送
+        
+        // 处理图片消息
+        if ("IMAGE".equals(message.getMessageType()) && message.getImage() != null && message.getImage().startsWith("data:image")) {
+            try {
+                String imageUrl = ImageUtils.processBase64Image(message.getImage());
+                message.setContent(imageUrl);
+                message.setImage(imageUrl); // 存储处理后的图片URL
+            } catch (Exception e) {
+                throw new RuntimeException("图片处理失败: " + e.getMessage());
+            }
+        } else if (message.getImage() != null && message.getImage().startsWith("data:image")) {
+            // 非图片消息但image参数包含base64数据，清空image字段
+            message.setImage(null);
+        }
         
         singleChatMessageDao.insert(message);
         

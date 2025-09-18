@@ -114,4 +114,34 @@ public class FriendRequest {
     public void setReceiver(User receiver) {
         this.receiver = receiver;
     }
+
+    // 便捷方法：获取发送者头像
+    public String getSenderAvatar() {
+        return sender != null ? sender.getImage() : null;
+    }
+
+    // 便捷方法：获取接收者头像
+    public String getReceiverAvatar() {
+        return receiver != null ? receiver.getImage() : null;
+    }
+
+    // 便捷方法：获取发送者昵称
+    public String getSenderNickname() {
+        return sender != null ? sender.getNickname() : null;
+    }
+
+    // 便捷方法：获取接收者昵称
+    public String getReceiverNickname() {
+        return receiver != null ? receiver.getNickname() : null;
+    }
+
+    // 便捷方法：获取发送者用户名
+    public String getSenderUsername() {
+        return sender != null ? sender.getUsername() : null;
+    }
+
+    // 便捷方法：获取接收者用户名
+    public String getReceiverUsername() {
+        return receiver != null ? receiver.getUsername() : null;
+    }
 }

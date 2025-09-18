@@ -18,7 +18,7 @@ public interface InstantMessagingService {
     /**
      * 发送单聊消息
      */
-    void sendPrivateMessage(Long senderId, Long receiverId, String content, String messageType);
+    void sendPrivateMessage(Long senderId, Long receiverId, String content, String messageType, String image);
     
     /**
      * 发送单聊消息（实体方式）
@@ -28,7 +28,7 @@ public interface InstantMessagingService {
     /**
      * 发送群聊消息
      */
-    void sendGroupMessage(Long senderId, Long groupId, String content, String messageType);
+    void sendGroupMessage(Long senderId, Long groupId, String content, String messageType, String image);
     
 
     
