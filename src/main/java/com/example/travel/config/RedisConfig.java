@@ -52,29 +52,30 @@ public class RedisConfig {
      */
     @Bean
     public RedisScript<Long> rateLimitScript() {
-        String luaScript = "local key = KEYS[1]\n" +
-                "local now = tonumber(ARGV[1])\n" +
-                "local windowStart = tonumber(ARGV[2])\n" +
-                "local maxRequests = tonumber(ARGV[3])\n" +
-                "\n" +
-                "-- 移除过期的时间戳\n" +
-                "redis.call('zremrangebyscore', key, 0, windowStart)\n" +
-                "\n" +
-                "-- 获取当前窗口内的请求数量\n" +
-                "local count = redis.call('zcount', key, windowStart, now)\n" +
-                "\n" +
-                "-- 如果超过限制，返回0\n" +
-                "if count >= maxRequests then\n" +
-                "    return 0\n" +
-                "end\n" +
-                "\n" +
-                "-- 添加当前请求时间戳\n" +
-                "redis.call('zadd', key, now, now)\n" +
-                "\n" +
-                "-- 设置过期时间\n" +
-                "redis.call('expire', key, ARGV[4])\n" +
-                "\n" +
-                "return 1";
+        String luaScript = """
+                local key = KEYS[1]
+                local now = tonumber(ARGV[1])
+                local windowStart = tonumber(ARGV[2])
+                local maxRequests = tonumber(ARGV[3])
+
+                -- 移除过期的时间戳
+                redis.call('zremrangebyscore', key, 0, windowStart)
+
+                -- 获取当前窗口内的请求数量
+                local count = redis.call('zcount', key, windowStart, now)
+
+                -- 如果超过限制，返回0
+                if count >= maxRequests then
+                    return 0
+                end
+
+                -- 添加当前请求时间戳
+                redis.call('zadd', key, now, now)
+
+                -- 设置过期时间
+                redis.call('expire', key, ARGV[4])
+
+                return 1""";
 
         DefaultRedisScript<Long> script = new DefaultRedisScript<>();
         script.setScriptText(luaScript);
