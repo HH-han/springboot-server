@@ -45,10 +45,6 @@
             <!-- 可选：主键生成策略 -->
             <generatedKey column="id" sqlStatement="MySQL" identity="true"/>
         </table>
-        
-        <!-- 添加其他常用表配置 -->
-        <table tableName="user" domainObjectName="User">
-            <generatedKey column="id" sqlStatement="MySQL" identity="true"/>
-        </table>
+
     </context>
 </generatorConfiguration>

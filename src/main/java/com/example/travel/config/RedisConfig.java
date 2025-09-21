@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -42,5 +44,41 @@ public class RedisConfig {
 
         template.afterPropertiesSet();
         return template;
+    }
+
+    /**
+     * 限流Redis Lua脚本
+     * 基于滑动窗口算法实现限流
+     */
+    @Bean
+    public RedisScript<Long> rateLimitScript() {
+        String luaScript = "local key = KEYS[1]\n" +
+                "local now = tonumber(ARGV[1])\n" +
+                "local windowStart = tonumber(ARGV[2])\n" +
+                "local maxRequests = tonumber(ARGV[3])\n" +
+                "\n" +
+                "-- 移除过期的时间戳\n" +
+                "redis.call('zremrangebyscore', key, 0, windowStart)\n" +
+                "\n" +
+                "-- 获取当前窗口内的请求数量\n" +
+                "local count = redis.call('zcount', key, windowStart, now)\n" +
+                "\n" +
+                "-- 如果超过限制，返回0\n" +
+                "if count >= maxRequests then\n" +
+                "    return 0\n" +
+                "end\n" +
+                "\n" +
+                "-- 添加当前请求时间戳\n" +
+                "redis.call('zadd', key, now, now)\n" +
+                "\n" +
+                "-- 设置过期时间\n" +
+                "redis.call('expire', key, ARGV[4])\n" +
+                "\n" +
+                "return 1";
+
+        DefaultRedisScript<Long> script = new DefaultRedisScript<>();
+        script.setScriptText(luaScript);
+        script.setResultType(Long.class);
+        return script;
     }
 }
