@@ -6,24 +6,7 @@
 <generatorConfiguration>
     <!-- 数据库驱动路径（可选，若使用Maven插件可省略） -->
     <!-- <classPathEntry location="驱动绝对路径，如：C:/mysql-connector-java-8.0.23.jar" /> -->
-    <!-- 关键配置说明-->
-    <!-- 数据库连接：替换your_database、your_password为实际值，注意时区参数（如serverTimezone=UTC）。-->
-
-    <!-- 生成路径：-->
-
-    <!-- javaModelGenerator：实体类生成到src/main/java下的com.example.demo.model包。-->
-
-    <!-- sqlMapGenerator：XML文件生成到src/main/resources/mapper目录。-->
-
-    <!-- javaClientGenerator：Mapper接口生成到com.example.demo.mapper包。-->
-
-    <!-- 表配置：-->
-
-    <!-- tableName：数据库表名。-->
-
-    <!-- domainObjectName：生成的实体类名。-->
-
-    <!-- 使用generatedKey配置自增主键（如MySQL的AUTO_INCREMENT）。-->
+    
     <context id="MysqlTables" targetRuntime="MyBatis3">
         <!-- 防止生成的代码中有注释 -->
         <commentGenerator>
@@ -32,7 +15,7 @@
 
         <!-- 数据库连接配置 -->
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost:3306/db_travel?"
+                        connectionURL="jdbc:mysql://localhost:3306/db_travel?serverTimezone=UTC&amp;useUnicode=true&amp;characterEncoding=utf8"
                         userId="root"
                         password="123456">
         </jdbcConnection>
@@ -62,7 +45,10 @@
             <!-- 可选：主键生成策略 -->
             <generatedKey column="id" sqlStatement="MySQL" identity="true"/>
         </table>
-        <!-- 添加其他表 -->
-        <!-- <table tableName="order" domainObjectName="Order"/> -->
+        
+        <!-- 添加其他常用表配置 -->
+        <table tableName="user" domainObjectName="User">
+            <generatedKey column="id" sqlStatement="MySQL" identity="true"/>
+        </table>
     </context>
 </generatorConfiguration>
