@@ -18,10 +18,12 @@ import java.util.Map;
 public class StrategygroupController {
 
     private final StrategygroupService strategygroupService;
+    private final ImageUtils imageUtils;
 
     @Autowired
-    public StrategygroupController(StrategygroupService strategygroupService) {
+    public StrategygroupController(StrategygroupService strategygroupService, ImageUtils imageUtils) {
         this.strategygroupService = strategygroupService;
+        this.imageUtils = imageUtils;
     }
 
     @GetMapping
@@ -53,7 +55,7 @@ public class StrategygroupController {
         // 处理图片
         if (group.getImage() != null && group.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(group.getImage());
+                String imageUrl = imageUtils.processBase64Image(group.getImage());
                 group.setImage(imageUrl);
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -71,13 +73,13 @@ public class StrategygroupController {
         // 处理图片
         if (groupDetails.getImage() != null && groupDetails.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(groupDetails.getImage());
+                String imageUrl = imageUtils.processBase64Image(groupDetails.getImage());
                 groupDetails.setImage(imageUrl);
 
                 // 删除旧图片
                 Strategygroup existingGroup = strategygroupService.getStrategygroupById(id);
                 if (existingGroup != null && existingGroup.getImage() != null) {
-                    ImageUtils.deleteImage(existingGroup.getImage());
+                    imageUtils.deleteImage(existingGroup.getImage());
                 }
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -87,7 +89,7 @@ public class StrategygroupController {
             Strategygroup existingGroup = strategygroupService.getStrategygroupById(id);
             if (existingGroup != null && existingGroup.getImage() != null) {
                 try {
-                    ImageUtils.deleteImage(existingGroup.getImage());
+                    imageUtils.deleteImage(existingGroup.getImage());
                 } catch (Exception e) {
                     System.err.println("删除图片文件失败: " + e.getMessage());
                 }
@@ -102,7 +104,7 @@ public class StrategygroupController {
         Strategygroup group = strategygroupService.getStrategygroupById(id);
         if (group != null && group.getImage() != null) {
             try {
-                ImageUtils.deleteImage(group.getImage());
+                imageUtils.deleteImage(group.getImage());
             } catch (Exception e) {
                 System.err.println("删除图片文件失败: " + e.getMessage());
             }

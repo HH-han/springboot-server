@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .frameOptions(frameOptions -> frameOptions.disable())
             )
             .authorizeHttpRequests(auth -> auth
+                // 允许访问接口...
                 .requestMatchers("/api/public/user/login").permitAll()
                 .requestMatchers("/api/public/user/register").permitAll()
                 .requestMatchers("/voice/**").permitAll()

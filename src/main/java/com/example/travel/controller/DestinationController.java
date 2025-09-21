@@ -16,8 +16,14 @@ import java.nio.file.Paths;
 @RequestMapping("/api/public/destination")
 public class DestinationController {
 
+    private final DestinationService destinationService;
+    private final ImageUtils imageUtils;
+
     @Autowired
-    private DestinationService destinationService;
+    public DestinationController(DestinationService destinationService, ImageUtils imageUtils) {
+        this.destinationService = destinationService;
+        this.imageUtils = imageUtils;
+    }
 
     @GetMapping("/list")
     public Result listDestinations(
@@ -36,7 +42,7 @@ public class DestinationController {
         // 图片处理
         if (destination.getImage() != null && destination.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(destination.getImage());
+                String imageUrl = imageUtils.processBase64Image(destination.getImage());
                 destination.setImage(imageUrl);
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -56,12 +62,12 @@ public class DestinationController {
         // 图片处理
         if (destination.getImage() != null && destination.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(destination.getImage());
+                String imageUrl = imageUtils.processBase64Image(destination.getImage());
                 destination.setImage(imageUrl);
 
                 // 删除旧图片
                 if (existingDestination != null && existingDestination.getImage() != null) {
-                    ImageUtils.deleteImage(existingDestination.getImage());
+                    imageUtils.deleteImage(existingDestination.getImage());
                 }
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -95,7 +101,7 @@ public class DestinationController {
         Destination destination = destinationService.getById(id);
         if (destination != null && destination.getImage() != null) {
             try {
-                ImageUtils.deleteImage(destination.getImage());
+                imageUtils.deleteImage(destination.getImage());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());

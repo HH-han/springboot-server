@@ -16,8 +16,15 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/public/order")
 public class OrderController {
+    
+    private final OrderService orderService;
+    private final ImageUtils imageUtils;
+
     @Autowired
-    private OrderService orderService;
+    public OrderController(OrderService orderService, ImageUtils imageUtils) {
+        this.orderService = orderService;
+        this.imageUtils = imageUtils;
+    }
 
     // 分页查询订单
     @GetMapping
@@ -51,7 +58,7 @@ public class OrderController {
             // 图片处理
             if (order.getImage() != null && order.getImage().startsWith("data:image")) {
                 try {
-                    String imageUrl = ImageUtils.processBase64Image(order.getImage());
+                    String imageUrl = imageUtils.processBase64Image(order.getImage());
                     order.setImage(imageUrl);
                 } catch (Exception e) {
                     return Result.error("图片保存失败: " + e.getMessage());
@@ -79,12 +86,12 @@ public class OrderController {
             // 图片处理
             if (order.getImage() != null && order.getImage().startsWith("data:image")) {
                 try {
-                    String imageUrl = ImageUtils.processBase64Image(order.getImage());
+                    String imageUrl = imageUtils.processBase64Image(order.getImage());
                     order.setImage(imageUrl);
 
                     // 删除旧图片
                     if (existingOrder != null && existingOrder.getImage() != null) {
-                        ImageUtils.deleteImage(existingOrder.getImage());
+                        imageUtils.deleteImage(existingOrder.getImage());
                     }
                 } catch (Exception e) {
                     return Result.error("图片保存失败: " + e.getMessage());
@@ -92,7 +99,7 @@ public class OrderController {
             } else if (order.getImage() == null && existingOrder != null && existingOrder.getImage() != null) {
                 // 删除原有图片
                 try {
-                    ImageUtils.deleteImage(existingOrder.getImage());
+                    imageUtils.deleteImage(existingOrder.getImage());
                 } catch (Exception e) {
                     // 文件删除失败不影响主流程
                     System.err.println("删除图片文件失败: " + e.getMessage());
@@ -119,7 +126,7 @@ public class OrderController {
             if (order != null && order.getImage() != null && order.getImage().startsWith("http://localhost:2025/upload/")) {
                 try {
                     // 删除图片文件
-                    ImageUtils.deleteImage(order.getImage());
+                    imageUtils.deleteImage(order.getImage());
                 } catch (Exception e) {
                     // 文件删除失败不影响主流程
                     System.err.println("删除图片文件失败: " + e.getMessage());

@@ -20,9 +20,15 @@ public class TravelCollectionController {
     //记录器
     Logger logger = LoggerFactory.getLogger(TravelCollectionController.class);
 
-    @Autowired
-    private TravelCollectionService travelCollectionService;
+    private final TravelCollectionService travelCollectionService;
+    private final ImageUtils imageUtils;
 
+    @Autowired
+    public TravelCollectionController(TravelCollectionService travelCollectionService, ImageUtils imageUtils) {
+        this.travelCollectionService = travelCollectionService;
+        this.imageUtils = imageUtils;
+    }
+    
     // 查询所有收藏
     @GetMapping
     public Result findAll() {
@@ -85,7 +91,7 @@ public class TravelCollectionController {
         // 处理图片
         if (travelCollection.getImage() != null && travelCollection.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(travelCollection.getImage());
+                String imageUrl = imageUtils.processBase64Image(travelCollection.getImage());
                 travelCollection.setImage(imageUrl);
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -108,13 +114,13 @@ public class TravelCollectionController {
         // 处理图片
         if (travelCollection.getImage() != null && travelCollection.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(travelCollection.getImage());
+                String imageUrl = imageUtils.processBase64Image(travelCollection.getImage());
                 travelCollection.setImage(imageUrl);
                 
                 // 删除旧图片
                 TravelCollection existingCollection = travelCollectionService.findById(id);
                 if (existingCollection != null && existingCollection.getImage() != null) {
-                    ImageUtils.deleteImage(existingCollection.getImage());
+                    imageUtils.deleteImage(existingCollection.getImage());
                 }
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -124,7 +130,7 @@ public class TravelCollectionController {
             TravelCollection existingCollection = travelCollectionService.findById(id);
             if (existingCollection != null && existingCollection.getImage() != null) {
                 try {
-                    ImageUtils.deleteImage(existingCollection.getImage());
+                    imageUtils.deleteImage(existingCollection.getImage());
                 } catch (Exception e) {
                     // 文件删除失败不影响主流程
                     System.err.println("删除图片文件失败: " + e.getMessage());
@@ -149,7 +155,7 @@ public class TravelCollectionController {
         if (collection != null && collection.getImage() != null) {
             try {
                 // 删除图片文件
-                ImageUtils.deleteImage(collection.getImage());
+                imageUtils.deleteImage(collection.getImage());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());

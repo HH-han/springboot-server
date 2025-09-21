@@ -17,8 +17,16 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/public/scenic")
 public class ScenicController {
+    
+    private final ScenicService scenicService;
+    private final ImageUtils imageUtils;
+
     @Autowired
-    private ScenicService scenicService;
+    public ScenicController(ScenicService scenicService, ImageUtils imageUtils) {
+        this.scenicService = scenicService;
+        this.imageUtils = imageUtils;
+    }
+    
     @GetMapping
     public Result findAllScenic(
             @RequestParam(defaultValue = "1") int page,
@@ -44,7 +52,7 @@ public class ScenicController {
         // 处理图片
         if (scenic.getImage() != null && scenic.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(scenic.getImage());
+                String imageUrl = imageUtils.processBase64Image(scenic.getImage());
                 scenic.setImage(imageUrl);
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -70,12 +78,12 @@ public class ScenicController {
         // 处理图片
         if (scenic.getImage() != null && scenic.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(scenic.getImage());
+                String imageUrl = imageUtils.processBase64Image(scenic.getImage());
                 scenic.setImage(imageUrl);
 
                 // 删除旧图片
                 if (existingScenic != null && existingScenic.getImage() != null) {
-                    ImageUtils.deleteImage(existingScenic.getImage());
+                    imageUtils.deleteImage(existingScenic.getImage());
                 }
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -83,7 +91,7 @@ public class ScenicController {
         } else if (scenic.getImage() == null && existingScenic != null && existingScenic.getImage() != null) {
             // 删除原有图片
             try {
-                ImageUtils.deleteImage(existingScenic.getImage());
+                imageUtils.deleteImage(existingScenic.getImage());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());
@@ -107,7 +115,7 @@ public class ScenicController {
         if (scenic != null && scenic.getImage() != null) {
             try {
                 // 删除图片文件
-                ImageUtils.deleteImage(scenic.getImage());
+                imageUtils.deleteImage(scenic.getImage());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());

@@ -16,10 +16,12 @@ import java.util.*;
 public class SafetyTipsController {
 
     private final SafetyTipsService safetyTipsService;
+    private final ImageUtils imageUtils;
 
     @Autowired
-    public SafetyTipsController(SafetyTipsService safetyTipsService) {
+    public SafetyTipsController(SafetyTipsService safetyTipsService, ImageUtils imageUtils) {
         this.safetyTipsService = safetyTipsService;
+        this.imageUtils = imageUtils;
     }
 
     /**
@@ -85,7 +87,7 @@ public class SafetyTipsController {
             // 处理图片
             if (safetyTips.getImageUrl() != null && safetyTips.getImageUrl().startsWith("data:image")) {
                 try {
-                    String imageUrl = ImageUtils.processBase64Image(safetyTips.getImageUrl());
+                    String imageUrl = imageUtils.processBase64Image(safetyTips.getImageUrl());
                     safetyTips.setImageUrl(imageUrl);
                 } catch (Exception e) {
                     return Result.error("图片保存失败: " + e.getMessage());
@@ -127,12 +129,12 @@ public class SafetyTipsController {
             // 处理图片
             if (safetyTips.getImageUrl() != null && safetyTips.getImageUrl().startsWith("data:image")) {
                 try {
-                    String imageUrl = ImageUtils.processBase64Image(safetyTips.getImageUrl());
+                    String imageUrl = imageUtils.processBase64Image(safetyTips.getImageUrl());
                     safetyTips.setImageUrl(imageUrl);
 
                     // 删除旧图片
                     if (existingTip != null && existingTip.getImageUrl() != null) {
-                        ImageUtils.deleteImage(existingTip.getImageUrl());
+                        imageUtils.deleteImage(existingTip.getImageUrl());
                     }
                 } catch (Exception e) {
                     return Result.error("图片保存失败: " + e.getMessage());
@@ -141,7 +143,7 @@ public class SafetyTipsController {
                 // 删除原有图片
                 if (existingTip != null && existingTip.getImageUrl() != null) {
                     try {
-                        ImageUtils.deleteImage(existingTip.getImageUrl());
+                        imageUtils.deleteImage(existingTip.getImageUrl());
                     } catch (Exception e) {
                         // 文件删除失败不影响主流程
                         System.err.println("删除图片文件失败: " + e.getMessage());
@@ -153,7 +155,7 @@ public class SafetyTipsController {
                 if (existingTip != null && existingTip.getImageUrl() != null && 
                     !existingTip.getImageUrl().equals(safetyTips.getImageUrl())) {
                     try {
-                        ImageUtils.deleteImage(existingTip.getImageUrl());
+                        imageUtils.deleteImage(existingTip.getImageUrl());
                     } catch (Exception e) {
                         // 文件删除失败不影响主流程
                         System.err.println("删除图片文件失败: " + e.getMessage());
@@ -177,7 +179,7 @@ public class SafetyTipsController {
     public Result batchCreateSafetyTips(@Validated @RequestBody List<SafetyTips> safetyTipsList) {
         boolean result = safetyTipsService.batchCreateSafetyTips(safetyTipsList);
         return result ? Result.success("批量创建成功", true) :
-                Result.error("批量创建失败");
+                    Result.error("批量创建失败");
     }
     /**
      * 批量更新安全提示
@@ -188,7 +190,7 @@ public class SafetyTipsController {
     public Result batchUpdateSafetyTips(@Validated @RequestBody List<SafetyTips> safetyTipsList) {
         boolean result = safetyTipsService.batchUpdateSafetyTips(safetyTipsList);
         return result ? Result.success("批量更新成功", true) :
-                Result.error("批量更新失败");
+                    Result.error("批量更新失败");
     }
 
     /**
@@ -204,7 +206,7 @@ public class SafetyTipsController {
             if (safetyTip != null && safetyTip.getImageUrl() != null) {
                 try {
                     // 删除图片文件
-                    ImageUtils.deleteImage(safetyTip.getImageUrl());
+                    imageUtils.deleteImage(safetyTip.getImageUrl());
                 } catch (Exception e) {
                     // 文件删除失败不影响主流程
                     System.err.println("删除图片文件失败: " + e.getMessage());
@@ -217,49 +219,5 @@ public class SafetyTipsController {
         } catch (Exception e) {
             return Result.error("删除安全提示时发生错误: " + e.getMessage());
         }
-    }
-
-    /**
-     * 批量删除安全提示
-     * @param ids 安全提示ID列表
-     * @return 操作结果
-     */
-    @DeleteMapping("/batch")
-    public Result batchDeleteSafetyTips(@RequestBody List<Long> ids) {
-        boolean result = safetyTipsService.batchDeleteSafetyTips(ids);
-        return result ? Result.success("批量删除成功", true) :
-                Result.error("批量删除失败");
-    }
-
-    /**
-     * 条件查询安全提示
-     * @param condition 查询条件
-     * @return 安全提示列表
-     */
-    @PostMapping("/condition")
-    public Result getSafetyTipsByCondition(@RequestBody Map<String, Object> condition) {
-        List<SafetyTips> list = safetyTipsService.getSafetyTipsByCondition(condition);
-        return Result.success("查询成功", list);
-    }
-
-    /**
-     * 统计安全提示总数
-     * @return 总数
-     */
-    @GetMapping("/count")
-    public Result countSafetyTips() {
-        long count = safetyTipsService.countSafetyTips();
-        return Result.success("统计成功", count);
-    }
-
-    /**
-     * 条件统计安全提示数量
-     * @param condition 统计条件
-     * @return 数量
-     */
-    @PostMapping("/count/condition")
-    public Result countSafetyTipsByCondition(@RequestBody Map<String, Object> condition) {
-        long count = safetyTipsService.countSafetyTipsByCondition(condition);
-        return Result.success("条件统计成功", count);
     }
 }

@@ -15,9 +15,15 @@ import java.util.*;
 @RequestMapping("/api/public/blogs")
 public class TravelBlogController {
 
-    @Autowired
-    private TravelBlogService travelBlogService;
+    private final TravelBlogService travelBlogService;
+    private final ImageUtils imageUtils;
 
+    @Autowired
+    public TravelBlogController(TravelBlogService travelBlogService, ImageUtils imageUtils) {
+        this.travelBlogService = travelBlogService;
+        this.imageUtils = imageUtils;
+    }
+    
     /**
      * 获取所有博客
      */
@@ -74,7 +80,7 @@ public class TravelBlogController {
         // 处理图片
         if (blog.getCoverImage() != null && blog.getCoverImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(blog.getCoverImage());
+                String imageUrl = imageUtils.processBase64Image(blog.getCoverImage());
                 blog.setCoverImage(imageUrl);
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -101,12 +107,12 @@ public class TravelBlogController {
         // 处理图片
         if (blog.getCoverImage() != null && blog.getCoverImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(blog.getCoverImage());
+                String imageUrl = imageUtils.processBase64Image(blog.getCoverImage());
                 blog.setCoverImage(imageUrl);
 
                 // 删除旧图片
                 if (existingBlog != null && existingBlog.getCoverImage() != null) {
-                    ImageUtils.deleteImage(existingBlog.getCoverImage());
+                    imageUtils.deleteImage(existingBlog.getCoverImage());
                 }
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -114,7 +120,7 @@ public class TravelBlogController {
         } else if (blog.getCoverImage() == null && existingBlog != null && existingBlog.getCoverImage() != null) {
             // 删除原有图片
             try {
-                ImageUtils.deleteImage(existingBlog.getCoverImage());
+                imageUtils.deleteImage(existingBlog.getCoverImage());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());
@@ -138,7 +144,7 @@ public class TravelBlogController {
         if (blog != null && blog.getCoverImage() != null) {
             try {
                 // 删除图片文件
-                ImageUtils.deleteImage(blog.getCoverImage());
+                imageUtils.deleteImage(blog.getCoverImage());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());

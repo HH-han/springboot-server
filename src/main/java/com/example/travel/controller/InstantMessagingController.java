@@ -297,8 +297,11 @@ public class InstantMessagingController {
      * 获取用户好友列表
      */
     @GetMapping("/friend/list")
-    public Result getFriendList(@RequestParam Long userId) {
+    public Result getFriendList(@RequestParam(required = false) Long userId) {
         try {
+            if (userId == null) {
+                return Result.error("用户ID不能为空");
+            }
             List<User> friends = instantMessagingService.getFriendList(userId);
             return Result.success(friends);
         } catch (Exception e) {
@@ -311,8 +314,17 @@ public class InstantMessagingController {
      * 删除好友
      */
     @DeleteMapping("/friend/delete")
-    public Result deleteFriend(@RequestParam Long userId, @RequestParam Long friendId) {
+    public Result deleteFriend(@RequestBody Map<String, Object> params) {
         try {
+            Long userId = params.containsKey("userId") ? Long.parseLong(params.get("userId").toString()) : null;
+            Long friendId = params.containsKey("friendId") ? Long.parseLong(params.get("friendId").toString()) : null;
+            
+            if (userId == null) {
+                return Result.error("用户ID不能为空");
+            }
+            if (friendId == null) {
+                return Result.error("好友ID不能为空");
+            }
             instantMessagingService.deleteFriend(userId, friendId);
             logger.info("好友删除成功: {} -> {}", userId, friendId);
             return Result.success("好友删除成功");
@@ -326,8 +338,11 @@ public class InstantMessagingController {
      * 获取待处理的好友申请
      */
     @GetMapping("/friend/request/pending")
-    public Result getPendingFriendRequests(@RequestParam Long userId) {
+    public Result getPendingFriendRequests(@RequestParam(required = false) Long userId) {
         try {
+            if (userId == null) {
+                return Result.error("用户ID不能为空");
+            }
             List<FriendRequest> requests = instantMessagingService.getPendingFriendRequests(userId);
             return Result.success(requests);
         } catch (Exception e) {
@@ -337,31 +352,15 @@ public class InstantMessagingController {
     }
 
     /**
-     * 标记消息为已读
-     */
-    @PostMapping("/message/read")
-    public Result markMessageAsRead(@RequestBody Map<String, Object> params) {
-        try {
-            Long messageId = Long.parseLong(params.get("messageId").toString());
-            Long userId = Long.parseLong(params.get("userId").toString());
-            Long groupId = params.get("groupId") != null ? Long.parseLong(params.get("groupId").toString()) : null;
-
-            instantMessagingService.markMessageAsRead(messageId, userId, groupId);
-            logger.info("消息标记为已读: 消息ID{}, 用户ID{}", messageId, userId);
-            return Result.success("消息已读");
-        } catch (Exception e) {
-            logger.error("标记消息已读失败: {}", e.getMessage(), e);
-            return Result.error("标记消息已读失败");
-        }
-    }
-
-    /**
      * 获取未读消息数量
      */
     @GetMapping("/message/unread/count")
-    public Result getUnreadMessageCount(@RequestParam Long userId,
+    public Result getUnreadMessageCount(@RequestParam(required = false) Long userId,
             @RequestParam(required = false) Long groupId) {
         try {
+            if (userId == null) {
+                return Result.error("用户ID不能为空");
+            }
             int count = instantMessagingService.getUnreadMessageCount(userId, groupId);
             return Result.success(count);
         } catch (Exception e) {

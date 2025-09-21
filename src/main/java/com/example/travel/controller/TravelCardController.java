@@ -3,10 +3,10 @@ package com.example.travel.controller;
 import com.example.travel.common.Result;
 import com.example.travel.entity.TravelCard;
 import com.example.travel.service.TravelCardService;
+import com.example.travel.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import com.example.travel.utils.ImageUtils;
 import org.springframework.http.MediaType;
 import java.util.HashMap;
 import java.util.List;
@@ -21,10 +21,12 @@ import java.util.Map;
 public class TravelCardController {
 
     private final TravelCardService travelCardService;
+    private final ImageUtils imageUtils;
 
     @Autowired
-    public TravelCardController(TravelCardService travelCardService) {
+    public TravelCardController(TravelCardService travelCardService, ImageUtils imageUtils) {
         this.travelCardService = travelCardService;
+        this.imageUtils = imageUtils;
     }
     /**
      * 获取所有旅游卡列表（分页）
@@ -76,7 +78,7 @@ public class TravelCardController {
         // 处理图片
         if (card.getImage() != null && card.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(card.getImage());
+                String imageUrl = imageUtils.processBase64Image(card.getImage());
                 card.setImage(imageUrl);
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -98,13 +100,13 @@ public class TravelCardController {
         // 处理图片
         if (cardDetails.getImage() != null && cardDetails.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(cardDetails.getImage());
+                String imageUrl = imageUtils.processBase64Image(cardDetails.getImage());
                 cardDetails.setImage(imageUrl);
 
                 // 删除旧图片
                 TravelCard existingCard = travelCardService.getCardById(id);
                 if (existingCard != null && existingCard.getImage() != null) {
-                    ImageUtils.deleteImage(existingCard.getImage());
+                    imageUtils.deleteImage(existingCard.getImage());
                 }
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -114,7 +116,7 @@ public class TravelCardController {
             TravelCard existingCard = travelCardService.getCardById(id);
             if (existingCard != null && existingCard.getImage() != null) {
                 try {
-                    ImageUtils.deleteImage(existingCard.getImage());
+                    imageUtils.deleteImage(existingCard.getImage());
                 } catch (Exception e) {
                     // 文件删除失败不影响主流程
                     System.err.println("删除图片文件失败: " + e.getMessage());
@@ -136,7 +138,7 @@ public class TravelCardController {
         if (card != null && card.getImage() != null) {
             try {
                 // 删除图片文件
-                ImageUtils.deleteImage(card.getImage());
+                imageUtils.deleteImage(card.getImage());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());

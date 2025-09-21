@@ -21,10 +21,12 @@ import java.util.Map;
 public class TravelNewsController {
 
     private final TravelNewsService travelNewsService;
+    private final ImageUtils imageUtils;
 
     @Autowired
-    public TravelNewsController(TravelNewsService travelNewsService) {
+    public TravelNewsController(TravelNewsService travelNewsService, ImageUtils imageUtils) {
         this.travelNewsService = travelNewsService;
+        this.imageUtils = imageUtils;
     }
 
     /**
@@ -86,7 +88,7 @@ public class TravelNewsController {
         // 处理图片
         if (news.getCoverImage() != null && news.getCoverImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(news.getCoverImage());
+                String imageUrl = imageUtils.processBase64Image(news.getCoverImage());
                 news.setCoverImage(imageUrl);
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -109,13 +111,13 @@ public class TravelNewsController {
         // 处理图片
         if (newsDetails.getCoverImage() != null && newsDetails.getCoverImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(newsDetails.getCoverImage());
+                String imageUrl = imageUtils.processBase64Image(newsDetails.getCoverImage());
                 newsDetails.setCoverImage(imageUrl);
 
                 // 删除旧图片
                 TravelNews existingNews = travelNewsService.findById(id);
                 if (existingNews != null && existingNews.getCoverImage() != null) {
-                    ImageUtils.deleteImage(existingNews.getCoverImage());
+                    imageUtils.deleteImage(existingNews.getCoverImage());
                 }
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -125,7 +127,7 @@ public class TravelNewsController {
             TravelNews existingNews = travelNewsService.findById(id);
             if (existingNews != null && existingNews.getCoverImage() != null) {
                 try {
-                    ImageUtils.deleteImage(existingNews.getCoverImage());
+                    imageUtils.deleteImage(existingNews.getCoverImage());
                 } catch (Exception e) {
                     // 文件删除失败不影响主流程
                     System.err.println("删除图片文件失败: " + e.getMessage());
@@ -147,7 +149,7 @@ public class TravelNewsController {
         if (news != null && news.getCoverImage() != null) {
             try {
                 // 删除图片文件
-                ImageUtils.deleteImage(news.getCoverImage());
+                imageUtils.deleteImage(news.getCoverImage());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());

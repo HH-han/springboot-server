@@ -310,7 +310,8 @@
                 icon: 'fas fa-user-shield',
                 apis: [
                     { method: 'POST', endpoint: '/send-code', title: '发送验证码', description: '发送邮箱验证码', tags: ['认证管理', '验证码'], icons: ['fa-envelope', 'fa-key'] },
-                    { method: 'POST', endpoint: '/Emaillogin', title: '邮箱验证码登录', description: '使用邮箱验证码进行登录', tags: ['认证管理', '邮箱登录'], icons: ['fa-sign-in-alt', 'fa-envelope'] }
+                    { method: 'POST', endpoint: '/Emaillogin', title: '邮箱验证码登录', description: '使用邮箱验证码进行登录', tags: ['认证管理', '邮箱登录'], icons: ['fa-sign-in-alt', 'fa-envelope'] },
+                    { method: 'GET', endpoint: '/token-status', title: '获取Token状态', description: '获取JWT令牌的详细状态信息，包括有效期、用户名等', tags: ['认证管理', 'Token验证'], icons: ['fa-shield-alt', 'fa-info-circle'] }
                 ]
             },
             'login-log-controller': {

@@ -18,8 +18,14 @@ import java.nio.file.Paths;
 @RequestMapping("/api/public/travelworld")
 public class TravelWorldcharacteristicsController {
 
+    private final TravelWorldcharacteristicsService travelWorldcharacteristicsService;
+    private final ImageUtils imageUtils;
+
     @Autowired
-    private TravelWorldcharacteristicsService travelWorldcharacteristicsService;
+    public TravelWorldcharacteristicsController(TravelWorldcharacteristicsService travelWorldcharacteristicsService, ImageUtils imageUtils) {
+        this.travelWorldcharacteristicsService = travelWorldcharacteristicsService;
+        this.imageUtils = imageUtils;
+    }
 
     @GetMapping
     public Result TravelWorldcharacteristics(
@@ -38,7 +44,7 @@ public class TravelWorldcharacteristicsController {
         // 图片处理
         if (travelWorldcharacteristics.getImage() != null && travelWorldcharacteristics.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(travelWorldcharacteristics.getImage());
+                String imageUrl = imageUtils.processBase64Image(travelWorldcharacteristics.getImage());
                 travelWorldcharacteristics.setImage(imageUrl);
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -58,12 +64,12 @@ public class TravelWorldcharacteristicsController {
         // 图片处理
         if (travelWorldcharacteristics.getImage() != null && travelWorldcharacteristics.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(travelWorldcharacteristics.getImage());
+                String imageUrl = imageUtils.processBase64Image(travelWorldcharacteristics.getImage());
                 travelWorldcharacteristics.setImage(imageUrl);
 
                 // 删除旧图片
                 if (existingTravelWorld != null && existingTravelWorld.getImage() != null) {
-                    ImageUtils.deleteImage(existingTravelWorld.getImage());
+                    imageUtils.deleteImage(existingTravelWorld.getImage());
                 }
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -97,7 +103,7 @@ public class TravelWorldcharacteristicsController {
         TravelWorldcharacteristics travelWorldcharacteristics = travelWorldcharacteristicsService.getById(id);
         if (travelWorldcharacteristics != null && travelWorldcharacteristics.getImage() != null) {
             try {
-                ImageUtils.deleteImage(travelWorldcharacteristics.getImage());
+                imageUtils.deleteImage(travelWorldcharacteristics.getImage());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());

@@ -29,6 +29,7 @@ public class InstantMessagingServiceImpl implements InstantMessagingService {
     private final UserFriendDao userFriendDao;
     private final FriendRequestDao friendRequestDao;
     private final MessageReadStatusDao messageReadStatusDao;
+    private final ImageUtils imageUtils;
     
     @Override
     public void handleChatMessage(ChatMessage chatMessage) {
@@ -76,7 +77,7 @@ public class InstantMessagingServiceImpl implements InstantMessagingService {
             
             if (imageData != null) {
                 try {
-                    String imageUrl = ImageUtils.processBase64Image(imageData);
+                    String imageUrl = imageUtils.processBase64Image(imageData);
                     finalContent = imageUrl; // 将content设置为图片URL
                     finalImage = imageUrl; // 将image也设置为图片URL
                 } catch (Exception e) {
@@ -138,7 +139,7 @@ public class InstantMessagingServiceImpl implements InstantMessagingService {
             
             if (imageData != null) {
                 try {
-                    String imageUrl = ImageUtils.processBase64Image(imageData);
+                    String imageUrl = imageUtils.processBase64Image(imageData);
                     finalContent = imageUrl; // 将content设置为图片URL
                 } catch (Exception e) {
                     throw new RuntimeException("图片处理失败: " + e.getMessage());
@@ -349,7 +350,7 @@ public class InstantMessagingServiceImpl implements InstantMessagingService {
         // 处理图片消息
         if ("IMAGE".equals(message.getMessageType()) && message.getImage() != null && message.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(message.getImage());
+                String imageUrl = imageUtils.processBase64Image(message.getImage());
                 message.setContent(imageUrl);
                 message.setImage(imageUrl); // 存储处理后的图片URL
             } catch (Exception e) {

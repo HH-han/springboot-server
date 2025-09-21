@@ -19,6 +19,9 @@ public class TravelCarouselController {
     @Autowired
     private TravelCarouselService travelcarouselService;
 
+    @Autowired
+    private ImageUtils imageUtils;
+
     //查询
     @GetMapping
     public Result findAllTravelRecommend(
@@ -44,7 +47,7 @@ public class TravelCarouselController {
         // 图片处理
         if (travelcarousel.getImage() != null && travelcarousel.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(travelcarousel.getImage());
+                String imageUrl = imageUtils.processBase64Image(travelcarousel.getImage());
                 travelcarousel.setImage(imageUrl);
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -72,12 +75,12 @@ public class TravelCarouselController {
         // 图片处理
         if (travelcarousel.getImage() != null && travelcarousel.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(travelcarousel.getImage());
+                String imageUrl = imageUtils.processBase64Image(travelcarousel.getImage());
                 travelcarousel.setImage(imageUrl);
 
                 // 删除旧图片
                 if (existingCarousel != null && existingCarousel.getImage() != null) {
-                    ImageUtils.deleteImage(existingCarousel.getImage());
+                    imageUtils.deleteImage(existingCarousel.getImage());
                 }
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -85,7 +88,7 @@ public class TravelCarouselController {
         } else if (travelcarousel.getImage() == null && existingCarousel != null && existingCarousel.getImage() != null) {
             // 删除原有图片
             try {
-                ImageUtils.deleteImage(existingCarousel.getImage());
+                imageUtils.deleteImage(existingCarousel.getImage());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());
@@ -110,7 +113,7 @@ public class TravelCarouselController {
         if (travelcarousel != null && travelcarousel.getImage() != null && travelcarousel.getImage().startsWith("http://localhost:2025/upload/")) {
             try {
                 // 删除图片文件
-                ImageUtils.deleteImage(travelcarousel.getImage());
+                imageUtils.deleteImage(travelcarousel.getImage());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());

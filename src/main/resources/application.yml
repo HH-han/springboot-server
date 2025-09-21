@@ -38,7 +38,7 @@ spring:
 
   web:
     resources:
-      static-locations: classpath:static
+      static-locations: classpath:/static/,file:/tmp/images/
 
   mail:
     host: smtp.qq.com
@@ -76,3 +76,15 @@ mybatis:
 jwt:
   secret: 12@~!www1231**
   expiration: 86400000
+
+# 图片上传配置
+image:
+  upload:
+    # Windows系统上传目录
+    windows-dir: D:/Image/
+    # Linux/Mac系统上传目录
+    unix-dir: /tmp/images/
+    # Windows系统访问URL
+    windows-url: http://localhost:2025/upload/
+    # Linux/Mac系统访问URL
+    unix-url: http://8.137.150.183:2025/tmp/images/

@@ -18,8 +18,16 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/public/hotel")
 public class HotelController {
+    
+    private final HotelService hotelService;
+    private final ImageUtils imageUtils;
+    
     @Autowired
-    private HotelService hotelService;
+    public HotelController(HotelService hotelService, ImageUtils imageUtils) {
+        this.hotelService = hotelService;
+        this.imageUtils = imageUtils;
+    }
+    
     //查询
     @GetMapping
     public Result findAllHotel(
@@ -48,7 +56,7 @@ public class HotelController {
         // 处理图片
         if (hotel.getHotelImage() != null && hotel.getHotelImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(hotel.getHotelImage());
+                String imageUrl = imageUtils.processBase64Image(hotel.getHotelImage());
                 hotel.setHotelImage(imageUrl);
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -59,6 +67,7 @@ public class HotelController {
         hotelService.addHotel(hotel);
         return Result.success(hotel);
     }
+    
     //修改
     @PutMapping("/{id}")
     @Transactional
@@ -79,12 +88,12 @@ public class HotelController {
         // 处理图片
         if (hotel.getHotelImage() != null && hotel.getHotelImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(hotel.getHotelImage());
+                String imageUrl = imageUtils.processBase64Image(hotel.getHotelImage());
                 hotel.setHotelImage(imageUrl);
                 
                 // 删除旧图片
                 if (existingHotel != null && existingHotel.getHotelImage() != null) {
-                    ImageUtils.deleteImage(existingHotel.getHotelImage());
+                    imageUtils.deleteImage(existingHotel.getHotelImage());
                 }
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -92,7 +101,7 @@ public class HotelController {
         } else if (hotel.getHotelImage() == null && existingHotel != null && existingHotel.getHotelImage() != null) {
             // 删除原有图片
             try {
-                ImageUtils.deleteImage(existingHotel.getHotelImage());
+                imageUtils.deleteImage(existingHotel.getHotelImage());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());
@@ -118,7 +127,7 @@ public class HotelController {
         if (hotel != null && hotel.getHotelImage() != null) {
             try {
                 // 删除图片文件
-                ImageUtils.deleteImage(hotel.getHotelImage());
+                imageUtils.deleteImage(hotel.getHotelImage());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());

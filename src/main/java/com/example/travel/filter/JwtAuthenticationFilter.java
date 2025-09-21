@@ -34,7 +34,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
-            username = jwtUtils.getUsernameFromToken(jwt);
+            try {
+                username = jwtUtils.getUsernameFromToken(jwt);
+            } catch (RuntimeException e) {
+                // Token无效或过期，只记录错误信息而不抛出异常
+                logger.error("Token验证失败: " + e.getMessage());
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+                return;
+            }
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

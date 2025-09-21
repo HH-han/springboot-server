@@ -19,9 +19,15 @@ import java.util.Map;
 @RequestMapping("/api/public/foods")
 public class FoodController {
 
-    @Autowired
-    private FoodService foodService;
+    private final FoodService foodService;
+    private final ImageUtils imageUtils;
 
+    @Autowired
+    public FoodController(FoodService foodService, ImageUtils imageUtils) {
+        this.foodService = foodService;
+        this.imageUtils = imageUtils;
+    }
+    
     // 所有美食
     @GetMapping
     public Result findAllfood(
@@ -57,7 +63,7 @@ public class FoodController {
         //图片处理
         if (food.getImage() != null && food.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(food.getImage());
+                String imageUrl = imageUtils.processBase64Image(food.getImage());
                 food.setImage(imageUrl);
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -76,12 +82,12 @@ public class FoodController {
         // 图片处理
         if (food.getImage() != null && food.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(food.getImage());
+                String imageUrl = imageUtils.processBase64Image(food.getImage());
                 food.setImage(imageUrl);
 
                 // 删除旧图片
                 if (existingFood != null && existingFood.getImage() != null) {
-                    ImageUtils.deleteImage(existingFood.getImage());
+                    imageUtils.deleteImage(existingFood.getImage());
                 }
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -89,7 +95,7 @@ public class FoodController {
         } else if (food.getImage() == null && existingFood != null && existingFood.getImage() != null) {
             // 删除原有图片
             try {
-                ImageUtils.deleteImage(existingFood.getImage());
+                imageUtils.deleteImage(existingFood.getImage());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());
@@ -109,7 +115,7 @@ public class FoodController {
             if (food != null && food.getImage() != null) {
                 try {
                     // 删除图片文件
-                    ImageUtils.deleteImage(food.getImage());
+                    imageUtils.deleteImage(food.getImage());
                 } catch (Exception e) {
                     // 文件删除失败不影响主流程
                     System.err.println("删除图片文件失败: " + e.getMessage());

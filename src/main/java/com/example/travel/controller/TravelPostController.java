@@ -22,10 +22,12 @@ import java.util.Map;
 public class TravelPostController {
 
     private final TravelPostService travelPostService;
+    private final ImageUtils imageUtils;
 
     @Autowired
-    public TravelPostController(TravelPostService travelPostService) {
+    public TravelPostController(TravelPostService travelPostService, ImageUtils imageUtils) {
         this.travelPostService = travelPostService;
+        this.imageUtils = imageUtils;
     }
 
     /**
@@ -108,7 +110,7 @@ public class TravelPostController {
         // 处理图片
         if (post.getImages() != null && post.getImages().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(post.getImages());
+                String imageUrl = imageUtils.processBase64Image(post.getImages());
                 post.setImages(imageUrl);
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -130,13 +132,13 @@ public class TravelPostController {
         // 处理图片
         if (postDetails.getImages() != null && postDetails.getImages().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(postDetails.getImages());
+                String imageUrl = imageUtils.processBase64Image(postDetails.getImages());
                 postDetails.setImages(imageUrl);
 
                 // 删除旧图片
                 TravelPost existingPost = travelPostService.getPostById(id);
                 if (existingPost != null && existingPost.getImages() != null) {
-                    ImageUtils.deleteImage(existingPost.getImages());
+                    imageUtils.deleteImage(existingPost.getImages());
                 }
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -146,7 +148,7 @@ public class TravelPostController {
             TravelPost existingPost = travelPostService.getPostById(id);
             if (existingPost != null && existingPost.getImages() != null) {
                 try {
-                    ImageUtils.deleteImage(existingPost.getImages());
+                    imageUtils.deleteImage(existingPost.getImages());
                 } catch (Exception e) {
                     // 文件删除失败不影响主流程
                     System.err.println("删除图片文件失败: " + e.getMessage());
@@ -169,7 +171,7 @@ public class TravelPostController {
         if (post != null && post.getImages() != null) {
             try {
                 // 删除图片文件
-                ImageUtils.deleteImage(post.getImages());
+                imageUtils.deleteImage(post.getImages());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());

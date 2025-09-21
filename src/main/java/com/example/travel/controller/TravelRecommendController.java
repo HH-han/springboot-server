@@ -20,8 +20,15 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/public/travelrecommend")
 public class TravelRecommendController {
+    
+    private final TravelRecommendService travelrecommendService;
+    private final ImageUtils imageUtils;
+    
     @Autowired
-    private TravelRecommendService travelrecommendService;
+    public TravelRecommendController(TravelRecommendService travelrecommendService, ImageUtils imageUtils) {
+        this.travelrecommendService = travelrecommendService;
+        this.imageUtils = imageUtils;
+    }
     
     //查询
     @GetMapping
@@ -48,7 +55,7 @@ public class TravelRecommendController {
         // 图片处理
         if (travelrecommend.getImage() != null && travelrecommend.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(travelrecommend.getImage());
+                String imageUrl = imageUtils.processBase64Image(travelrecommend.getImage());
                 travelrecommend.setImage(imageUrl);
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -76,12 +83,12 @@ public class TravelRecommendController {
         // 图片处理
         if (travelrecommend.getImage() != null && travelrecommend.getImage().startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(travelrecommend.getImage());
+                String imageUrl = imageUtils.processBase64Image(travelrecommend.getImage());
                 travelrecommend.setImage(imageUrl);
 
                 // 删除旧图片
                 if (existingRecommend != null && existingRecommend.getImage() != null) {
-                    ImageUtils.deleteImage(existingRecommend.getImage());
+                    imageUtils.deleteImage(existingRecommend.getImage());
                 }
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
@@ -89,7 +96,8 @@ public class TravelRecommendController {
         } else if (travelrecommend.getImage() == null && existingRecommend != null && existingRecommend.getImage() != null) {
             // 删除原有图片
             try {
-                ImageUtils.deleteImage(existingRecommend.getImage());
+                imageUtils.deleteImage(existingRecommend.getImage());
+                travelrecommend.setImage(null);
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());
@@ -114,7 +122,7 @@ public class TravelRecommendController {
         if (travelrecommend != null && travelrecommend.getImage() != null && travelrecommend.getImage().startsWith("http://localhost:2025/upload/")) {
             try {
                 // 删除图片文件
-                ImageUtils.deleteImage(travelrecommend.getImage());
+                imageUtils.deleteImage(travelrecommend.getImage());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());

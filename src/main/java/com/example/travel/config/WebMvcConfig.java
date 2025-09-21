@@ -1,6 +1,7 @@
 package com.example.travel.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -17,7 +18,7 @@ import java.nio.file.Paths;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    public void addResourceHandlers(@NotNull ResourceHandlerRegistry registry) {
         // 自动检测操作系统
         String os = System.getProperty("os.name").toLowerCase();
 
@@ -52,10 +53,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
             }
         }
 
-        if (imagePath != null) {
-            registry.addResourceHandler("/upload/**")
-                    .addResourceLocations("file:" + imagePath.toString());
-        }
+        registry.addResourceHandler("/upload/**")
+                .addResourceLocations("file:" + imagePath.toString());
+
+        // 添加对/tmp/images路径的映射，确保Linux系统能正常访问图片
+        registry.addResourceHandler("/tmp/images/**")
+                .addResourceLocations("file:" + imagePath.toString());
 
         // 添加类路径下的静态资源映射（可选）
         registry.addResourceHandler("/static/**")

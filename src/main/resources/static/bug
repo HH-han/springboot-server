@@ -1,0 +1,140 @@
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelCardController.java:79:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelCardController.java:101:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelCardController.java:107:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelCardController.java:117:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelCardController.java:139:27
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelCollectionController.java:88:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelCollectionController.java:111:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelCollectionController.java:117:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelCollectionController.java:127:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelCollectionController.java:152:27
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\FoodController.java:60:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\FoodController.java:79:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\FoodController.java:84:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\FoodController.java:92:27
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\FoodController.java:112:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelBlogController.java:77:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelBlogController.java:104:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelBlogController.java:109:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelBlogController.java:117:27
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelBlogController.java:141:27
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelNewsController.java:89:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelNewsController.java:112:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelNewsController.java:118:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelNewsController.java:128:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelNewsController.java:150:27
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelPostController.java:111:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelPostController.java:133:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelPostController.java:139:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelPostController.java:149:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelPostController.java:172:27
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\service\impl\InstantMessagingServiceImpl.java:79:49
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\service\impl\InstantMessagingServiceImpl.java:141:49
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\service\impl\InstantMessagingServiceImpl.java:352:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\UserController.java:405:35
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\UserController.java:413:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\UserController.java:532:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelRecommendController.java:51:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelRecommendController.java:79:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelRecommendController.java:84:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelRecommendController.java:92:27
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelRecommendController.java:117:27
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\HotelController.java:51:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\HotelController.java:82:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\HotelController.java:87:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\HotelController.java:95:27
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\HotelController.java:121:27
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\SafetyTipsController.java:88:49
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\SafetyTipsController.java:130:49
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\SafetyTipsController.java:135:35
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\SafetyTipsController.java:144:35
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\SafetyTipsController.java:156:35
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\SafetyTipsController.java:207:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\OrderController.java:54:49
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\OrderController.java:82:49
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\OrderController.java:87:35
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\OrderController.java:95:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\OrderController.java:122:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelWorldcharacteristicsController.java:41:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelWorldcharacteristicsController.java:61:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelWorldcharacteristicsController.java:66:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\TravelWorldcharacteristicsController.java:100:27
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\DestinationController.java:39:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\DestinationController.java:59:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\DestinationController.java:64:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\DestinationController.java:98:27
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\ScenicController.java:47:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\ScenicController.java:73:45
+java: 无法从静态上下文中引用非静态 方法 processBase64Image(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\ScenicController.java:78:31
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\ScenicController.java:86:27
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\controller\ScenicController.java:110:27
+java: 无法从静态上下文中引用非静态 方法 deleteImage(java.lang.String)

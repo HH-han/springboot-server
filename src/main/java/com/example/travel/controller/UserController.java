@@ -35,6 +35,15 @@ public class UserController {
     private final UserService userService;
      //JWT工具类
     private final JwtUtils jwtUtils;
+     //图片工具类
+    private final ImageUtils imageUtils;
+
+    @Autowired
+    public UserController(UserService userService, JwtUtils jwtUtils, ImageUtils imageUtils) {
+        this.userService = userService;
+        this.jwtUtils = jwtUtils;
+        this.imageUtils = imageUtils;
+    }
      //获取用户信息
     @GetMapping("/info")
     public Result getUserInfo(HttpServletRequest request) {
@@ -172,7 +181,7 @@ public class UserController {
     public Result uploadAvatar(@PathVariable String username, @RequestParam("file") MultipartFile file) {
         try {
             // 使用ImageUtils处理图片上传
-            String image = ImageUtils.processMultipartFile(file);
+            String image = imageUtils.processMultipartFile(file);
             // 查询用户获取ID
             User existingUser = userService.findByUsername(username);
             if (existingUser == null) {
@@ -187,7 +196,7 @@ public class UserController {
             // 删除原有图片
             if (oldImagePath != null) {
                 try {
-                    ImageUtils.deleteImage(oldImagePath);
+                    imageUtils.deleteImage(oldImagePath);
                 } catch (Exception e) {
                     logger.warn("Failed to delete old avatar file: " + oldImagePath, e);
                 }
@@ -262,12 +271,6 @@ public class UserController {
             return Result.error("服务器内部错误");
         }
     }
-    @Autowired
-    public UserController(UserService userService, JwtUtils jwtUtils) {
-        this.userService = userService;
-        this.jwtUtils = jwtUtils;
-    }
-
     /**
      *修改权限
      */
@@ -347,7 +350,7 @@ public class UserController {
             //图片处理
             if (user.getImage() != null && user.getImage().startsWith("data:image")) {
                 try {
-                    String imageUrl = ImageUtils.processBase64Image(user.getImage());
+                    String imageUrl = imageUtils.processBase64Image(user.getImage());
                     user.setImage(imageUrl);
                 } catch (Exception e) {
                     return Result.error("图片保存失败: " + e.getMessage());
@@ -394,12 +397,12 @@ public class UserController {
             // 处理图片
             if (user.getImage() != null && user.getImage().startsWith("data:image")) {
                 try {
-                    String imageUrl = ImageUtils.processBase64Image(user.getImage());
+                    String imageUrl = imageUtils.processBase64Image(user.getImage());
                     user.setImage(imageUrl);
 
                     // 删除旧图片
                     if (existingUser != null && existingUser.getImage() != null) {
-                        ImageUtils.deleteImage(existingUser.getImage());
+                        imageUtils.deleteImage(existingUser.getImage());
                     }
                 } catch (Exception e) {
                     return Result.error("图片保存失败: " + e.getMessage());
@@ -407,7 +410,7 @@ public class UserController {
             } else if (user.getImage() == null && existingUser != null && existingUser.getImage() != null) {
                 // 删除原有图片
                 try {
-                    ImageUtils.deleteImage(existingUser.getImage());
+                    imageUtils.deleteImage(existingUser.getImage());
                 } catch (Exception e) {
                     // 文件删除失败不影响主流程
                     System.err.println("删除图片文件失败: " + e.getMessage());
@@ -431,7 +434,7 @@ public class UserController {
             if (user != null && user.getImage() != null) {
                 try {
                     // 删除图片文件
-                    ImageUtils.deleteImage(user.getImage());
+                    imageUtils.deleteImage(user.getImage());
                 } catch (Exception e) {
                     // 文件删除失败不影响主流程
                     System.err.println("删除图片文件失败: " + e.getMessage());
@@ -526,7 +529,7 @@ public class UserController {
         // 处理图片
         if (image != null && image.startsWith("data:image")) {
             try {
-                String imageUrl = ImageUtils.processBase64Image(image);
+                String imageUrl = imageUtils.processBase64Image(image);
                 user.setImage(imageUrl);
             } catch (Exception e) {
                 return Result.error("图片保存失败: " + e.getMessage());
