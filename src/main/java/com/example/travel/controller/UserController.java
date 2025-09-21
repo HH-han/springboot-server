@@ -1,8 +1,10 @@
 package com.example.travel.controller;
 
 import com.example.travel.common.Result;
+import com.example.travel.entity.LoginInfo;
 import com.example.travel.entity.User;
 import com.example.travel.listener.UserDataListener;
+import com.example.travel.service.LoginInfoService;
 import com.example.travel.service.UserService;
 import com.example.travel.utils.ImageUtils;
 import com.example.travel.utils.JwtUtils;
@@ -37,12 +39,15 @@ public class UserController {
     private final JwtUtils jwtUtils;
      //图片工具类
     private final ImageUtils imageUtils;
+     //登录信息服务
+    private final LoginInfoService loginInfoService;
 
     @Autowired
-    public UserController(UserService userService, JwtUtils jwtUtils, ImageUtils imageUtils) {
+    public UserController(UserService userService, JwtUtils jwtUtils, ImageUtils imageUtils, LoginInfoService loginInfoService) {
         this.userService = userService;
         this.jwtUtils = jwtUtils;
         this.imageUtils = imageUtils;
+        this.loginInfoService = loginInfoService;
     }
      //获取用户信息
     @GetMapping("/info")
@@ -79,7 +84,7 @@ public class UserController {
      * @return 登录结果
      */
     @PostMapping("/login")
-    public Result login(@RequestBody User loginUser) {
+    public Result login(@RequestBody User loginUser, HttpServletRequest request) {
         String username = loginUser.getUsername();
         String password = loginUser.getPassword();
         
@@ -117,6 +122,10 @@ public class UserController {
         data.put("token", jwtUtils.generateToken(username));
         // 返回完整数据
         logger.info("登录成功 - {}",username);
+        
+        // 记录登录信息
+        recordLoginInfo(user, request);
+        
         return Result.success("登录成功",data);
     }
 
@@ -126,7 +135,7 @@ public class UserController {
      * @return 登录结果
      */
     @PostMapping("/adminlogin")
-    public Result adminlogin(@RequestBody User loginUser) {
+    public Result adminlogin(@RequestBody User loginUser, HttpServletRequest request) {
         String username = loginUser.getUsername();
         String password = loginUser.getPassword();
 
@@ -142,6 +151,7 @@ public class UserController {
         }
         // 查询用户
         User user = userService.findByUsername(username);
+
         if (user == null) {
             logger.warn("登录失败: 用户不存在 - {}", username);
             return Result.error("用户名或密码错误！");
@@ -170,6 +180,10 @@ public class UserController {
         data.put("token", jwtUtils.generateToken(username));
         // 返回完整数据
         logger.info("登录成功 - {}",username);
+        
+        // 记录登录信息
+        recordLoginInfo(user, request);
+        
         return Result.success("登录成功",data);
     }
     /**
@@ -571,5 +585,99 @@ public class UserController {
                 .doRead();
         logger.info("用户数据导入成功");
         return Result.success();
+    }
+
+    /**
+     * 记录登录信息
+     * @param user    用户信息
+     * @param request HTTP请求
+     */
+    private void recordLoginInfo(User user, HttpServletRequest request) {
+        try {
+            LoginInfo loginInfo = new LoginInfo();
+            loginInfo.setUserId(user.getId().longValue());
+            loginInfo.setUsername(user.getUsername());
+            loginInfo.setIpaddr(getClientIp(request));
+            loginInfo.setLoginTime(LocalDateTime.now());
+            loginInfo.setStatus("登录成功");
+            loginInfo.setMsg("用户登录成功");
+            
+            loginInfoService.recordLoginInfo(loginInfo);
+            logger.info("登录记录成功 - 用户: {}, IP: {}", user.getUsername(), loginInfo.getIpaddr());
+        } catch (Exception e) {
+            logger.error("记录登录信息失败 - 用户: {}, 错误: {}", user.getUsername(), e.getMessage());
+        }
+    }
+
+    /**
+     * 查询登录信息（分页）
+     * @param page 页码
+     * @param pageSize 每页大小
+     * @param keyword 搜索关键词
+     * @return 登录信息列表和总数
+     */
+    @GetMapping("/logininfo")
+    public Result getLoginInfo(@RequestParam(defaultValue = "1") int page,
+                              @RequestParam(defaultValue = "10") int pageSize,
+                              @RequestParam(required = false) String keyword) {
+        try {
+            Map<String, Object> result = loginInfoService.getAllLoginInfo(page, pageSize, keyword);
+            logger.info("查询登录信息成功，页码: {}, 每页大小: {}, 关键词: {}", page, pageSize, keyword);
+            return Result.success(result);
+        } catch (Exception e) {
+            logger.error("查询登录信息失败，页码: {}, 每页大小: {}, 关键词: {}", page, pageSize, keyword, e);
+            return Result.error("查询登录信息失败");
+        }
+    }
+
+    /**
+     * 退出登录
+     * @param userId 用户ID
+     * @return 操作结果
+     */
+    @PostMapping("/logout/{userId}")
+    public Result logout(@PathVariable Long userId) {
+        try {
+            int result = loginInfoService.deleteLoginInfoByUserId(userId);
+            if (result > 0) {
+                logger.info("用户退出登录成功，删除登录记录: {} 条，用户ID: {}", result, userId);
+                return Result.success("退出登录成功");
+            } else {
+                logger.warn("用户退出登录失败，未找到登录记录，用户ID: {}", userId);
+                return Result.error("退出登录失败，未找到登录记录");
+            }
+        } catch (Exception e) {
+            logger.error("用户退出登录时出现异常，用户ID: {}", userId, e);
+            return Result.error("退出登录时出现异常，请稍后重试");
+        }
+    }
+
+    /**
+     * 获取客户端IP地址
+     */
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
+            // 多次反向代理后会有多个ip值，第一个ip才是真实ip
+            if (ip.contains(",")) {
+                ip = ip.split(",")[0];
+            }
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 }

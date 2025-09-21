@@ -1,34 +1,51 @@
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\aspect\RateLimitAspect.java:132:56
-java: 非法逃逸 符
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\aspect\RateLimitAspect.java:132:47
-java: 未结束的字符串文字
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\aspect\RateLimitAspect.java:135:9
-java: 非法的类型开始
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\aspect\RateLimitAspect.java:135:15
-java: 需要<标识符>
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\aspect\RateLimitAspect.java:135:36
-java: 需要<标识符>
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\aspect\RateLimitAspect.java:135:38
-java: 需要';'
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\aspect\RateLimitAspect.java:138:9
-java: 非法的类型开始
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\aspect\RateLimitAspect.java:138:15
-java: 需要<标识符>
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\aspect\RateLimitAspect.java:138:36
-java: 需要<标识符>
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\aspect\RateLimitAspect.java:138:38
-java: 需要';'
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\aspect\RateLimitAspect.java:141:9
-java: 非法的类型开始
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\aspect\RateLimitAspect.java:141:15
-java: 需要<标识符>
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\aspect\RateLimitAspect.java:141:36
-java: 需要<标识符>
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\aspect\RateLimitAspect.java:141:38
-java: 需要';'
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\aspect\RateLimitAspect.java:144:9
-java: 非法的类型开始
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\aspect\RateLimitAspect.java:144:18
-java: 需要<标识符>
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\aspect\RateLimitAspect.java:146
-java: 需要 class、interface、enum 或 record
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\service\TravelBlogService.java:3:61
+java: 程序包com.baomidou.mybatisplus.extension.plugins.pagination不存在
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\service\TravelBlogService.java:10:5
+java: 找不到符号
+  符号:   类 Page
+  位置: 接口 com.example.travel.service.TravelBlogService
+  D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\entity\TravelBlog.java:3:43
+  java: 程序包com.baomidou.mybatisplus.annotation不存在
+  D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\entity\TravelBlog.java:4:43
+  java: 程序包com.baomidou.mybatisplus.annotation不存在
+  D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\entity\TravelBlog.java:5:43
+  java: 程序包com.baomidou.mybatisplus.annotation不存在
+  D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\entity\TravelBlog.java:6:43
+  java: 程序包com.baomidou.mybatisplus.annotation不存在
+  D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\entity\TravelBlog.java:17:2
+  java: 找不到符号
+    符号: 类 TableName
+  D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\entity\TravelBlog.java:19:6
+  java: 找不到符号
+    符号:   类 TableId
+    位置: 类 com.example.travel.entity.TravelBlog
+  D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\entity\TravelBlog.java:19:21
+  java: 找不到符号
+    符号:   变量 IdType
+    位置: 类 com.example.travel.entity.TravelBlog
+    D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\service\impl\TravelBlogServiceImpl.java:3:54
+    java: 程序包com.baomidou.mybatisplus.core.conditions.query不存在
+    D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\service\impl\TravelBlogServiceImpl.java:4:61
+    java: 程序包com.baomidou.mybatisplus.extension.plugins.pagination不存在
+    D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\service\impl\TravelBlogServiceImpl.java:22:12
+    java: 找不到符号
+      符号:   类 Page
+      位置: 类 com.example.travel.service.impl.TravelBlogServiceImpl
+
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\dao\TravelBlogDao.java:3:44
+java: 程序包com.baomidou.mybatisplus.core.mapper不存在
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\dao\TravelBlogDao.java:4:61
+java: 程序包com.baomidou.mybatisplus.extension.plugins.pagination不存在
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\dao\TravelBlogDao.java:14:40
+java: 找不到符号
+  符号: 类 BaseMapper
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\config\MyBatisConfig.java:3:43
+java: 程序包com.baomidou.mybatisplus.annotation不存在
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\config\MyBatisConfig.java:4:50
+java: 程序包com.baomidou.mybatisplus.extension.plugins不存在
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\config\MyBatisConfig.java:5:56
+java: 程序包com.baomidou.mybatisplus.extension.plugins.inner不存在
+D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\config\MyBatisConfig.java:18:12
+java: 找不到符号
+  符号:   类 MybatisPlusInterceptor
+  位置: 类 com.example.travel.config.MyBatisConfig
