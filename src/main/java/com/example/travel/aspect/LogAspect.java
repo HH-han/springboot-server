@@ -1,5 +1,6 @@
 package com.example.travel.aspect;
 
+import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -44,14 +45,14 @@ public class LogAspect {
             Method method = signature.getMethod();
 
             // 记录请求信息
-            log.info("===================== 请求开始 =====================");
-            log.info("请求地址: {} {}", request.getMethod(), request.getRequestURL());
-            log.info("控制器方法: {}.{}", method.getDeclaringClass().getName(), method.getName());
-            log.info("请求参数: {}", Arrays.toString(joinPoint.getArgs()));
-            log.info("请求IP: {}", getClientIp(request));
-            log.info("用户代理: {}", request.getHeader("User-Agent"));
+//            log.info("===================== 请求开始 =====================");
+//            log.info("请求地址: {} {}", request.getMethod(), request.getRequestURL());
+//            log.info("控制器方法: {}.{}", method.getDeclaringClass().getName(), method.getName());
+//            log.info("请求参数: {}", Arrays.toString(joinPoint.getArgs()));
+//            log.info("请求IP: {}", getClientIp(request));
+//            log.info("用户代理: {}", request.getHeader("User-Agent"));
         } catch (Exception e) {
-            log.warn("记录请求日志异常: {}", e.getMessage());
+//            log.warn("记录请求日志异常: {}", e.getMessage());
         }
     }
 
@@ -65,10 +66,10 @@ public class LogAspect {
             Method method = signature.getMethod();
 
             // 记录响应信息
-            //log.info("方法返回: {}", JSON.toJSONString(result));
-            log.info("===================== 请求结束 =====================");
+//            log.info("方法返回: {}", JSON.toJSONString(result));
+//            log.info("===================== 请求结束 =====================");
         } catch (Exception e) {
-            log.warn("记录响应日志异常: {}", e.getMessage());
+//            log.warn("记录响应日志异常: {}", e.getMessage());
         }
     }
 
@@ -82,12 +83,12 @@ public class LogAspect {
             Method method = signature.getMethod();
 
             // 记录异常信息
-            log.error("方法执行异常: {}.{}", method.getDeclaringClass().getName(), method.getName());
-            log.error("异常信息: {}", e.getMessage());
-            log.error("异常堆栈: ", e);
-            log.info("===================== 请求异常结束 =====================");
+//            log.error("方法执行异常: {}.{}", method.getDeclaringClass().getName(), method.getName());
+//            log.error("异常信息: {}", e.getMessage());
+//            log.error("异常堆栈: ", e);
+//            log.info("===================== 请求异常结束 =====================");
         } catch (Exception ex) {
-            log.warn("记录异常日志异常: {}", ex.getMessage());
+//            log.warn("记录异常日志异常: {}", ex.getMessage());
         }
     }
 
@@ -105,10 +106,10 @@ public class LogAspect {
             MethodSignature signature = (MethodSignature) joinPoint.getSignature();
             Method method = signature.getMethod();
 
-            log.info("方法执行时间: {}ms - {}.{}",
-                    (endTime - startTime),
-                    method.getDeclaringClass().getSimpleName(),
-                    method.getName());
+//            log.info("方法执行时间: {}ms - {}.{}",
+//                    (endTime - startTime),
+//                    method.getDeclaringClass().getSimpleName(),
+//                    method.getName());
 
             return result;
         } catch (Throwable e) {

@@ -147,7 +147,6 @@ public class AuthController {
         try {
             // 使用JwtUtils获取Token状态
             Object tokenStatus = jwtUtils.getTokenStatus(token);
-            logger.info("Token状态查询成功");
             return Result.success(tokenStatus);
         } catch (Exception e) {
             logger.warn("Token状态查询失败: {}", e.getMessage());

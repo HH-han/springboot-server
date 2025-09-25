@@ -3,11 +3,14 @@ package com.example.travel.controller;
 import com.example.travel.common.Result;
 import com.example.travel.dto.FriendRequestWithPhoneDTO;
 import com.example.travel.entity.*;
+import com.example.travel.service.ChatEmojiService;
 import com.example.travel.service.InstantMessagingService;
 import com.example.travel.service.UserService;
+import com.example.travel.utils.ImageUtils;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +28,9 @@ public class InstantMessagingController {
 
     private final InstantMessagingService instantMessagingService;
     private final UserService userService;
+    private final ChatEmojiService chatEmojiService;
+    private final ImageUtils imageUtils;
+    private final SimpMessagingTemplate messagingTemplate;
     private final Logger logger = LoggerFactory.getLogger(InstantMessagingController.class);
 
     /**
@@ -368,4 +374,130 @@ public class InstantMessagingController {
             return Result.error("获取未读消息数量失败");
         }
     }
+
+    /**
+     * 处理单聊图片消息（Base64格式）
+     * 接收Base64图片数据，保存到服务器并返回图片URL，然后通过WebSocket发送
+     */
+    @PostMapping("/single/process/image")
+    public Result processSingleImage(@RequestBody Map<String, Object> params) {
+        try {
+            Long senderId = Long.parseLong(params.get("senderId").toString());
+            Long receiverId = Long.parseLong(params.get("receiverId").toString());
+            String imageData = params.get("image").toString();
+            
+            if (senderId == null) {
+                return Result.error("发送者ID不能为空");
+            }
+            
+            if (receiverId == null) {
+                return Result.error("接收者ID不能为空");
+            }
+            
+            if (imageData == null || imageData.trim().isEmpty()) {
+                return Result.error("图片数据不能为空");
+            }
+
+            // 使用ImageUtils处理Base64图片数据
+            String imageUrl = imageUtils.processBase64Image(imageData);
+            
+            // 创建图片消息并保存到数据库
+            SingleChatMessage message = new SingleChatMessage();
+            message.setSenderId(senderId);
+            message.setReceiverId(receiverId);
+            message.setContent("[图片]");
+            message.setMessageType("IMAGE");
+            message.setImage(imageUrl);
+            
+            instantMessagingService.sendSingleMessage(message);
+            
+            // 通过WebSocket发送图片消息给接收方 - 使用用户名而不是用户ID进行路由
+            com.example.travel.entity.User receiver = userService.getById(receiverId);
+            if (receiver != null) {
+                messagingTemplate.convertAndSendToUser(
+                    receiver.getUsername(), 
+                    "/queue/messages", 
+                    message
+                );
+                
+                // 同时也发送给发送者，确保发送者能看到自己的消息
+                com.example.travel.entity.User sender = userService.getById(senderId);
+                if (sender != null) {
+                    messagingTemplate.convertAndSendToUser(
+                        sender.getUsername(), 
+                        "/queue/messages", 
+                        message
+                    );
+                }
+            }
+            
+            logger.info("单聊图片处理成功: {} -> {}, 图片URL: {}", senderId, receiverId, imageUrl);
+            return Result.success("图片处理成功", imageUrl);
+            
+        } catch (Exception e) {
+            logger.error("单聊图片处理失败: {}", e.getMessage(), e);
+            return Result.error("图片处理失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 处理群聊图片消息（Base64格式）
+     * 接收Base64图片数据，保存到服务器并返回图片URL，然后通过WebSocket发送
+     */
+    @PostMapping("/group/process/image")
+    public Result processGroupImage(@RequestBody Map<String, Object> params) {
+        try {
+            Long senderId = Long.parseLong(params.get("senderId").toString());
+            Long groupId = Long.parseLong(params.get("groupId").toString());
+            String imageData = params.get("image").toString();
+            
+            if (senderId == null) {
+                return Result.error("发送者ID不能为空");
+            }
+            
+            if (groupId == null) {
+                return Result.error("群组ID不能为空");
+            }
+            
+            if (imageData == null || imageData.trim().isEmpty()) {
+                return Result.error("图片数据不能为空");
+            }
+
+            // 使用ImageUtils处理Base64图片数据
+            String imageUrl = imageUtils.processBase64Image(imageData);
+            
+            // 创建群聊图片消息并保存到数据库
+            GroupChatMessage message = instantMessagingService.sendGroupMessage(senderId, groupId, "[图片]", "IMAGE", imageUrl);
+            
+            // 通过WebSocket发送图片消息给群组所有成员
+            messagingTemplate.convertAndSend(
+                "/topic/group/" + groupId, 
+                message
+            );
+            
+            logger.info("群聊图片处理成功: 用户{} -> 群组{}, 图片URL: {}", senderId, groupId, imageUrl);
+            return Result.success("图片处理成功", imageUrl);
+            
+        } catch (Exception e) {
+            logger.error("群聊图片处理失败: {}", e.getMessage(), e);
+            return Result.error("图片处理失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取所有emoji表情
+     */
+    @GetMapping("/emoji/all")
+    public Result getAllEmojis() {
+        try {
+            List<ChatEmoji> emojis = chatEmojiService.findAll();
+            logger.info("获取所有emoji表情成功，共{}个", emojis.size());
+            return Result.success(emojis);
+        } catch (Exception e) {
+            logger.error("获取emoji表情失败: {}", e.getMessage(), e);
+            return Result.error("获取表情失败");
+        }
+    }
+
+
 }

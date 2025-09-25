@@ -2,12 +2,16 @@ package com.example.travel.config;
 
 import com.example.travel.interceptor.WebSocketChannelInterceptor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+
+import java.util.List;
 
 /**
  * WebSocket配置类
@@ -48,14 +52,21 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
         
-        // 注册不带SockJS的端点
-        registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("*");
-        
         // 注册语音通话专用的WebSocket端点
         registry.addEndpoint("/voice")
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
+    }
+    
+
+    
+    @Override
+    public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
+        // 显式配置MappingJackson2MessageConverter作为消息转换器
+        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
+        converter.setStrictContentTypeMatch(false);
+        messageConverters.add(converter);
+        return false;
     }
     
     /**
@@ -63,7 +74,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
      */
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        // 启用简单内存消息代理，目的地前缀为 /topic
+        // 启用简单内存消息代理，目的地前缀为 /topic 和 /queue
         config.enableSimpleBroker("/topic", "/queue");
         // 设置应用程序目的地前缀
         config.setApplicationDestinationPrefixes("/app");

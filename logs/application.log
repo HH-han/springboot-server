@@ -1,0 +1,484 @@
+2025-09-23 18:48:47.769 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-09-23 18:48:47.798 [main] INFO  c.e.t.SpiritualPressureApplication - Starting SpiritualPressureApplication using Java 21.0.4 with PID 27280 (D:\IDEA\Work\spiritualPressure\target\classes started by hanhejun in D:\IDEA\Work\spiritualPressure)
+2025-09-23 18:48:47.798 [main] INFO  c.e.t.SpiritualPressureApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-23 18:48:48.409 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-09-23 18:48:48.410 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-23 18:48:48.441 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 25 ms. Found 0 JPA repository interfaces.
+2025-09-23 18:48:48.456 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-09-23 18:48:48.458 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-09-23 18:48:48.470 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 8 ms. Found 0 Redis repository interfaces.
+2025-09-23 18:48:49.003 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 2025 (http)
+2025-09-23 18:48:49.005 [main] INFO  o.a.c.core.AprLifecycleListener - An older version [1.3.1] of the Apache Tomcat Native library is installed, while Tomcat recommends a minimum version of [2.0.5]
+2025-09-23 18:48:49.005 [main] INFO  o.a.c.core.AprLifecycleListener - Loaded Apache Tomcat Native library [1.3.1] using APR version [1.7.4].
+2025-09-23 18:48:49.008 [main] INFO  o.a.c.core.AprLifecycleListener - OpenSSL successfully initialized [OpenSSL 3.0.14 4 Jun 2024]
+2025-09-23 18:48:49.015 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-2025"]
+2025-09-23 18:48:49.016 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-23 18:48:49.016 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-09-23 18:48:49.063 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-23 18:48:49.063 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1239 ms
+2025-09-23 18:48:49.503 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-23 18:48:49.530 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-09-23 18:48:49.551 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-23 18:48:49.709 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-23 18:48:49.729 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-09-23 18:48:49.923 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@475eb4fd
+2025-09-23 18:48:49.924 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-09-23 18:48:49.956 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-23 18:48:49.965 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-23 18:48:50.629 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-23 18:48:50.736 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-23 18:48:51.611 [main] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2025-09-23 18:48:51.698 [main] DEBUG o.s.w.s.s.s.WebSocketHandlerMapping - Patterns [/ws/**, /voice/**] in 'stompWebSocketHandlerMapping'
+2025-09-23 18:48:51.711 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+2025-09-23 18:48:51.818 [main] INFO  c.example.travel.config.WebMvcConfig - 使用目录: D:\Image
+2025-09-23 18:48:51.824 [main] WARN  o.s.w.s.r.ResourceHandlerUtils - Appended trailing slash to static resource location: file:D:\Image\
+2025-09-23 18:48:51.826 [main] WARN  o.s.w.s.r.ResourceHandlerUtils - Appended trailing slash to static resource location: file:D:\Image\
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.AuthController:
+	
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.CartController:
+	
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.ChatGroupController:
+	
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.DestinationController:
+	
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.FoodController:
+	
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.HotelController:
+	
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.InstantMessagingController:
+	
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.LoginLogController:
+	
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.MonitorController:
+	
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.OrderController:
+	
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.PaymentController:
+	
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.ProvinceController:
+	
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.SafetyTipsController:
+	
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.ScenicController:
+	
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.StrategygroupController:
+	
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.TravelBlogController:
+	
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.TravelCardController:
+	
+2025-09-23 18:48:51.926 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.TravelCarouselController:
+	
+2025-09-23 18:48:51.927 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.TravelCollectionController:
+	
+2025-09-23 18:48:51.927 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.TravelNewsController:
+	
+2025-09-23 18:48:51.927 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.TravelNoteController:
+	
+2025-09-23 18:48:51.927 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.TravelPostController:
+	
+2025-09-23 18:48:51.927 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.TravelRecommendController:
+	
+2025-09-23 18:48:51.927 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.TravelWorldcharacteristicsController:
+	
+2025-09-23 18:48:51.927 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.UserController:
+	
+2025-09-23 18:48:51.929 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.VoiceCallController:
+	{[MESSAGE],[/voice/call/request]}: handleCallRequest(VoiceCallMessage,Principal)
+	{[MESSAGE],[/voice/call/accept]}: handleCallAccept(VoiceCallMessage,Principal)
+	{[MESSAGE],[/voice/audio]}: handleAudioData(VoiceCallMessage,Principal)
+	{[MESSAGE],[/voice/sdp/answer]}: handleSdpAnswer(VoiceCallMessage,Principal)
+	{[MESSAGE],[/voice/ice]}: handleIceCandidate(VoiceCallMessage,Principal)
+	{[MESSAGE],[/voice/call/end]}: handleCallEnd(VoiceCallMessage,Principal)
+	{[MESSAGE],[/voice/call/reject]}: handleCallReject(VoiceCallMessage,Principal)
+	{[MESSAGE],[/voice/sdp/offer]}: handleSdpOffer(VoiceCallMessage,Principal)
+2025-09-23 18:48:51.930 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	c.e.t.c.WebSocketController:
+	{[MESSAGE],[/system.notification]}: sendNotification(ChatMessage)
+	{[MESSAGE],[/chat.sendMessage]}: sendMessage(ChatMessage)
+	{[MESSAGE],[/private.message]}: sendPrivateMessage(ChatMessage,Principal)
+	{[MESSAGE],[/order.update]}: updateOrderStatus(ChatMessage)
+	{[MESSAGE],[/chat.addUser]}: addUser(ChatMessage,SimpMessageHeaderAccessor)
+	{[MESSAGE],[/chat/single]}: handleSingleChatMessage(SingleChatMessage,Principal)
+	{[MESSAGE],[/hello]}: greeting(String)
+2025-09-23 18:48:51.930 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	o.s.b.a.w.s.e.BasicErrorController:
+	
+2025-09-23 18:48:51.931 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	o.s.w.a.OpenApiWebMvcResource:
+	
+2025-09-23 18:48:51.931 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	o.s.w.u.SwaggerWelcomeWebMvc:
+	
+2025-09-23 18:48:51.931 [main] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - 
+	o.s.w.u.SwaggerConfigResource:
+	
+2025-09-23 18:48:52.276 [main] DEBUG o.s.m.s.ExecutorSubscribableChannel - clientOutboundChannel added SubProtocolWebSocketHandler[StompSubProtocolHandler[v10.stomp, v11.stomp, v12.stomp]]
+2025-09-23 18:48:52.277 [main] DEBUG o.s.m.s.ExecutorSubscribableChannel - clientInboundChannel added WebSocketAnnotationMethodMessageHandler[prefixes=[/app/]]
+2025-09-23 18:48:52.277 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-09-23 18:48:52.277 [main] DEBUG o.s.m.s.ExecutorSubscribableChannel - clientInboundChannel added SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@431a9a71]
+2025-09-23 18:48:52.277 [main] DEBUG o.s.m.s.ExecutorSubscribableChannel - brokerChannel added SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@431a9a71]
+2025-09-23 18:48:52.277 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@431a9a71]]
+2025-09-23 18:48:52.278 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-09-23 18:48:52.278 [main] DEBUG o.s.m.s.ExecutorSubscribableChannel - clientInboundChannel added UserDestinationMessageHandler[DefaultUserDestinationResolver[prefix=/user/]]
+2025-09-23 18:48:52.278 [main] DEBUG o.s.m.s.ExecutorSubscribableChannel - brokerChannel added UserDestinationMessageHandler[DefaultUserDestinationResolver[prefix=/user/]]
+2025-09-23 18:48:52.278 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-2025"]
+2025-09-23 18:48:52.292 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 2025 (http) with context path '/'
+2025-09-23 18:48:52.300 [main] INFO  c.e.t.SpiritualPressureApplication - Started SpiritualPressureApplication in 4.816 seconds (process running for 5.367)
+2025-09-23 18:49:33.336 [http-nio-2025-exec-4] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-23 18:49:33.336 [http-nio-2025-exec-4] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-09-23 18:49:33.339 [http-nio-2025-exec-4] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2025-09-23 18:49:34.567 [http-nio-2025-exec-5] DEBUG o.s.w.s.s.s.WebSocketHandlerMapping - Mapped to org.springframework.web.socket.sockjs.support.SockJsHttpRequestHandler@f4ecbbf
+2025-09-23 18:49:34.567 [http-nio-2025-exec-2] DEBUG o.s.w.s.s.s.WebSocketHandlerMapping - Mapped to org.springframework.web.socket.sockjs.support.SockJsHttpRequestHandler@73430c86
+2025-09-23 18:49:34.568 [http-nio-2025-exec-2] DEBUG o.s.w.s.s.t.h.DefaultSockJsService - Processing transport request: GET http://localhost:2025/ws/info?t=1758624574565
+2025-09-23 18:49:34.568 [http-nio-2025-exec-5] DEBUG o.s.w.s.s.t.h.DefaultSockJsService - Processing transport request: GET http://localhost:2025/voice/info?t=1758624574564
+2025-09-23 18:49:34.575 [http-nio-2025-exec-7] DEBUG o.s.w.s.s.s.WebSocketHandlerMapping - Mapped to org.springframework.web.socket.sockjs.support.SockJsHttpRequestHandler@f4ecbbf
+2025-09-23 18:49:34.575 [http-nio-2025-exec-7] DEBUG o.s.w.s.s.t.h.DefaultSockJsService - Processing transport request: GET http://localhost:2025/voice/947/io2bo2md/websocket
+2025-09-23 18:49:34.619 [http-nio-2025-exec-7] DEBUG o.s.w.s.h.LoggingWebSocketHandlerDecorator - New WebSocketServerSockJsSession[id=io2bo2md]
+2025-09-23 18:49:34.619 [http-nio-2025-exec-10] DEBUG o.s.w.s.s.s.WebSocketHandlerMapping - Mapped to org.springframework.web.socket.sockjs.support.SockJsHttpRequestHandler@73430c86
+2025-09-23 18:49:34.620 [http-nio-2025-exec-10] DEBUG o.s.w.s.s.t.h.DefaultSockJsService - Processing transport request: GET http://localhost:2025/ws/639/q5nanrsz/websocket
+2025-09-23 18:49:34.622 [http-nio-2025-exec-10] DEBUG o.s.w.s.h.LoggingWebSocketHandlerDecorator - New WebSocketServerSockJsSession[id=q5nanrsz]
+2025-09-23 18:49:34.643 [http-nio-2025-exec-3] INFO  c.e.t.i.WebSocketChannelInterceptor - WebSocket连接认证成功: admin
+2025-09-23 18:49:34.643 [http-nio-2025-exec-1] INFO  c.e.t.i.WebSocketChannelInterceptor - WebSocket连接认证成功: admin
+2025-09-23 18:49:34.643 [http-nio-2025-exec-1] INFO  c.e.t.i.WebSocketChannelInterceptor - 用户连接: admin
+2025-09-23 18:49:34.643 [http-nio-2025-exec-3] INFO  c.e.t.i.WebSocketChannelInterceptor - 用户连接: admin
+2025-09-23 18:49:34.645 [http-nio-2025-exec-3] INFO  c.e.t.i.WebSocketChannelInterceptor - postSend: CONNECT -> admin
+2025-09-23 18:49:34.645 [http-nio-2025-exec-1] INFO  c.e.t.i.WebSocketChannelInterceptor - postSend: CONNECT -> admin
+2025-09-23 18:49:34.645 [clientInboundChannel-3] DEBUG o.s.m.s.b.SimpleBrokerMessageHandler - Processing CONNECT user=admin session=io2bo2md
+2025-09-23 18:49:34.645 [http-nio-2025-exec-3] INFO  c.e.t.i.WebSocketChannelInterceptor - afterSendCompletion: CONNECT -> UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=admin, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[USER]], Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]
+2025-09-23 18:49:34.645 [clientInboundChannel-4] DEBUG o.s.m.s.b.SimpleBrokerMessageHandler - Processing CONNECT user=admin session=q5nanrsz
+2025-09-23 18:49:34.645 [http-nio-2025-exec-1] INFO  c.e.t.i.WebSocketChannelInterceptor - afterSendCompletion: CONNECT -> UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=admin, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[USER]], Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]
+2025-09-23 18:49:34.658 [http-nio-2025-exec-2] INFO  c.e.t.i.WebSocketChannelInterceptor - 获取用户ID成功: admin -> 1
+2025-09-23 18:49:34.659 [http-nio-2025-exec-2] INFO  c.e.t.i.WebSocketChannelInterceptor - 用户订阅: 1 -> /user/queue/voice/call
+2025-09-23 18:49:34.659 [http-nio-2025-exec-2] INFO  c.e.t.i.WebSocketChannelInterceptor - postSend: SUBSCRIBE -> admin
+2025-09-23 18:49:34.659 [http-nio-2025-exec-2] INFO  c.e.t.i.WebSocketChannelInterceptor - afterSendCompletion: SUBSCRIBE -> UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=admin, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[USER]], Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]
+2025-09-23 18:49:34.660 [http-nio-2025-exec-5] INFO  c.e.t.i.WebSocketChannelInterceptor - 获取用户ID成功: admin -> 1
+2025-09-23 18:49:34.660 [http-nio-2025-exec-5] INFO  c.e.t.i.WebSocketChannelInterceptor - 用户订阅: 1 -> /user/queue/messages
+2025-09-23 18:49:34.660 [http-nio-2025-exec-5] INFO  c.e.t.i.WebSocketChannelInterceptor - postSend: SUBSCRIBE -> admin
+2025-09-23 18:49:34.660 [http-nio-2025-exec-5] INFO  c.e.t.i.WebSocketChannelInterceptor - afterSendCompletion: SUBSCRIBE -> UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=admin, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[USER]], Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]
+2025-09-23 18:49:34.660 [clientInboundChannel-9] DEBUG o.s.m.s.b.SimpleBrokerMessageHandler - Processing SUBSCRIBE destination=/queue/voice/call-userio2bo2md subscriptionId=sub-0 session=io2bo2md user=admin payload=byte[0]
+2025-09-23 18:49:34.660 [clientInboundChannel-12] DEBUG o.s.m.s.b.SimpleBrokerMessageHandler - Processing SUBSCRIBE destination=/queue/messages-userq5nanrsz subscriptionId=sub-0 session=q5nanrsz user=admin payload=byte[0]
+2025-09-23 18:49:34.661 [http-nio-2025-exec-2] INFO  c.e.t.i.WebSocketChannelInterceptor - 获取用户ID成功: admin -> 1
+2025-09-23 18:49:34.661 [http-nio-2025-exec-2] INFO  c.e.t.i.WebSocketChannelInterceptor - 用户订阅: 1 -> /user/queue/voice/audio
+2025-09-23 18:49:34.663 [http-nio-2025-exec-2] INFO  c.e.t.i.WebSocketChannelInterceptor - postSend: SUBSCRIBE -> admin
+2025-09-23 18:49:34.663 [http-nio-2025-exec-2] INFO  c.e.t.i.WebSocketChannelInterceptor - afterSendCompletion: SUBSCRIBE -> UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=admin, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[USER]], Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]
+2025-09-23 18:49:34.663 [clientInboundChannel-15] DEBUG o.s.m.s.b.SimpleBrokerMessageHandler - Processing SUBSCRIBE destination=/queue/voice/audio-userio2bo2md subscriptionId=sub-1 session=io2bo2md user=admin payload=byte[0]
+2025-09-23 18:49:34.665 [http-nio-2025-exec-2] INFO  c.e.t.i.WebSocketChannelInterceptor - 获取用户ID成功: admin -> 1
+2025-09-23 18:49:34.665 [http-nio-2025-exec-2] INFO  c.e.t.i.WebSocketChannelInterceptor - 用户订阅: 1 -> /user/queue/voice/ice
+2025-09-23 18:49:34.665 [http-nio-2025-exec-2] INFO  c.e.t.i.WebSocketChannelInterceptor - postSend: SUBSCRIBE -> admin
+2025-09-23 18:49:34.665 [http-nio-2025-exec-2] INFO  c.e.t.i.WebSocketChannelInterceptor - afterSendCompletion: SUBSCRIBE -> UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=admin, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[USER]], Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]
+2025-09-23 18:49:34.666 [clientInboundChannel-18] DEBUG o.s.m.s.b.SimpleBrokerMessageHandler - Processing SUBSCRIBE destination=/queue/voice/ice-userio2bo2md subscriptionId=sub-2 session=io2bo2md user=admin payload=byte[0]
+2025-09-23 18:49:34.668 [http-nio-2025-exec-2] INFO  c.e.t.i.WebSocketChannelInterceptor - 获取用户ID成功: admin -> 1
+2025-09-23 18:49:34.668 [http-nio-2025-exec-2] INFO  c.e.t.i.WebSocketChannelInterceptor - 用户订阅: 1 -> /user/queue/voice/sdp
+2025-09-23 18:49:34.669 [http-nio-2025-exec-2] INFO  c.e.t.i.WebSocketChannelInterceptor - postSend: SUBSCRIBE -> admin
+2025-09-23 18:49:34.670 [http-nio-2025-exec-2] INFO  c.e.t.i.WebSocketChannelInterceptor - afterSendCompletion: SUBSCRIBE -> UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=admin, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[USER]], Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]
+2025-09-23 18:49:34.670 [clientInboundChannel-21] DEBUG o.s.m.s.b.SimpleBrokerMessageHandler - Processing SUBSCRIBE destination=/queue/voice/sdp-userio2bo2md subscriptionId=sub-3 session=io2bo2md user=admin payload=byte[0]
+2025-09-23 18:49:39.677 [http-nio-2025-exec-4] INFO  c.e.t.i.WebSocketChannelInterceptor - 用户发送消息: admin -> /app/voice/call/request
+2025-09-23 18:49:39.677 [http-nio-2025-exec-4] INFO  c.e.t.i.WebSocketChannelInterceptor - postSend: SEND -> admin
+2025-09-23 18:49:39.677 [http-nio-2025-exec-4] INFO  c.e.t.i.WebSocketChannelInterceptor - 消息发送成功: admin -> /app/voice/call/request
+2025-09-23 18:49:39.677 [clientInboundChannel-22] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - Searching methods to handle SEND /app/voice/call/request session=io2bo2md, lookupDestination='/voice/call/request'
+2025-09-23 18:49:39.677 [http-nio-2025-exec-4] INFO  c.e.t.i.WebSocketChannelInterceptor - afterSendCompletion: SEND -> UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=admin, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[USER]], Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]
+2025-09-23 18:49:39.677 [http-nio-2025-exec-4] DEBUG c.e.t.i.WebSocketChannelInterceptor - 消息发送完成统计: admin -> /app/voice/call/request, 消息大小: 11 字节
+2025-09-23 18:49:39.680 [clientInboundChannel-22] DEBUG o.s.w.s.m.WebSocketAnnotationMethodMessageHandler - Invoking VoiceCallController#handleCallRequest[2 args]
+2025-09-23 18:49:39.707 [clientInboundChannel-22] INFO  c.e.t.s.impl.VoiceCallServiceImpl - 发起通话: 发起者=admin, 接收者=43
+2025-09-23 18:49:39.709 [clientInboundChannel-22] INFO  c.e.t.s.impl.VoiceCallServiceImpl - 接收者用户验证成功: ID=43, 用户名=小懒猪
+2025-09-23 18:49:39.709 [clientInboundChannel-22] INFO  c.e.t.s.impl.VoiceCallServiceImpl - 接收者WebSocket会话ID: session_043
+2025-09-23 18:49:39.710 [clientInboundChannel-22] INFO  c.e.t.s.impl.VoiceCallServiceImpl - 发送者用户验证成功: 用户名=admin
+2025-09-23 18:49:39.710 [clientInboundChannel-22] INFO  c.e.t.s.impl.VoiceCallServiceImpl - 发送者WebSocket会话ID: session_001
+2025-09-23 18:49:39.710 [clientInboundChannel-22] INFO  c.e.t.s.impl.VoiceCallServiceImpl - 会话状态检查 - 发送者: admin (在线状态: 1, 会话ID: session_001)
+2025-09-23 18:49:39.710 [clientInboundChannel-22] INFO  c.e.t.s.impl.VoiceCallServiceImpl - 会话状态检查 - 接收者: 43 (在线状态: 1, 会话ID: session_043)
+2025-09-23 18:49:39.711 [clientInboundChannel-22] INFO  c.e.t.s.impl.VoiceCallServiceImpl - 通话信息已创建: callId=4b6a6c18-a412-49c9-8eb3-07bcb6879857, caller=admin, receiver=43
+2025-09-23 18:49:39.711 [clientInboundChannel-22] INFO  c.e.t.s.impl.VoiceCallServiceImpl - 准备向接收者 43 发送通话请求，通话ID: 4b6a6c18-a412-49c9-8eb3-07bcb6879857
+2025-09-23 18:49:39.711 [clientInboundChannel-22] INFO  c.e.t.s.impl.VoiceCallServiceImpl - 发送目标: /user/43/queue/voice/call
+2025-09-23 18:49:39.711 [clientInboundChannel-22] INFO  c.e.t.s.impl.VoiceCallServiceImpl - 消息内容: caller=admin, receiver=43, callId=4b6a6c18-a412-49c9-8eb3-07bcb6879857
+2025-09-23 18:49:39.713 [clientInboundChannel-22] INFO  c.e.t.s.impl.VoiceCallServiceImpl - 成功向接收者 43 发送通话请求，通话ID: 4b6a6c18-a412-49c9-8eb3-07bcb6879857
+2025-09-23 18:49:39.713 [clientInboundChannel-22] INFO  c.e.t.s.impl.VoiceCallServiceImpl - 消息已发送到: /user/43/queue/voice/call
+2025-09-23 18:49:39.713 [clientInboundChannel-22] DEBUG o.s.m.s.b.SimpleBrokerMessageHandler - Processing MESSAGE destination=/queue/voice/call/sent-userio2bo2md session=null payload={"type":"CALL_REQUEST","caller":"admin","receiver":"43","callId":"4b6a6c18-a412-...(truncated)
+2025-09-23 18:49:39.715 [clientInboundChannel-22] DEBUG o.s.m.s.b.SimpleBrokerMessageHandler - Processing MESSAGE destination=/queue/voice/call/sent-userq5nanrsz session=null payload={"type":"CALL_REQUEST","caller":"admin","receiver":"43","callId":"4b6a6c18-a412-...(truncated)
+2025-09-23 18:49:39.715 [clientInboundChannel-22] INFO  c.e.t.s.impl.VoiceCallServiceImpl - 向发送者 admin 发送确认消息
+2025-09-23 18:49:39.715 [clientInboundChannel-22] INFO  c.e.t.s.impl.VoiceCallServiceImpl - 用户 admin 向 43 发起语音通话，通话ID: 4b6a6c18-a412-49c9-8eb3-07bcb6879857
+2025-09-23 18:49:39.716 [clientInboundChannel-22] DEBUG o.s.m.s.b.SimpleBrokerMessageHandler - Processing MESSAGE destination=/queue/voice/call-userq5nanrsz session=null payload={"type":"CALL_REQUEST","caller":"admin","receiver":"43","callId":"4b6a6c18-a412-...(truncated)
+2025-09-23 18:49:39.716 [clientInboundChannel-22] DEBUG o.s.m.s.b.SimpleBrokerMessageHandler - Processing MESSAGE destination=/queue/voice/call-userio2bo2md session=null payload={"type":"CALL_REQUEST","caller":"admin","receiver":"43","callId":"4b6a6c18-a412-...(truncated)
+2025-09-23 18:49:39.716 [clientInboundChannel-22] DEBUG o.s.m.s.b.SimpleBrokerMessageHandler - Broadcasting to 1 sessions.
+2025-09-23 18:49:39.717 [clientInboundChannel-22] INFO  c.e.t.controller.VoiceCallController - 语音通话请求处理成功: admin -> 43, 通话ID: 4b6a6c18-a412-49c9-8eb3-07bcb6879857
+2025-09-23 18:49:52.279 [MessageBroker-7] INFO  o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[2 current WS(2)-HttpStream(0)-HttpPoll(0), 2 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(2)-CONNECTED(2)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 24, active threads = 0, queued tasks = 0, completed tasks = 24], outboundChannel[pool size = 3, active threads = 0, queued tasks = 0, completed tasks = 3], sockJsScheduler[pool size = 16, active threads = 1, queued tasks = 5, completed tasks = 9]
+2025-09-23 18:52:51.138 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-23 18:52:51.146 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-09-23 18:52:51.148 [SpringApplicationShutdownHook] DEBUG o.s.m.s.ExecutorSubscribableChannel - clientOutboundChannel removed SubProtocolWebSocketHandler[StompSubProtocolHandler[v10.stomp, v11.stomp, v12.stomp]]
+2025-09-23 18:52:51.149 [SpringApplicationShutdownHook] DEBUG o.s.w.s.s.t.s.WebSocketServerSockJsSession - Closing SockJS session io2bo2md with CloseStatus[code=1001, reason=null]
+2025-09-23 18:52:51.149 [SpringApplicationShutdownHook] DEBUG o.s.w.s.h.LoggingWebSocketHandlerDecorator - Transport error in WebSocketServerSockJsSession[id=io2bo2md]
+java.io.IOException: java.nio.channels.ClosedChannelException
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlockInternal(WsRemoteEndpointImplBase.java:326)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlock(WsRemoteEndpointImplBase.java:266)
+	at org.apache.tomcat.websocket.WsSession.sendCloseMessage(WsSession.java:792)
+	at org.apache.tomcat.websocket.WsSession.doClose(WsSession.java:589)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlockInternal(WsRemoteEndpointImplBase.java:324)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlock(WsRemoteEndpointImplBase.java:266)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlock(WsRemoteEndpointImplBase.java:250)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendPartialString(WsRemoteEndpointImplBase.java:223)
+	at org.apache.tomcat.websocket.WsRemoteEndpointBasic.sendText(WsRemoteEndpointBasic.java:48)
+	at org.springframework.web.socket.adapter.standard.StandardWebSocketSession.sendTextMessage(StandardWebSocketSession.java:217)
+	at org.springframework.web.socket.adapter.AbstractWebSocketSession.sendMessage(AbstractWebSocketSession.java:108)
+	at org.springframework.web.socket.sockjs.transport.session.WebSocketServerSockJsSession.writeFrameInternal(WebSocketServerSockJsSession.java:228)
+	at org.springframework.web.socket.sockjs.transport.session.AbstractSockJsSession.close(AbstractSockJsSession.java:188)
+	at org.springframework.web.socket.handler.WebSocketSessionDecorator.close(WebSocketSessionDecorator.java:164)
+	at org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator.close(ConcurrentWebSocketSessionDecorator.java:271)
+	at org.springframework.web.socket.messaging.SubProtocolWebSocketHandler.stop(SubProtocolWebSocketHandler.java:308)
+	at org.springframework.web.socket.messaging.SubProtocolWebSocketHandler.stop(SubProtocolWebSocketHandler.java:321)
+	at org.springframework.context.support.DefaultLifecycleProcessor.doStop(DefaultLifecycleProcessor.java:384)
+	at org.springframework.context.support.DefaultLifecycleProcessor$LifecycleGroup.stop(DefaultLifecycleProcessor.java:526)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.context.support.DefaultLifecycleProcessor.stopBeans(DefaultLifecycleProcessor.java:353)
+	at org.springframework.context.support.DefaultLifecycleProcessor.onClose(DefaultLifecycleProcessor.java:253)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1172)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:179)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1126)
+	at org.springframework.boot.SpringApplicationShutdownHook.closeAndWait(SpringApplicationShutdownHook.java:147)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:116)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.nio.channels.ClosedChannelException: null
+	at org.apache.tomcat.util.net.NioChannel$1.write(NioChannel.java:273)
+	at org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper$NioOperationState.run(NioEndpoint.java:1634)
+	at org.apache.tomcat.util.net.SocketWrapperBase$OperationState.start(SocketWrapperBase.java:1051)
+	at org.apache.tomcat.util.net.SocketWrapperBase.vectoredOperation(SocketWrapperBase.java:1440)
+	at org.apache.tomcat.util.net.SocketWrapperBase.write(SocketWrapperBase.java:1366)
+	at org.apache.tomcat.util.net.SocketWrapperBase.write(SocketWrapperBase.java:1337)
+	at org.apache.tomcat.websocket.server.WsRemoteEndpointImplServer.doWrite(WsRemoteEndpointImplServer.java:171)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.writeMessagePart(WsRemoteEndpointImplBase.java:521)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlockInternal(WsRemoteEndpointImplBase.java:313)
+	... 24 common frames omitted
+2025-09-23 18:52:51.150 [SpringApplicationShutdownHook] DEBUG o.s.w.s.s.t.s.WebSocketServerSockJsSession - Failure while sending SockJS close frame
+java.io.IOException: java.nio.channels.ClosedChannelException
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlockInternal(WsRemoteEndpointImplBase.java:326)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlock(WsRemoteEndpointImplBase.java:266)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlock(WsRemoteEndpointImplBase.java:250)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendPartialString(WsRemoteEndpointImplBase.java:223)
+	at org.apache.tomcat.websocket.WsRemoteEndpointBasic.sendText(WsRemoteEndpointBasic.java:48)
+	at org.springframework.web.socket.adapter.standard.StandardWebSocketSession.sendTextMessage(StandardWebSocketSession.java:217)
+	at org.springframework.web.socket.adapter.AbstractWebSocketSession.sendMessage(AbstractWebSocketSession.java:108)
+	at org.springframework.web.socket.sockjs.transport.session.WebSocketServerSockJsSession.writeFrameInternal(WebSocketServerSockJsSession.java:228)
+	at org.springframework.web.socket.sockjs.transport.session.AbstractSockJsSession.close(AbstractSockJsSession.java:188)
+	at org.springframework.web.socket.handler.WebSocketSessionDecorator.close(WebSocketSessionDecorator.java:164)
+	at org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator.close(ConcurrentWebSocketSessionDecorator.java:271)
+	at org.springframework.web.socket.messaging.SubProtocolWebSocketHandler.stop(SubProtocolWebSocketHandler.java:308)
+	at org.springframework.web.socket.messaging.SubProtocolWebSocketHandler.stop(SubProtocolWebSocketHandler.java:321)
+	at org.springframework.context.support.DefaultLifecycleProcessor.doStop(DefaultLifecycleProcessor.java:384)
+	at org.springframework.context.support.DefaultLifecycleProcessor$LifecycleGroup.stop(DefaultLifecycleProcessor.java:526)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.context.support.DefaultLifecycleProcessor.stopBeans(DefaultLifecycleProcessor.java:353)
+	at org.springframework.context.support.DefaultLifecycleProcessor.onClose(DefaultLifecycleProcessor.java:253)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1172)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:179)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1126)
+	at org.springframework.boot.SpringApplicationShutdownHook.closeAndWait(SpringApplicationShutdownHook.java:147)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:116)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.nio.channels.ClosedChannelException: null
+	at org.apache.tomcat.util.net.NioChannel$1.write(NioChannel.java:273)
+	at org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper$NioOperationState.run(NioEndpoint.java:1634)
+	at org.apache.tomcat.util.net.SocketWrapperBase$OperationState.start(SocketWrapperBase.java:1051)
+	at org.apache.tomcat.util.net.SocketWrapperBase.vectoredOperation(SocketWrapperBase.java:1440)
+	at org.apache.tomcat.util.net.SocketWrapperBase.write(SocketWrapperBase.java:1366)
+	at org.apache.tomcat.util.net.SocketWrapperBase.write(SocketWrapperBase.java:1337)
+	at org.apache.tomcat.websocket.server.WsRemoteEndpointImplServer.doWrite(WsRemoteEndpointImplServer.java:171)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.writeMessagePart(WsRemoteEndpointImplBase.java:521)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlockInternal(WsRemoteEndpointImplBase.java:313)
+	... 24 common frames omitted
+2025-09-23 18:52:51.151 [SpringApplicationShutdownHook] DEBUG o.s.w.s.h.LoggingWebSocketHandlerDecorator - WebSocketServerSockJsSession[id=io2bo2md] closed with CloseStatus[code=1001, reason=null]
+2025-09-23 18:52:51.151 [SpringApplicationShutdownHook] DEBUG o.s.w.s.m.SubProtocolWebSocketHandler - Clearing session io2bo2md
+2025-09-23 18:52:51.151 [SpringApplicationShutdownHook] INFO  c.e.t.i.WebSocketChannelInterceptor - 用户断开连接: admin
+2025-09-23 18:52:51.151 [SpringApplicationShutdownHook] INFO  c.e.t.i.WebSocketChannelInterceptor - postSend: DISCONNECT -> admin
+2025-09-23 18:52:51.151 [SpringApplicationShutdownHook] INFO  c.e.t.i.WebSocketChannelInterceptor - afterSendCompletion: DISCONNECT -> UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=admin, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[USER]], Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]
+2025-09-23 18:52:51.151 [clientInboundChannel-26] DEBUG o.s.m.s.b.SimpleBrokerMessageHandler - Processing DISCONNECT session=io2bo2md
+2025-09-23 18:52:51.152 [SpringApplicationShutdownHook] DEBUG o.s.w.s.s.t.s.WebSocketServerSockJsSession - Closing SockJS session q5nanrsz with CloseStatus[code=1001, reason=null]
+2025-09-23 18:52:51.152 [SpringApplicationShutdownHook] DEBUG o.s.w.s.h.LoggingWebSocketHandlerDecorator - Transport error in WebSocketServerSockJsSession[id=q5nanrsz]
+java.io.IOException: java.nio.channels.ClosedChannelException
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlockInternal(WsRemoteEndpointImplBase.java:326)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlock(WsRemoteEndpointImplBase.java:266)
+	at org.apache.tomcat.websocket.WsSession.sendCloseMessage(WsSession.java:792)
+	at org.apache.tomcat.websocket.WsSession.doClose(WsSession.java:589)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlockInternal(WsRemoteEndpointImplBase.java:324)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlock(WsRemoteEndpointImplBase.java:266)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlock(WsRemoteEndpointImplBase.java:250)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendPartialString(WsRemoteEndpointImplBase.java:223)
+	at org.apache.tomcat.websocket.WsRemoteEndpointBasic.sendText(WsRemoteEndpointBasic.java:48)
+	at org.springframework.web.socket.adapter.standard.StandardWebSocketSession.sendTextMessage(StandardWebSocketSession.java:217)
+	at org.springframework.web.socket.adapter.AbstractWebSocketSession.sendMessage(AbstractWebSocketSession.java:108)
+	at org.springframework.web.socket.sockjs.transport.session.WebSocketServerSockJsSession.writeFrameInternal(WebSocketServerSockJsSession.java:228)
+	at org.springframework.web.socket.sockjs.transport.session.AbstractSockJsSession.close(AbstractSockJsSession.java:188)
+	at org.springframework.web.socket.handler.WebSocketSessionDecorator.close(WebSocketSessionDecorator.java:164)
+	at org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator.close(ConcurrentWebSocketSessionDecorator.java:271)
+	at org.springframework.web.socket.messaging.SubProtocolWebSocketHandler.stop(SubProtocolWebSocketHandler.java:308)
+	at org.springframework.web.socket.messaging.SubProtocolWebSocketHandler.stop(SubProtocolWebSocketHandler.java:321)
+	at org.springframework.context.support.DefaultLifecycleProcessor.doStop(DefaultLifecycleProcessor.java:384)
+	at org.springframework.context.support.DefaultLifecycleProcessor$LifecycleGroup.stop(DefaultLifecycleProcessor.java:526)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.context.support.DefaultLifecycleProcessor.stopBeans(DefaultLifecycleProcessor.java:353)
+	at org.springframework.context.support.DefaultLifecycleProcessor.onClose(DefaultLifecycleProcessor.java:253)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1172)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:179)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1126)
+	at org.springframework.boot.SpringApplicationShutdownHook.closeAndWait(SpringApplicationShutdownHook.java:147)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:116)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.nio.channels.ClosedChannelException: null
+	at org.apache.tomcat.util.net.NioChannel$1.write(NioChannel.java:273)
+	at org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper$NioOperationState.run(NioEndpoint.java:1634)
+	at org.apache.tomcat.util.net.SocketWrapperBase$OperationState.start(SocketWrapperBase.java:1051)
+	at org.apache.tomcat.util.net.SocketWrapperBase.vectoredOperation(SocketWrapperBase.java:1440)
+	at org.apache.tomcat.util.net.SocketWrapperBase.write(SocketWrapperBase.java:1366)
+	at org.apache.tomcat.util.net.SocketWrapperBase.write(SocketWrapperBase.java:1337)
+	at org.apache.tomcat.websocket.server.WsRemoteEndpointImplServer.doWrite(WsRemoteEndpointImplServer.java:171)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.writeMessagePart(WsRemoteEndpointImplBase.java:521)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlockInternal(WsRemoteEndpointImplBase.java:313)
+	... 24 common frames omitted
+2025-09-23 18:52:51.152 [SpringApplicationShutdownHook] DEBUG o.s.w.s.s.t.s.WebSocketServerSockJsSession - Failure while sending SockJS close frame
+java.io.IOException: java.nio.channels.ClosedChannelException
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlockInternal(WsRemoteEndpointImplBase.java:326)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlock(WsRemoteEndpointImplBase.java:266)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlock(WsRemoteEndpointImplBase.java:250)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendPartialString(WsRemoteEndpointImplBase.java:223)
+	at org.apache.tomcat.websocket.WsRemoteEndpointBasic.sendText(WsRemoteEndpointBasic.java:48)
+	at org.springframework.web.socket.adapter.standard.StandardWebSocketSession.sendTextMessage(StandardWebSocketSession.java:217)
+	at org.springframework.web.socket.adapter.AbstractWebSocketSession.sendMessage(AbstractWebSocketSession.java:108)
+	at org.springframework.web.socket.sockjs.transport.session.WebSocketServerSockJsSession.writeFrameInternal(WebSocketServerSockJsSession.java:228)
+	at org.springframework.web.socket.sockjs.transport.session.AbstractSockJsSession.close(AbstractSockJsSession.java:188)
+	at org.springframework.web.socket.handler.WebSocketSessionDecorator.close(WebSocketSessionDecorator.java:164)
+	at org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator.close(ConcurrentWebSocketSessionDecorator.java:271)
+	at org.springframework.web.socket.messaging.SubProtocolWebSocketHandler.stop(SubProtocolWebSocketHandler.java:308)
+	at org.springframework.web.socket.messaging.SubProtocolWebSocketHandler.stop(SubProtocolWebSocketHandler.java:321)
+	at org.springframework.context.support.DefaultLifecycleProcessor.doStop(DefaultLifecycleProcessor.java:384)
+	at org.springframework.context.support.DefaultLifecycleProcessor$LifecycleGroup.stop(DefaultLifecycleProcessor.java:526)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.context.support.DefaultLifecycleProcessor.stopBeans(DefaultLifecycleProcessor.java:353)
+	at org.springframework.context.support.DefaultLifecycleProcessor.onClose(DefaultLifecycleProcessor.java:253)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1172)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:179)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1126)
+	at org.springframework.boot.SpringApplicationShutdownHook.closeAndWait(SpringApplicationShutdownHook.java:147)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:116)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.nio.channels.ClosedChannelException: null
+	at org.apache.tomcat.util.net.NioChannel$1.write(NioChannel.java:273)
+	at org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper$NioOperationState.run(NioEndpoint.java:1634)
+	at org.apache.tomcat.util.net.SocketWrapperBase$OperationState.start(SocketWrapperBase.java:1051)
+	at org.apache.tomcat.util.net.SocketWrapperBase.vectoredOperation(SocketWrapperBase.java:1440)
+	at org.apache.tomcat.util.net.SocketWrapperBase.write(SocketWrapperBase.java:1366)
+	at org.apache.tomcat.util.net.SocketWrapperBase.write(SocketWrapperBase.java:1337)
+	at org.apache.tomcat.websocket.server.WsRemoteEndpointImplServer.doWrite(WsRemoteEndpointImplServer.java:171)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.writeMessagePart(WsRemoteEndpointImplBase.java:521)
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendMessageBlockInternal(WsRemoteEndpointImplBase.java:313)
+	... 24 common frames omitted
+2025-09-23 18:52:51.152 [SpringApplicationShutdownHook] DEBUG o.s.w.s.h.LoggingWebSocketHandlerDecorator - WebSocketServerSockJsSession[id=q5nanrsz] closed with CloseStatus[code=1001, reason=null]
+2025-09-23 18:52:51.152 [SpringApplicationShutdownHook] DEBUG o.s.w.s.m.SubProtocolWebSocketHandler - Clearing session q5nanrsz
+2025-09-23 18:52:51.152 [SpringApplicationShutdownHook] INFO  c.e.t.i.WebSocketChannelInterceptor - 用户断开连接: admin
+2025-09-23 18:52:51.153 [SpringApplicationShutdownHook] INFO  c.e.t.i.WebSocketChannelInterceptor - postSend: DISCONNECT -> admin
+2025-09-23 18:52:51.153 [SpringApplicationShutdownHook] INFO  c.e.t.i.WebSocketChannelInterceptor - afterSendCompletion: DISCONNECT -> UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=admin, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[USER]], Credentials=[PROTECTED], Authenticated=true, Details=null, Granted Authorities=[USER]]
+2025-09-23 18:52:51.153 [clientInboundChannel-29] DEBUG o.s.m.s.b.SimpleBrokerMessageHandler - Processing DISCONNECT session=q5nanrsz
+2025-09-23 18:52:51.153 [SpringApplicationShutdownHook] DEBUG o.s.m.s.ExecutorSubscribableChannel - clientInboundChannel removed WebSocketAnnotationMethodMessageHandler[prefixes=[/app/]]
+2025-09-23 18:52:51.153 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-09-23 18:52:51.153 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@431a9a71]]
+2025-09-23 18:52:51.153 [SpringApplicationShutdownHook] DEBUG o.s.m.s.ExecutorSubscribableChannel - clientInboundChannel removed SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@431a9a71]
+2025-09-23 18:52:51.153 [SpringApplicationShutdownHook] DEBUG o.s.m.s.ExecutorSubscribableChannel - brokerChannel removed SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@431a9a71]
+2025-09-23 18:52:51.153 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-09-23 18:52:51.153 [SpringApplicationShutdownHook] DEBUG o.s.m.s.ExecutorSubscribableChannel - clientInboundChannel removed UserDestinationMessageHandler[DefaultUserDestinationResolver[prefix=/user/]]
+2025-09-23 18:52:51.153 [SpringApplicationShutdownHook] DEBUG o.s.m.s.ExecutorSubscribableChannel - brokerChannel removed UserDestinationMessageHandler[DefaultUserDestinationResolver[prefix=/user/]]
+2025-09-23 18:52:51.168 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-23 18:52:51.171 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-09-23 18:52:51.174 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-09-23 18:52:56.029 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-09-23 18:52:56.064 [main] INFO  c.e.t.SpiritualPressureApplication - Starting SpiritualPressureApplication using Java 21.0.4 with PID 19552 (D:\IDEA\Work\spiritualPressure\target\classes started by hanhejun in D:\IDEA\Work\spiritualPressure)
+2025-09-23 18:52:56.065 [main] INFO  c.e.t.SpiritualPressureApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-23 18:52:56.692 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-09-23 18:52:56.693 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-23 18:52:56.720 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 22 ms. Found 0 JPA repository interfaces.
+2025-09-23 18:52:56.729 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-09-23 18:52:56.734 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-09-23 18:52:56.748 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 7 ms. Found 0 Redis repository interfaces.
+2025-09-23 18:52:57.291 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 2025 (http)
+2025-09-23 18:52:57.293 [main] INFO  o.a.c.core.AprLifecycleListener - An older version [1.3.1] of the Apache Tomcat Native library is installed, while Tomcat recommends a minimum version of [2.0.5]
+2025-09-23 18:52:57.293 [main] INFO  o.a.c.core.AprLifecycleListener - Loaded Apache Tomcat Native library [1.3.1] using APR version [1.7.4].
+2025-09-23 18:52:57.296 [main] INFO  o.a.c.core.AprLifecycleListener - OpenSSL successfully initialized [OpenSSL 3.0.14 4 Jun 2024]
+2025-09-23 18:52:57.303 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-2025"]
+2025-09-23 18:52:57.303 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-23 18:52:57.305 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-09-23 18:52:57.350 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-23 18:52:57.350 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1254 ms
+2025-09-23 18:52:57.795 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-23 18:52:57.823 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-09-23 18:52:57.844 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-23 18:52:57.998 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-23 18:52:58.019 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-09-23 18:52:58.214 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@475eb4fd
+2025-09-23 18:52:58.216 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-09-23 18:52:58.247 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-23 18:52:58.259 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-23 18:52:58.921 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-23 18:52:59.016 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-23 18:53:00.036 [main] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2025-09-23 18:53:00.147 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+2025-09-23 18:53:00.257 [main] INFO  c.example.travel.config.WebMvcConfig - 使用目录: D:\Image
+2025-09-23 18:53:00.264 [main] WARN  o.s.w.s.r.ResourceHandlerUtils - Appended trailing slash to static resource location: file:D:\Image\
+2025-09-23 18:53:00.264 [main] WARN  o.s.w.s.r.ResourceHandlerUtils - Appended trailing slash to static resource location: file:D:\Image\
+2025-09-23 18:53:00.722 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-09-23 18:53:00.722 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@42a4e5cb]]
+2025-09-23 18:53:00.723 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-09-23 18:53:00.723 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-2025"]
+2025-09-23 18:53:00.739 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 2025 (http) with context path '/'
+2025-09-23 18:53:00.746 [main] INFO  c.e.t.SpiritualPressureApplication - Started SpiritualPressureApplication in 5.015 seconds (process running for 5.564)
+2025-09-23 18:53:36.935 [http-nio-2025-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-23 18:53:36.935 [http-nio-2025-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-09-23 18:53:36.936 [http-nio-2025-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-09-23 18:53:37.142 [http-nio-2025-exec-8] ERROR c.e.t.e.GlobalExceptionHandler - 系统异常: No static resource @vite/client.
+2025-09-23 18:53:52.626 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-23 18:53:52.634 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-09-23 18:53:52.638 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-09-23 18:53:52.638 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@42a4e5cb]]
+2025-09-23 18:53:52.639 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-09-23 18:53:52.664 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-23 18:53:52.667 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-09-23 18:53:52.674 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

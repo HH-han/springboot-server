@@ -6,6 +6,8 @@ import com.example.travel.entity.*;
 import com.example.travel.service.InstantMessagingService;
 import com.example.travel.utils.ImageUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class InstantMessagingServiceImpl implements InstantMessagingService {
     
     private final SimpMessagingTemplate messagingTemplate;
@@ -52,6 +55,7 @@ public class InstantMessagingServiceImpl implements InstantMessagingService {
     
     @Override
     @Transactional
+    @SendTo("/topic/greetings")
     public void sendPrivateMessage(Long senderId, Long receiverId, String content, String messageType ,String image) {
         // 验证接收者是否存在
         User receiver = userDao.findById(receiverId);
@@ -104,18 +108,11 @@ public class InstantMessagingServiceImpl implements InstantMessagingService {
         message.setStatus(1); // 已发送
         
         singleChatMessageDao.insert(message);
-        
-        // 通过WebSocket发送消息
-        messagingTemplate.convertAndSendToUser(
-            receiverId.toString(),
-            "/queue/private",
-            message
-        );
     }
     
     @Override
     @Transactional
-    public void sendGroupMessage(Long senderId, Long groupId, String content, String messageType, String image) {
+    public GroupChatMessage sendGroupMessage(Long senderId, Long groupId, String content, String messageType, String image) {
         // 检查用户是否在群组中
         GroupMember member = groupMemberDao.findByGroupIdAndUserId(groupId, senderId);
         if (member == null || member.getStatus() != 1) {
@@ -160,6 +157,8 @@ public class InstantMessagingServiceImpl implements InstantMessagingService {
         
         // 通过WebSocket发送消息到群组
         messagingTemplate.convertAndSend("/topic/group/" + groupId, message);
+        
+        return message;
     }
     
     @Override
@@ -363,18 +362,31 @@ public class InstantMessagingServiceImpl implements InstantMessagingService {
         
         singleChatMessageDao.insert(message);
         
-        // 发送WebSocket通知
+        // 发送WebSocket通知 - 使用用户名而不是用户ID进行路由
+        log.info("发送消息给接收者: {} (用户名: {}, 用户ID: {})", 
+                 receiver.getUsername(), receiver.getUsername(), message.getReceiverId());
+        log.info("消息内容: {}", message.getContent());
         messagingTemplate.convertAndSendToUser(
-            message.getReceiverId().toString(), 
-            "/queue/private", 
-            message
+            receiver.getUsername(),
+                "/queue/messages",
+                message
         );
+
+        // 同时也发送给发送者，确保发送者能看到自己的消息
+        User sender = userDao.findById(message.getSenderId());
+        if (sender != null) {
+            log.info("同时也发送消息给发送者: {} (用户名: {}, 用户ID: {})",
+                     sender.getUsername(), sender.getUsername(), message.getSenderId());
+            messagingTemplate.convertAndSendToUser(
+                sender.getUsername(),
+                "/queue/messages",
+                message
+            );
+        } else {
+            log.warn("未找到发送者用户，用户ID: {}", message.getSenderId());
+        }
     }
-
-
-
-
-
+    
     @Override
     public List<User> getFriendList(Long userId) {
         return userFriendDao.findFriendsByUserId(userId);

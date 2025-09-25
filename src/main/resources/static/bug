@@ -1,51 +1,502 @@
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\service\TravelBlogService.java:3:61
-java: 程序包com.baomidou.mybatisplus.extension.plugins.pagination不存在
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\service\TravelBlogService.java:10:5
-java: 找不到符号
-  符号:   类 Page
-  位置: 接口 com.example.travel.service.TravelBlogService
-  D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\entity\TravelBlog.java:3:43
-  java: 程序包com.baomidou.mybatisplus.annotation不存在
-  D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\entity\TravelBlog.java:4:43
-  java: 程序包com.baomidou.mybatisplus.annotation不存在
-  D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\entity\TravelBlog.java:5:43
-  java: 程序包com.baomidou.mybatisplus.annotation不存在
-  D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\entity\TravelBlog.java:6:43
-  java: 程序包com.baomidou.mybatisplus.annotation不存在
-  D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\entity\TravelBlog.java:17:2
-  java: 找不到符号
-    符号: 类 TableName
-  D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\entity\TravelBlog.java:19:6
-  java: 找不到符号
-    符号:   类 TableId
-    位置: 类 com.example.travel.entity.TravelBlog
-  D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\entity\TravelBlog.java:19:21
-  java: 找不到符号
-    符号:   变量 IdType
-    位置: 类 com.example.travel.entity.TravelBlog
-    D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\service\impl\TravelBlogServiceImpl.java:3:54
-    java: 程序包com.baomidou.mybatisplus.core.conditions.query不存在
-    D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\service\impl\TravelBlogServiceImpl.java:4:61
-    java: 程序包com.baomidou.mybatisplus.extension.plugins.pagination不存在
-    D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\service\impl\TravelBlogServiceImpl.java:22:12
-    java: 找不到符号
-      符号:   类 Page
-      位置: 类 com.example.travel.service.impl.TravelBlogServiceImpl
+后端实现 (Spring Boot 3)
+1. 添加依赖
+xml
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-websocket</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+</dependencies>
+2. WebSocket配置类
+java
+@Configuration
+@EnableWebSocket
+public class WebSocketConfig implements WebSocketConfigurer {
 
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\dao\TravelBlogDao.java:3:44
-java: 程序包com.baomidou.mybatisplus.core.mapper不存在
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\dao\TravelBlogDao.java:4:61
-java: 程序包com.baomidou.mybatisplus.extension.plugins.pagination不存在
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\dao\TravelBlogDao.java:14:40
-java: 找不到符号
-  符号: 类 BaseMapper
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\config\MyBatisConfig.java:3:43
-java: 程序包com.baomidou.mybatisplus.annotation不存在
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\config\MyBatisConfig.java:4:50
-java: 程序包com.baomidou.mybatisplus.extension.plugins不存在
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\config\MyBatisConfig.java:5:56
-java: 程序包com.baomidou.mybatisplus.extension.plugins.inner不存在
-D:\IDEA\Work\spiritualPressure\src\main\java\com\example\travel\config\MyBatisConfig.java:18:12
-java: 找不到符号
-  符号:   类 MybatisPlusInterceptor
-  位置: 类 com.example.travel.config.MyBatisConfig
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(new ImageWebSocketHandler(), "/ws/images")
+                .setAllowedOrigins("*");
+    }
+}
+3. WebSocket处理器
+java
+@Component
+public class ImageWebSocketHandler extends TextWebSocketHandler {
+
+    private static final List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
+
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        sessions.add(session);
+        System.out.println("新连接建立: " + session.getId());
+    }
+
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        sessions.remove(session);
+        System.out.println("连接关闭: " + session.getId());
+    }
+
+    @Override
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        String payload = message.getPayload();
+        
+        // 解析JSON消息
+        ObjectMapper objectMapper = new ObjectMapper();
+        ImageMessage imageMessage = objectMapper.readValue(payload, ImageMessage.class);
+        
+        // 广播消息给所有连接的客户端
+        broadcastMessage(imageMessage);
+    }
+
+    private void broadcastMessage(ImageMessage message) {
+        String jsonMessage;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            jsonMessage = objectMapper.writeValueAsString(message);
+            
+            for (WebSocketSession session : sessions) {
+                if (session.isOpen()) {
+                    synchronized (session) {
+                        session.sendMessage(new TextMessage(jsonMessage));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+4. 消息实体类
+java
+public class ImageMessage {
+    private String sender;
+    private String imageBase64;
+    private String timestamp;
+    private MessageType type; // TEXT or IMAGE
+
+    public enum MessageType {
+        TEXT, IMAGE
+    }
+
+    // 构造函数
+    public ImageMessage() {}
+
+    public ImageMessage(String sender, String imageBase64, String timestamp, MessageType type) {
+        this.sender = sender;
+        this.imageBase64 = imageBase64;
+        this.timestamp = timestamp;
+        this.type = type;
+    }
+
+    // Getter和Setter方法
+    public String getSender() { return sender; }
+    public void setSender(String sender) { this.sender = sender; }
+    
+    public String getImageBase64() { return imageBase64; }
+    public void setImageBase64(String imageBase64) { this.imageBase64 = imageBase64; }
+    
+    public String getTimestamp() { return timestamp; }
+    public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
+    
+    public MessageType getType() { return type; }
+    public void setType(MessageType type) { this.type = type; }
+}
+前端实现 (Vue 3)
+1. 安装依赖
+bash
+npm install axios
+2. WebSocket工具类
+javascript
+// src/utils/websocket.js
+class ImageWebSocket {
+    constructor() {
+        this.socket = null;
+        this.messageHandlers = new Set();
+        this.connected = false;
+    }
+
+    connect() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws/images`;
+        
+        this.socket = new WebSocket(wsUrl);
+        
+        this.socket.onopen = () => {
+            this.connected = true;
+            console.log('WebSocket连接已建立');
+        };
+
+        this.socket.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            this.messageHandlers.forEach(handler => handler(message));
+        };
+
+        this.socket.onclose = () => {
+            this.connected = false;
+            console.log('WebSocket连接已关闭');
+        };
+
+        this.socket.onerror = (error) => {
+            console.error('WebSocket错误:', error);
+        };
+    }
+
+    sendMessage(message) {
+        if (this.socket && this.connected) {
+            this.socket.send(JSON.stringify(message));
+        }
+    }
+
+    addMessageHandler(handler) {
+        this.messageHandlers.add(handler);
+    }
+
+    removeMessageHandler(handler) {
+        this.messageHandlers.delete(handler);
+    }
+
+    disconnect() {
+        if (this.socket) {
+            this.socket.close();
+        }
+    }
+}
+
+export default new ImageWebSocket();
+3. 图片处理工具
+javascript
+// src/utils/imageUtils.js
+export const imageUtils = {
+    // 将图片文件转换为Base64
+    fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                // 移除Base64前缀（如：data:image/jpeg;base64,）
+                const base64 = reader.result.split(',')[1];
+                resolve(base64);
+            };
+            reader.onerror = error => reject(error);
+            reader.readAsDataURL(file);
+        });
+    },
+
+    // 检查文件是否为图片
+    isImageFile(file) {
+        return file.type.startsWith('image/');
+    },
+
+    // 验证Base64字符串
+    isValidBase64(str) {
+        try {
+            return btoa(atob(str)) === str;
+        } catch (err) {
+            return false;
+        }
+    }
+};
+4. 主组件
+vue
+<template>
+  <div class="image-chat-container">
+    <div class="chat-header">
+      <h2>图片即时通讯</h2>
+      <div class="connection-status">
+        状态: {{ connected ? '已连接' : '未连接' }}
+      </div>
+    </div>
+
+    <div class="messages-container">
+      <div 
+        v-for="message in messages" 
+        :key="message.timestamp" 
+        :class="['message', message.sender === currentUser ? 'own-message' : 'other-message']"
+      >
+        <div class="message-header">
+          <span class="sender">{{ message.sender }}</span>
+          <span class="timestamp">{{ formatTime(message.timestamp) }}</span>
+        </div>
+        
+        <div v-if="message.type === 'TEXT'" class="text-content">
+          {{ message.imageBase64 }}
+        </div>
+        
+        <div v-else-if="message.type === 'IMAGE'" class="image-content">
+          <img 
+            :src="'data:image/jpeg;base64,' + message.imageBase64" 
+            alt="发送的图片"
+            @load="scrollToBottom"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="input-container">
+      <div class="input-group">
+        <input 
+          v-model="textInput" 
+          @keyup.enter="sendTextMessage"
+          placeholder="输入文字消息..."
+          class="text-input"
+        />
+        <input 
+          type="file" 
+          ref="fileInput"
+          @change="handleImageSelect"
+          accept="image/*"
+          style="display: none"
+        />
+        <button @click="triggerFileInput" class="image-btn">选择图片</button>
+        <button @click="sendTextMessage" class="send-btn">发送文字</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+import imageWebSocket from '@/utils/websocket'
+import { imageUtils } from '@/utils/imageUtils'
+
+const messages = ref([])
+const textInput = ref('')
+const fileInput = ref(null)
+const currentUser = ref(`用户${Math.random().toString(36).substr(2, 5)}`)
+const connected = ref(false)
+
+// 初始化WebSocket
+onMounted(() => {
+  imageWebSocket.connect()
+  connected.value = true
+  
+  imageWebSocket.addMessageHandler(handleIncomingMessage)
+})
+
+onUnmounted(() => {
+  imageWebSocket.disconnect()
+  connected.value = false
+  imageWebSocket.removeMessageHandler(handleIncomingMessage)
+})
+
+// 处理接收到的消息
+const handleIncomingMessage = (message) => {
+  messages.value.push(message)
+  scrollToBottom()
+}
+
+// 发送文字消息
+const sendTextMessage = () => {
+  if (textInput.value.trim()) {
+    const message = {
+      sender: currentUser.value,
+      imageBase64: textInput.value.trim(),
+      timestamp: new Date().toISOString(),
+      type: 'TEXT'
+    }
+    
+    imageWebSocket.sendMessage(message)
+    textInput.value = ''
+  }
+}
+
+// 触发文件选择
+const triggerFileInput = () => {
+  fileInput.value.click()
+}
+
+// 处理图片选择
+const handleImageSelect = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+
+  if (!imageUtils.isImageFile(file)) {
+    alert('请选择图片文件')
+    return
+  }
+
+  try {
+    const base64 = await imageUtils.fileToBase64(file)
+    
+    const message = {
+      sender: currentUser.value,
+      imageBase64: base64,
+      timestamp: new Date().toISOString(),
+      type: 'IMAGE'
+    }
+    
+    imageWebSocket.sendMessage(message)
+  } catch (error) {
+    console.error('图片转换失败:', error)
+    alert('图片上传失败')
+  }
+  
+  // 清空文件输入
+  event.target.value = ''
+}
+
+// 滚动到底部
+const scrollToBottom = () => {
+  nextTick(() => {
+    const container = document.querySelector('.messages-container')
+    if (container) {
+      container.scrollTop = container.scrollHeight
+    }
+  })
+}
+
+// 格式化时间
+const formatTime = (timestamp) => {
+  return new Date(timestamp).toLocaleTimeString()
+}
+</script>
+
+<style scoped>
+.image-chat-container {
+  max-width: 800px;
+  margin: 0 auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  background: #2c3e50;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  background: #f5f5f5;
+}
+
+.message {
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  max-width: 70%;
+}
+
+.own-message {
+  background: #007bff;
+  color: white;
+  margin-left: auto;
+}
+
+.other-message {
+  background: white;
+  border: 1px solid #ddd;
+}
+
+.message-header {
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.8;
+}
+
+.image-content img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 5px;
+}
+
+.input-container {
+  padding: 1rem;
+  background: white;
+  border-top: 1px solid #ddd;
+}
+
+.input-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.text-input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.image-btn, .send-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.image-btn {
+  background: #28a745;
+  color: white;
+}
+
+.send-btn {
+  background: #007bff;
+  color: white;
+}
+</style>
+配置说明
+后端配置 (application.yml)
+yaml
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  websocket:
+    allowed-origins: "*"
+解决跨域问题
+如果需要支持跨域，可以在Spring Boot中添加配置：
+
+java
+@Configuration
+public class CorsConfig {
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("*")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+            }
+        };
+    }
+}
+使用说明
+启动Spring Boot应用
+
+运行Vue应用
+
+打开浏览器访问Vue应用
+
+可以发送文字消息或选择图片发送
+
+所有连接的客户端都会实时收到消息和图片
+
+这个实现支持：
+
+实时文字通讯
+
+实时图片传输（Base64格式）
+
+多用户同时在线
+
+自动滚动到最新消息
+
+响应式界面设计
+
+注意：Base64格式的图片会增加约33%的数据量，适合小图片传输。对于大图片，建议先进行压缩处理。

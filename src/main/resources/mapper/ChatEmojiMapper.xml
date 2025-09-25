@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.travel.dao.ChatEmojiDao">
+
+    <resultMap id="chatEmojiResultMap" type="com.example.travel.entity.ChatEmoji">
+        <id column="id" property="id"/>
+        <result column="emoji_code" property="emojiCode"/>
+        <result column="emoji_char" property="emojiChar"/>
+        <result column="type" property="type"/>
+        <result column="description" property="description"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <!-- 查询所有表情 -->
+    <select id="findAll" resultMap="chatEmojiResultMap">
+        SELECT * FROM chat_meoji ORDER BY id ASC
+    </select>
+
+    <!-- 根据ID查询表情 -->
+    <select id="findById" resultMap="chatEmojiResultMap">
+        SELECT * FROM chat_meoji WHERE id = #{id}
+    </select>
+
+    <!-- 根据表情代码查询表情 -->
+    <select id="findByEmojiCode" resultMap="chatEmojiResultMap">
+        SELECT * FROM chat_meoji WHERE emoji_code = #{emojiCode}
+    </select>
+
+    <!-- 根据类型查询表情 -->
+    <select id="findByType" resultMap="chatEmojiResultMap">
+        SELECT * FROM chat_meoji WHERE type = #{type} ORDER BY id ASC
+    </select>
+
+    <!-- 分页查询表情 -->
+    <select id="findAllEmojis" resultMap="chatEmojiResultMap">
+        SELECT * FROM chat_meoji
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (emoji_code LIKE CONCAT('%', #{keyword}, '%') 
+                     OR emoji_char LIKE CONCAT('%', #{keyword}, '%')
+                     OR description LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY id ASC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 查询表情总数 -->
+    <select id="countEmojis" resultType="int">
+        SELECT COUNT(*) FROM chat_meoji
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (emoji_code LIKE CONCAT('%', #{keyword}, '%') 
+                     OR emoji_char LIKE CONCAT('%', #{keyword}, '%')
+                     OR description LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+    </select>
+
+    <!-- 新增表情 -->
+    <insert id="insert" parameterType="com.example.travel.entity.ChatEmoji" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO chat_meoji 
+        (emoji_code, emoji_char, type, description, created_at, updated_at)
+        VALUES 
+        (#{emojiCode}, #{emojiChar}, #{type}, #{description}, NOW(), NOW())
+    </insert>
+
+    <!-- 更新表情 -->
+    <update id="update" parameterType="com.example.travel.entity.ChatEmoji">
+        UPDATE chat_meoji 
+        SET emoji_code = #{emojiCode},
+            emoji_char = #{emojiChar},
+            type = #{type},
+            description = #{description},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除表情 -->
+    <delete id="delete">
+        DELETE FROM chat_meoji WHERE id = #{id}
+    </delete>
+
+    <!-- 检查表情是否存在 -->
+    <select id="exists" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM chat_meoji WHERE id = #{id}
+    </select>
+
+</mapper>

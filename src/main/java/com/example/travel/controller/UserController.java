@@ -7,7 +7,9 @@ import com.example.travel.listener.UserDataListener;
 import com.example.travel.service.LoginInfoService;
 import com.example.travel.service.UserService;
 import com.example.travel.utils.ImageUtils;
+import com.example.travel.utils.IpLocationUtils;
 import com.example.travel.utils.JwtUtils;
+import com.example.travel.utils.UserAgentUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -41,13 +43,21 @@ public class UserController {
     private final ImageUtils imageUtils;
      //登录信息服务
     private final LoginInfoService loginInfoService;
+    //用户代理工具
+    private final UserAgentUtils userAgentUtils;
+    //IP定位工具
+    private final IpLocationUtils ipLocationUtils;
 
     @Autowired
-    public UserController(UserService userService, JwtUtils jwtUtils, ImageUtils imageUtils, LoginInfoService loginInfoService) {
+    public UserController(UserService userService, JwtUtils jwtUtils, ImageUtils imageUtils, 
+                         LoginInfoService loginInfoService, UserAgentUtils userAgentUtils, 
+                         IpLocationUtils ipLocationUtils) {
         this.userService = userService;
         this.jwtUtils = jwtUtils;
         this.imageUtils = imageUtils;
         this.loginInfoService = loginInfoService;
+        this.userAgentUtils = userAgentUtils;
+        this.ipLocationUtils = ipLocationUtils;
     }
      //获取用户信息
     @GetMapping("/info")
@@ -597,13 +607,31 @@ public class UserController {
             LoginInfo loginInfo = new LoginInfo();
             loginInfo.setUserId(user.getId().longValue());
             loginInfo.setUsername(user.getUsername());
-            loginInfo.setIpaddr(getClientIp(request));
+            
+            String ip = getClientIp(request);
+            loginInfo.setIpaddr(ip);
+            
+            // 获取User-Agent信息
+            String userAgent = request.getHeader("User-Agent");
+            if (userAgent != null && !userAgent.isEmpty()) {
+                loginInfo.setBrowser(userAgentUtils.getBrowser(userAgent));
+                loginInfo.setOs(userAgentUtils.getOs(userAgent));
+            } else {
+                loginInfo.setBrowser("未知浏览器");
+                loginInfo.setOs("未知操作系统");
+            }
+            
+            // 获取登录地点
+            loginInfo.setLoginLocation(ipLocationUtils.getLocation(ip));
+            
             loginInfo.setLoginTime(LocalDateTime.now());
-            loginInfo.setStatus("登录成功");
+            loginInfo.setStatus("1");
             loginInfo.setMsg("用户登录成功");
             
             loginInfoService.recordLoginInfo(loginInfo);
-            logger.info("登录记录成功 - 用户: {}, IP: {}", user.getUsername(), loginInfo.getIpaddr());
+            logger.info("登录记录成功 - 用户: {}, IP: {}, 浏览器: {}, 操作系统: {}, 地点: {}", 
+                       user.getUsername(), loginInfo.getIpaddr(), 
+                       loginInfo.getBrowser(), loginInfo.getOs(), loginInfo.getLoginLocation());
         } catch (Exception e) {
             logger.error("记录登录信息失败 - 用户: {}, 错误: {}", user.getUsername(), e.getMessage());
         }
@@ -679,5 +707,27 @@ public class UserController {
             ip = request.getRemoteAddr();
         }
         return ip;
+    }
+
+    /**
+     * 删除用户登录记录
+     * @param userId 用户ID
+     * @return 操作结果
+     */
+    @DeleteMapping("/logininfo/{userId}")
+    public Result deleteLoginInfo(@PathVariable Long userId) {
+        try {
+            int result = loginInfoService.deleteLoginInfoByUserId(userId);
+            if (result > 0) {
+                logger.info("删除用户登录记录成功，用户ID: {}, 删除记录数: {}", userId, result);
+                return Result.success("删除登录记录成功", result);
+            } else {
+                logger.warn("删除用户登录记录失败，未找到相关记录，用户ID: {}", userId);
+                return Result.error("删除登录记录失败，未找到相关记录");
+            }
+        } catch (Exception e) {
+            logger.error("删除用户登录记录时出现异常，用户ID: {}", userId, e);
+            return Result.error("删除登录记录时出现异常，请稍后重试");
+        }
     }
 }

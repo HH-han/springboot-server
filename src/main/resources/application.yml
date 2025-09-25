@@ -87,4 +87,4 @@ image:
     # Windows系统访问URL
     windows-url: http://localhost:2025/upload/
     # Linux/Mac系统访问URL
-    unix-url: http://8.137.150.183:2025/tmp/images/
+    unix-url: http://121.40.144.69:2025/tmp/images/

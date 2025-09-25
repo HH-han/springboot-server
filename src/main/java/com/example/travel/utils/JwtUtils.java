@@ -123,7 +123,7 @@ public class JwtUtils {
         
         try {
             Claims claims = validateToken(token);
-            
+            details.put("id", claims.getId());
             details.put("username", claims.getSubject());
             details.put("issuedAt", claims.getIssuedAt());
             details.put("expiration", claims.getExpiration());

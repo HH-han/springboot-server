@@ -28,7 +28,7 @@ public interface InstantMessagingService {
     /**
      * 发送群聊消息
      */
-    void sendGroupMessage(Long senderId, Long groupId, String content, String messageType, String image);
+    GroupChatMessage sendGroupMessage(Long senderId, Long groupId, String content, String messageType, String image);
     
 
     
