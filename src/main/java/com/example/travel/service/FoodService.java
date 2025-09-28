@@ -1,9 +1,11 @@
 package com.example.travel.service;
 
 import com.example.travel.entity.Food;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public interface FoodService {
     List<Food> searchByNameOrDescription(String keyword);
     Food findById(Integer id);

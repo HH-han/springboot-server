@@ -4,6 +4,7 @@ import com.example.travel.common.Result;
 import com.example.travel.dto.FriendRequestWithPhoneDTO;
 import com.example.travel.entity.*;
 import com.example.travel.service.ChatEmojiService;
+import com.example.travel.service.EmojiImageService;
 import com.example.travel.service.InstantMessagingService;
 import com.example.travel.service.UserService;
 import com.example.travel.utils.ImageUtils;
@@ -31,6 +32,7 @@ public class InstantMessagingController {
     private final ChatEmojiService chatEmojiService;
     private final ImageUtils imageUtils;
     private final SimpMessagingTemplate messagingTemplate;
+    private final EmojiImageService emojiImageService;
     private final Logger logger = LoggerFactory.getLogger(InstantMessagingController.class);
 
     /**
@@ -496,6 +498,39 @@ public class InstantMessagingController {
         } catch (Exception e) {
             logger.error("获取emoji表情失败: {}", e.getMessage(), e);
             return Result.error("获取表情失败");
+        }
+    }
+    /**
+     * 获取所有emoji_image表情
+     */
+    @GetMapping("/emoji_image/all")
+    public Result getAllEmojis_image() {
+        try {
+            List<EmojiImage> emojiImages = emojiImageService.findAll();
+            logger.info("获取所有emoji_image表情成功，共{}个", emojiImages.size());
+            return Result.success(emojiImages);
+        }catch (Exception e) {
+            logger.error("获取emoji_image表情失败: {}", e.getMessage(), e);
+            return Result.error("获取表情失败");
+        }
+    }
+    /**
+     * 新增emoji_image表情
+     */
+    @PostMapping("/emoji_image/add")
+    public Result addEmojiImage(@RequestBody EmojiImage emojiImage) {
+        try {
+            int result = emojiImageService.insert(emojiImage);
+            if (result > 0) {
+                logger.info("新增emoji_image表情成功: {}", emojiImage);
+                return Result.success("新增emoji_image表情成功");
+                }else {
+                    logger.info("新增emoji_image表情失败: {}", emojiImage);
+                    return Result.error("新增emoji_image表情失败");
+            }
+        }catch (Exception e) {
+            logger.error("新增emoji_image表情失败: {}", e.getMessage(), e);
+            return Result.error("新增emoji_image表情失败");
         }
     }
 

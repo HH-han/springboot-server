@@ -1,9 +1,11 @@
 package com.example.travel.service;
 
 import com.example.travel.entity.SafetyTips;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Map;
-
+@Service
 public interface SafetyTipsService {
     /**
      * 分页查询安全提示

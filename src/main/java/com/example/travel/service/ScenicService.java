@@ -1,9 +1,10 @@
 package com.example.travel.service;
 
 import com.example.travel.entity.Scenic;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public interface ScenicService {
     //获取所有卡片
     //List<Scenic> getAllCards();

@@ -1,9 +1,11 @@
 package com.example.travel.service;
 
 import com.example.travel.entity.TravelBlog;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
-
+@Service
 public interface TravelBlogService {
     // 分页查询旅行博客
     List<TravelBlog> getTravel(int page, int pageSize, String keyword);

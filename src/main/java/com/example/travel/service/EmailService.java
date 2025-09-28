@@ -1,5 +1,8 @@
 package com.example.travel.service;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public interface EmailService {
     /**
      * 发送验证码邮件

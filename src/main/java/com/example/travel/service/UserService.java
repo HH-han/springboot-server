@@ -1,8 +1,10 @@
 package com.example.travel.service;
 
 import com.example.travel.entity.User;
-import java.util.List;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+@Service
 public interface UserService {
     /**
      * 批量保存用户

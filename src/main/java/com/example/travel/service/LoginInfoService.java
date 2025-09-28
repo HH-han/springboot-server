@@ -1,11 +1,13 @@
 package com.example.travel.service;
 
 import com.example.travel.entity.LoginInfo;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+@Service
 /**
  * 登录信息服务接口
  */

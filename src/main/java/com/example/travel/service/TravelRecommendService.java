@@ -1,9 +1,10 @@
 package com.example.travel.service;
 
 import com.example.travel.entity.TravelRecommend;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public interface TravelRecommendService {
     //查询酒店总数
     List<TravelRecommend> getRecommend(int page, int pageSize, String keyword);

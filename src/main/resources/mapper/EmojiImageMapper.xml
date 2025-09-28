@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.travel.dao.EmojiImageDao">
+
+    <resultMap id="emojiImageResultMap" type="com.example.travel.entity.EmojiImage">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="url" property="url"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <!-- 查询所有表情图片 -->
+    <select id="findAll" resultMap="emojiImageResultMap">
+        SELECT * FROM emoji_image ORDER BY id ASC
+    </select>
+
+    <!-- 根据ID查询表情图片 -->
+    <select id="findById" resultMap="emojiImageResultMap">
+        SELECT * FROM emoji_image WHERE id = #{id}
+    </select>
+
+    <!-- 根据名称查询表情图片 -->
+    <select id="findByName" resultMap="emojiImageResultMap">
+        SELECT * FROM emoji_image WHERE name = #{name}
+    </select>
+
+
+
+    <!-- 分页查询表情图片 -->
+    <select id="findAllEmojiImages" resultMap="emojiImageResultMap">
+        SELECT * FROM emoji_image
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        ORDER BY id ASC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 查询表情图片总数 -->
+    <select id="countEmojiImages" resultType="int">
+        SELECT COUNT(*) FROM emoji_image
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 新增表情图片 -->
+    <insert id="insert" parameterType="com.example.travel.entity.EmojiImage" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO emoji_image 
+        (name, url, created_at, updated_at)
+        VALUES 
+        (#{name}, #{url}, NOW(), NOW())
+    </insert>
+
+    <!-- 更新表情图片 -->
+    <update id="update" parameterType="com.example.travel.entity.EmojiImage">
+        UPDATE emoji_image 
+        SET name = #{name},
+            url = #{url},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除表情图片 -->
+    <delete id="delete">
+        DELETE FROM emoji_image WHERE id = #{id}
+    </delete>
+
+    <!-- 检查表情图片是否存在 -->
+    <select id="exists" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM emoji_image WHERE id = #{id}
+    </select>
+
+    <!-- 检查名称是否存在 -->
+    <select id="existsByName" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM emoji_image WHERE name = #{name}
+    </select>
+
+    <!-- 检查URL是否存在 -->
+    <select id="existsByUrl" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM emoji_image WHERE url = #{url}
+    </select>
+
+    <!-- 根据URL查询表情图片 -->
+    <select id="findByUrl" resultMap="emojiImageResultMap">
+        SELECT * FROM emoji_image WHERE url = #{url}
+    </select>
+
+    <!-- 批量插入表情图片 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO emoji_image 
+        (name, url, created_at, updated_at)
+        VALUES 
+        <foreach collection="list" item="item" separator=",">
+            (#{item.name}, #{item.url}, NOW(), NOW())
+        </foreach>
+    </insert>
+
+    <!-- 批量删除表情图片 -->
+    <delete id="batchDelete" parameterType="java.util.List">
+        DELETE FROM emoji_image WHERE id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

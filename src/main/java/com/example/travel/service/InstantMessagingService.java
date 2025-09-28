@@ -2,9 +2,11 @@ package com.example.travel.service;
 
 import com.example.travel.dto.ChatMessage;
 import com.example.travel.entity.*;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 /**
  * 即时通信服务接口
  */

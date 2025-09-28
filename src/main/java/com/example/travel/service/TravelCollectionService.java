@@ -4,7 +4,7 @@ import com.example.travel.entity.TravelCollection;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public interface TravelCollectionService {
     /**
      * 查询所有收藏

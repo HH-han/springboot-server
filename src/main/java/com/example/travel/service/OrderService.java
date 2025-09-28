@@ -1,8 +1,11 @@
 package com.example.travel.service;
 
 import com.example.travel.entity.Order;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
+@Service
 public interface OrderService {
     // 分页查询订单
     List<Order> getOrders(int page, int pageSize, String keyword);

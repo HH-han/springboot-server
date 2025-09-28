@@ -1,9 +1,10 @@
 package com.example.travel.service;
 
 import com.example.travel.entity.TravelCarousel;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public interface TravelCarouselService {
     //查询酒店总数
     List<TravelCarousel> getCarousel(int page, int pageSize, String keyword);

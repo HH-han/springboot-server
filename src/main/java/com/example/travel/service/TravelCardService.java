@@ -1,9 +1,10 @@
 package com.example.travel.service;
 
 import com.example.travel.entity.TravelCard;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public interface TravelCardService {
     //查询酒店总数
     List<TravelCard> getTravelCard(int page, int pageSize, String keyword);

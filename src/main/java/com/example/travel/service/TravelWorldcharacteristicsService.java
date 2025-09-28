@@ -2,7 +2,9 @@ package com.example.travel.service;
 
 import com.example.travel.common.Result;
 import com.example.travel.entity.TravelWorldcharacteristics;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface TravelWorldcharacteristicsService {
     //分页查询
     Result listTravelWorld(

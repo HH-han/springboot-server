@@ -4,10 +4,12 @@ import com.example.travel.common.Result;
 import com.example.travel.dto.CartRequestDTO;
 import com.example.travel.dto.PaymentRequestDTO;
 import com.example.travel.entity.Payment;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
+@Service
 public interface PaymentService {
     Result processPayment(PaymentRequestDTO request);
     //修改

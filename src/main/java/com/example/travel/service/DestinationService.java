@@ -2,7 +2,9 @@ package com.example.travel.service;
 
 import com.example.travel.common.Result;
 import com.example.travel.entity.Destination;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface DestinationService {
     Result listDestinations(
             String searchQuery,

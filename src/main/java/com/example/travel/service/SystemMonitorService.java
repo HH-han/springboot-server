@@ -2,7 +2,9 @@
 package com.example.travel.service;
 
 import com.example.travel.dto.*;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface SystemMonitorService {
 
     /**

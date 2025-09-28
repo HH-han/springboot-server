@@ -1,8 +1,11 @@
 package com.example.travel.service;
 
 import com.example.travel.entity.ChatGroup;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
+@Service
 /**
  * 聊天群组服务接口
  */

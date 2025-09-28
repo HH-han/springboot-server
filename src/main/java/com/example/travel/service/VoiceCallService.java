@@ -1,9 +1,10 @@
 package com.example.travel.service;
 
 import com.example.travel.dto.VoiceCallMessage;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
-
+@Service
 /**
  * 语音通话服务接口
  */

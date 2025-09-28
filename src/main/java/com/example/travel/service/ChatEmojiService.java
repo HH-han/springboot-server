@@ -1,9 +1,12 @@
 package com.example.travel.service;
 
 import com.example.travel.entity.ChatEmoji;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
+@Service
 /**
  * 聊天表情服务接口
  */

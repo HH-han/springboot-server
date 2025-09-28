@@ -1,8 +1,10 @@
 package com.example.travel.service;
 
 import com.example.travel.entity.TravelNote;
-import java.util.List;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+@Service
 public interface TravelNoteService {
     TravelNote getNoteById(String id);
     
