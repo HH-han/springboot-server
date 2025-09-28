@@ -3,6 +3,7 @@ package com.example.travel.service.impl;
 import com.example.travel.dao.EmojiImageDao;
 import com.example.travel.entity.EmojiImage;
 import com.example.travel.service.EmojiImageService;
+import com.example.travel.utils.ImageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.List;
 public class EmojiImageServiceImpl implements EmojiImageService {
 
     private final EmojiImageDao emojiImageDao;
+    private final ImageUtils imageUtils;
 
     @Override
     @Transactional(readOnly = true)
@@ -71,9 +73,17 @@ public class EmojiImageServiceImpl implements EmojiImageService {
     public int insert(EmojiImage emojiImage) {
         log.info("新增表情图片: {}", emojiImage.getName());
         
-        // 验证数据
-        if (!validateEmojiImage(emojiImage)) {
-            throw new IllegalArgumentException("表情图片数据验证失败");
+        // 处理图片URL - 如果URL是base64格式，则处理为实际图片URL
+        String originalUrl = emojiImage.getImage();
+        if (originalUrl != null && originalUrl.startsWith("data:image")) {
+            try {
+                String processedUrl = imageUtils.processBase64Image(originalUrl);
+                emojiImage.setImage(processedUrl);
+                log.info("Base64图片处理成功，新URL: {}", processedUrl);
+            } catch (Exception e) {
+                log.error("图片处理失败: {}", e.getMessage());
+                throw new RuntimeException("图片处理失败: " + e.getMessage());
+            }
         }
         
         // 设置创建时间和更新时间
@@ -136,8 +146,21 @@ public class EmojiImageServiceImpl implements EmojiImageService {
     public int batchInsert(List<EmojiImage> emojiImages) {
         log.info("批量插入表情图片, 数量: {}", emojiImages.size());
         
-        // 验证每个表情图片
+        // 验证每个表情图片并处理图片URL
         for (EmojiImage emojiImage : emojiImages) {
+            // 处理图片URL - 如果URL是base64格式，则处理为实际图片URL
+            String originalUrl = emojiImage.getImage();
+            if (originalUrl != null && originalUrl.startsWith("data:image")) {
+                try {
+                    String processedUrl = imageUtils.processBase64Image(originalUrl);
+                    emojiImage.setImage(processedUrl);
+                    log.info("Base64图片处理成功，新URL: {}", processedUrl);
+                } catch (Exception e) {
+                    log.error("图片处理失败: {}", e.getMessage());
+                    throw new RuntimeException("图片处理失败: " + e.getMessage());
+                }
+            }
+            
             if (!validateEmojiImage(emojiImage)) {
                 throw new IllegalArgumentException("表情图片数据验证失败: " + emojiImage.getName());
             }
@@ -168,12 +191,7 @@ public class EmojiImageServiceImpl implements EmojiImageService {
         }
         
         // 验证URL
-        if (!StringUtils.hasText(emojiImage.getUrl()) || emojiImage.getUrl().length() > 255) {
-            return false;
-        }
-        
-        // 验证URL格式
-        if (!emojiImage.isValidUrl()) {
+        if (!StringUtils.hasText(emojiImage.getImage()) || emojiImage.getImage().length() > 255) {
             return false;
         }
         
@@ -211,12 +229,6 @@ public class EmojiImageServiceImpl implements EmojiImageService {
         List<EmojiImage> all = emojiImageDao.findAll();
         List<EmojiImage> filteredList = new ArrayList<>();
         
-        for (EmojiImage emojiImage : all) {
-            if (emojiImage.getFileExtension().equalsIgnoreCase(extension)) {
-                filteredList.add(emojiImage);
-            }
-        }
-        
         return filteredList;
     }
 
@@ -251,7 +263,7 @@ public class EmojiImageServiceImpl implements EmojiImageService {
         
         for (EmojiImage emojiImage : all) {
             if (emojiImage.getName().toLowerCase().contains(keyword.toLowerCase()) ||
-                emojiImage.getUrl().toLowerCase().contains(keyword.toLowerCase())) {
+                emojiImage.getImage().toLowerCase().contains(keyword.toLowerCase())) {
                 searchResults.add(emojiImage);
             }
         }

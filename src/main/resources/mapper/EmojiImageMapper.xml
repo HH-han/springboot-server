@@ -8,7 +8,7 @@
     <resultMap id="emojiImageResultMap" type="com.example.travel.entity.EmojiImage">
         <id column="id" property="id"/>
         <result column="name" property="name"/>
-        <result column="url" property="url"/>
+        <result column="image" property="image"/>
         <result column="created_at" property="createdAt"/>
         <result column="updated_at" property="updatedAt"/>
     </resultMap>
@@ -55,16 +55,16 @@
     <!-- 新增表情图片 -->
     <insert id="insert" parameterType="com.example.travel.entity.EmojiImage" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO emoji_image 
-        (name, url, created_at, updated_at)
+        (name, image, created_at, updated_at)
         VALUES 
-        (#{name}, #{url}, NOW(), NOW())
+        (#{name}, #{image}, NOW(), NOW())
     </insert>
 
     <!-- 更新表情图片 -->
     <update id="update" parameterType="com.example.travel.entity.EmojiImage">
         UPDATE emoji_image 
         SET name = #{name},
-            url = #{url},
+            image = #{image},
             updated_at = NOW()
         WHERE id = #{id}
     </update>
@@ -86,21 +86,21 @@
 
     <!-- 检查URL是否存在 -->
     <select id="existsByUrl" resultType="boolean">
-        SELECT COUNT(*) > 0 FROM emoji_image WHERE url = #{url}
+        SELECT COUNT(*) > 0 FROM emoji_image WHERE image = #{image}
     </select>
 
     <!-- 根据URL查询表情图片 -->
     <select id="findByUrl" resultMap="emojiImageResultMap">
-        SELECT * FROM emoji_image WHERE url = #{url}
+        SELECT * FROM emoji_image WHERE image = #{image}
     </select>
 
     <!-- 批量插入表情图片 -->
     <insert id="batchInsert" parameterType="java.util.List">
         INSERT INTO emoji_image 
-        (name, url, created_at, updated_at)
+        (name, image, created_at, updated_at)
         VALUES 
         <foreach collection="list" item="item" separator=",">
-            (#{item.name}, #{item.url}, NOW(), NOW())
+            (#{item.name}, #{item.image}, NOW(), NOW())
         </foreach>
     </insert>
 

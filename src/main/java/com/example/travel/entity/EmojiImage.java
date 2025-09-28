@@ -19,8 +19,8 @@ public class EmojiImage {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
     
-    @Column(name = "url", nullable = false, length = 255)
-    private String url;
+    @Column(name = "image", nullable = false, length = 255)
+    private String image;
     
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
@@ -28,40 +28,43 @@ public class EmojiImage {
     @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
-    /**
-     * 便捷方法：获取图片文件名
-     */
-    public String getFileName() {
-        if (url != null && url.contains("/")) {
-            return url.substring(url.lastIndexOf("/") + 1);
-        }
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
         return name;
     }
 
-    /**
-     * 便捷方法：判断是否为有效URL
-     */
-    public boolean isValidUrl() {
-        return url != null && (url.startsWith("http") || url.startsWith("/"));
+    public void setName(String name) {
+        this.name = name;
     }
 
-    /**
-     * 便捷方法：获取图片扩展名
-     */
-    public String getFileExtension() {
-        if (url != null && url.contains(".")) {
-            return url.substring(url.lastIndexOf(".") + 1).toLowerCase();
-        }
-        return "";
+    public String getImage() {
+        return image;
     }
 
-    /**
-     * 便捷方法：判断是否为图片文件
-     */
-    public boolean isImageFile() {
-        String extension = getFileExtension();
-        return extension.equals("jpg") || extension.equals("jpeg") || 
-               extension.equals("png") || extension.equals("gif") || 
-               extension.equals("webp") || extension.equals("bmp");
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

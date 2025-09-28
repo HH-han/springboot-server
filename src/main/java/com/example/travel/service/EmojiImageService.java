@@ -5,11 +5,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
-@Service
 /**
  * 表情图片服务接口
  */
+@Service
 public interface EmojiImageService {
     
     /**

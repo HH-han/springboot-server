@@ -518,19 +518,32 @@ public class InstantMessagingController {
      * 新增emoji_image表情
      */
     @PostMapping("/emoji_image/add")
-    public Result addEmojiImage(@RequestBody EmojiImage emojiImage) {
+    public Result addEmojiImage(@RequestBody Map<String, Object> params) {
         try {
+            // 验证必填字段
+            if (params.get("name") == null || params.get("name").toString().trim().isEmpty()) {
+                return Result.error("表情名称不能为空");
+            }
+            if (params.get("image") == null || params.get("image").toString().trim().isEmpty()) {
+                return Result.error("图片不能为空");
+            }
+            
+            // 创建EmojiImage对象
+            EmojiImage emojiImage = new EmojiImage();
+            emojiImage.setName(params.get("name").toString());
+            emojiImage.setImage(params.get("image").toString());
+            
             int result = emojiImageService.insert(emojiImage);
             if (result > 0) {
                 logger.info("新增emoji_image表情成功: {}", emojiImage);
                 return Result.success("新增emoji_image表情成功");
-                }else {
-                    logger.info("新增emoji_image表情失败: {}", emojiImage);
-                    return Result.error("新增emoji_image表情失败");
+            } else {
+                logger.info("新增emoji_image表情失败: {}", emojiImage);
+                return Result.error("新增emoji_image表情失败");
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("新增emoji_image表情失败: {}", e.getMessage(), e);
-            return Result.error("新增emoji_image表情失败");
+            return Result.error("新增emoji_image表情失败: " + e.getMessage());
         }
     }
 
