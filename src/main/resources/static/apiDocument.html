@@ -421,10 +421,48 @@
                 basePath: '/api/public/destination',
                 icon: 'fas fa-map-marker-alt',
                 apis: [
+                    // 基础目的地管理接口
                     { method: 'GET', endpoint: '', title: '查询目的地列表', description: '获取所有目的地的列表', tags: ['数据查询', '完整列表'], icons: ['fa-list', 'fa-database'] },
                     { method: 'POST', endpoint: '', title: '新增目的地', description: '创建新的旅游目的地', tags: ['数据操作', '新增数据'], icons: ['fa-plus', 'fa-map-pin'] },
                     { method: 'PUT', endpoint: '/{id}', title: '修改目的地', description: '根据ID更新目的地信息', tags: ['数据操作', '信息更新'], icons: ['fa-edit', 'fa-sync'] },
-                    { method: 'DELETE', endpoint: '/{id}', title: '删除目的地', description: '根据ID删除目的地记录', tags: ['数据操作', '不可恢复'], icons: ['fa-trash', 'fa-warning'] }
+                    { method: 'DELETE', endpoint: '/{id}', title: '删除目的地', description: '根据ID删除目的地记录', tags: ['数据操作', '不可恢复'], icons: ['fa-trash', 'fa-warning'] },
+                    
+                    // RegionTab相关接口
+                    { method: 'GET', endpoint: '/region-tab/{id}', title: '根据ID查询地区标签', description: '根据ID获取地区标签的详细信息', tags: ['地区标签', 'ID查询'], icons: ['fa-id-card', 'fa-info-circle'] },
+                    { method: 'GET', endpoint: '/region-tabs', title: '查询所有地区标签', description: '获取所有地区标签的完整列表', tags: ['地区标签', '完整列表'], icons: ['fa-list', 'fa-database'] },
+                    { method: 'GET', endpoint: '/region-tab/name/{name}', title: '根据名称查询地区标签', description: '根据名称查询地区标签信息', tags: ['地区标签', '名称查询'], icons: ['fa-search', 'fa-filter'] },
+                    { method: 'POST', endpoint: '/region-tab', title: '新增地区标签', description: '创建新的地区标签', tags: ['地区标签', '新增数据'], icons: ['fa-plus', 'fa-tag'] },
+                    { method: 'PUT', endpoint: '/region-tab', title: '更新地区标签', description: '更新地区标签信息', tags: ['地区标签', '信息更新'], icons: ['fa-edit', 'fa-sync'] },
+                    { method: 'DELETE', endpoint: '/region-tab/{id}', title: '删除地区标签', description: '根据ID删除地区标签记录', tags: ['地区标签', '删除操作'], icons: ['fa-trash', 'fa-warning'] },
+                    { method: 'GET', endpoint: '/region-tabs/count', title: '统计地区标签总数', description: '获取地区标签的总数统计', tags: ['地区标签', '数量统计'], icons: ['fa-chart-bar', 'fa-hashtag'] },
+                    
+                    // TravelDestination相关接口
+                    { method: 'GET', endpoint: '/travel-destination/{id}', title: '根据ID查询旅游目的地', description: '根据ID获取旅游目的地的详细信息', tags: ['旅游目的地', 'ID查询'], icons: ['fa-id-card', 'fa-info-circle'] },
+                    { method: 'GET', endpoint: '/travel-destinations', title: '查询所有旅游目的地', description: '获取所有旅游目的地的完整列表', tags: ['旅游目的地', '完整列表'], icons: ['fa-list', 'fa-database'] },
+                    { method: 'GET', endpoint: '/travel-destinations/region/{regionId}', title: '根据地区ID查询目的地', description: '根据地区ID查询该地区的旅游目的地', tags: ['旅游目的地', '地区查询'], icons: ['fa-map-marker', 'fa-filter'] },
+                    { method: 'GET', endpoint: '/travel-destinations/region-name/{regionName}', title: '根据地区名称查询目的地', description: '根据地区名称查询该地区的旅游目的地', tags: ['旅游目的地', '名称查询'], icons: ['fa-search', 'fa-filter'] },
+                    { method: 'POST', endpoint: '/travel-destination', title: '新增旅游目的地', description: '创建新的旅游目的地', tags: ['旅游目的地', '新增数据'], icons: ['fa-plus', 'fa-map-pin'] },
+                    { method: 'PUT', endpoint: '/travel-destination', title: '更新旅游目的地', description: '更新旅游目的地信息', tags: ['旅游目的地', '信息更新'], icons: ['fa-edit', 'fa-sync'] },
+                    { method: 'DELETE', endpoint: '/travel-destination/{id}', title: '删除旅游目的地', description: '根据ID删除旅游目的地记录', tags: ['旅游目的地', '删除操作'], icons: ['fa-trash', 'fa-warning'] },
+                    { method: 'GET', endpoint: '/travel-destinations/count', title: '统计旅游目的地总数', description: '获取旅游目的地的总数统计', tags: ['旅游目的地', '数量统计'], icons: ['fa-chart-bar', 'fa-hashtag'] },
+                    { method: 'GET', endpoint: '/travel-destinations/count/region-name/{regionName}', title: '根据地区统计目的地数', description: '根据地区名称统计该地区的旅游目的地数量', tags: ['旅游目的地', '地区统计'], icons: ['fa-chart-pie', 'fa-filter'] },
+                    
+                    // City相关接口
+                    { method: 'GET', endpoint: '/city/{id}', title: '根据ID查询城市', description: '根据ID获取城市的详细信息', tags: ['城市管理', 'ID查询'], icons: ['fa-id-card', 'fa-info-circle'] },
+                    { method: 'GET', endpoint: '/cities', title: '查询所有城市', description: '获取所有城市的完整列表', tags: ['城市管理', '完整列表'], icons: ['fa-list', 'fa-database'] },
+                    { method: 'GET', endpoint: '/cities/destination/{destinationId}', title: '根据目的地查询城市', description: '根据目的地ID查询相关的城市列表', tags: ['城市管理', '目的地查询'], icons: ['fa-map-marker', 'fa-filter'] },
+                    { method: 'GET', endpoint: '/cities/region-name/{regionName}', title: '根据地区查询城市', description: '根据地区名称查询相关的城市列表', tags: ['城市管理', '地区查询'], icons: ['fa-search', 'fa-filter'] },
+                    { method: 'POST', endpoint: '/city', title: '新增城市', description: '创建新的城市记录', tags: ['城市管理', '新增数据'], icons: ['fa-plus', 'fa-city'] },
+                    { method: 'PUT', endpoint: '/city', title: '更新城市', description: '更新城市信息', tags: ['城市管理', '信息更新'], icons: ['fa-edit', 'fa-sync'] },
+                    { method: 'DELETE', endpoint: '/city/{id}', title: '删除城市', description: '根据ID删除城市记录', tags: ['城市管理', '删除操作'], icons: ['fa-trash', 'fa-warning'] },
+                    { method: 'GET', endpoint: '/cities/count', title: '统计城市总数', description: '获取城市的总数统计', tags: ['城市管理', '数量统计'], icons: ['fa-chart-bar', 'fa-hashtag'] },
+                    { method: 'GET', endpoint: '/cities/count/destination/{destinationId}', title: '根据目的地统计城市数', description: '根据目的地ID统计相关的城市数量', tags: ['城市管理', '目的地统计'], icons: ['fa-chart-pie', 'fa-filter'] },
+                    { method: 'POST', endpoint: '/cities/batch', title: '批量新增城市', description: '批量创建城市记录', tags: ['城市管理', '批量操作'], icons: ['fa-clone', 'fa-database'] },
+                    
+                    // 综合查询接口
+                    { method: 'GET', endpoint: '/region-tabs-with-destinations', title: '查询地区标签及目的地', description: '获取地区标签及其关联的旅游目的地列表', tags: ['综合查询', '关联数据'], icons: ['fa-sitemap', 'fa-link'] },
+                    { method: 'GET', endpoint: '/travel-destinations-with-cities', title: '查询目的地及城市', description: '获取旅游目的地及其关联的城市列表', tags: ['综合查询', '关联数据'], icons: ['fa-sitemap', 'fa-link'] },
+                    { method: 'GET', endpoint: '/cities-with-destination-and-region', title: '查询城市及关联信息', description: '获取城市及其关联的目的地和地区信息', tags: ['综合查询', '关联数据'], icons: ['fa-sitemap', 'fa-link'] }
                 ]
             },
             'travel-carousel-controller': {

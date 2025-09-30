@@ -1,35 +1,55 @@
 spring:
+  application:
+    name: travel
+
   datasource:
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password: 
-    driver-class-name: org.h2.Driver
+    url: jdbc:mysql://localhost:3306/db_travel?useUnicode=true&characterEncoding=utf-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       auto-commit: true
       connection-timeout: 30000
       maximum-pool-size: 10
       minimum-idle: 5
 
+  jackson:
+    date-format: yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+    time-zone: GMT+8
+
+  jpa:
+    show-sql: true
+    database: mysql
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        transaction:
+          jta:
+            platform: org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform
+    open-in-view: false
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+
   web:
     resources:
-      static-locations: classpath:static
-
-  security:
-    user:
-      name: test
-      password: test
+      static-locations: classpath:/static/,file:/tmp/images/
 
   mail:
     host: smtp.qq.com
-    username: test@example.com
-    password: test-password
+    username: 2560177364@qq.com
+    password: emxnkcjubwyzebjd
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-
   data:
     redis:
       host: localhost
@@ -44,8 +64,9 @@ spring:
           max-active: 16
 
 server:
-  port: 0
+  port: 2025
 
+#mybatis
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
   typeAliasesPackage: com.example.travel.entity
@@ -53,5 +74,17 @@ mybatis:
     map-underscore-to-camel-case: true
 
 jwt:
-  secret: test-secret
+  secret: 12@~!www1231**
   expiration: 86400000
+
+# 图片上传配置
+image:
+  upload:
+    # Windows系统上传目录
+    windows-dir: D:/Image/
+    # Linux/Mac系统上传目录
+    unix-dir: /tmp/images/
+    # Windows系统访问URL
+    windows-url: http://localhost:2025/upload/
+    # Linux/Mac系统访问URL
+    unix-url: http://121.40.144.69:2025/tmp/images/
