@@ -5,8 +5,10 @@ import com.example.travel.entity.City;
 import com.example.travel.entity.Destination;
 import com.example.travel.entity.RegionTab;
 import com.example.travel.entity.TravelDestination;
+import com.example.travel.entity.TravelRecommendation;
 import com.example.travel.service.DestinationService;
 import com.example.travel.service.PopulardestinationsService;
+import com.example.travel.service.TravelRecommendationService;
 import com.example.travel.utils.ImageUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +25,17 @@ public class DestinationController {
 
     private final DestinationService destinationService;
     private final PopulardestinationsService populardestinationsService;
+    private final TravelRecommendationService travelRecommendationService;
     private final ImageUtils imageUtils;
 
     @Autowired
     public DestinationController(DestinationService destinationService, 
                                 PopulardestinationsService populardestinationsService, 
+                                TravelRecommendationService travelRecommendationService,
                                 ImageUtils imageUtils) {
         this.destinationService = destinationService;
         this.populardestinationsService = populardestinationsService;
+        this.travelRecommendationService = travelRecommendationService;
         this.imageUtils = imageUtils;
     }
 
@@ -309,5 +314,184 @@ public class DestinationController {
     public Result getCitiesWithDestinationAndRegion() {
         List<City> cities = populardestinationsService.getCitiesWithDestinationAndRegion();
         return Result.success(cities);
+    }
+
+    // ========== TravelRecommendationService接口实现 ==========
+
+    // TravelRecommendation相关API
+    @GetMapping("/travel-recommendation/{id}")
+    public Result getTravelRecommendationById(@PathVariable Integer id) {
+        TravelRecommendation travelRecommendation = travelRecommendationService.getById(id);
+        return Result.success(travelRecommendation);
+    }
+
+    @GetMapping("/travel-recommendations")
+    public Result getAllTravelRecommendations() {
+        List<TravelRecommendation> travelRecommendations = travelRecommendationService.getAll();
+        return Result.success(travelRecommendations);
+    }
+
+    @GetMapping("/travel-recommendations/month/{monthId}")
+    public Result getTravelRecommendationsByMonthId(@PathVariable Integer monthId) {
+        List<TravelRecommendation> travelRecommendations = travelRecommendationService.getByMonthId(monthId);
+        return Result.success(travelRecommendations);
+    }
+
+    @GetMapping("/travel-recommendations/month-name/{monthName}")
+    public Result getTravelRecommendationsByMonthName(@PathVariable String monthName) {
+        List<TravelRecommendation> travelRecommendations = travelRecommendationService.getByMonthName(monthName);
+        return Result.success(travelRecommendations);
+    }
+
+    @GetMapping("/travel-recommendations/list")
+    public Result listTravelRecommendations(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) String keyword) {
+        List<TravelRecommendation> travelRecommendations = travelRecommendationService.getRecommendations(page, pageSize, keyword);
+        return Result.success(travelRecommendations);
+    }
+
+    @PostMapping("/travel-recommendation")
+    @Transactional
+    public Result addTravelRecommendation(@RequestBody TravelRecommendation travelRecommendation) {
+        // 图片处理
+        if (travelRecommendation.getImageUrl() != null && travelRecommendation.getImageUrl().startsWith("data:image")) {
+            try {
+                String imageUrl = imageUtils.processBase64Image(travelRecommendation.getImageUrl());
+                travelRecommendation.setImageUrl(imageUrl);
+            } catch (Exception e) {
+                return Result.error("图片保存失败: " + e.getMessage());
+            }
+        }
+
+        int result = travelRecommendationService.add(travelRecommendation);
+        return result > 0 ? Result.success("添加成功") : Result.error("添加失败");
+    }
+
+    @PutMapping("/travel-recommendation/{id}")
+    @Transactional
+    public Result updateTravelRecommendation(@PathVariable Integer id, @RequestBody TravelRecommendation travelRecommendation) {
+        // 获取原有推荐信息
+        TravelRecommendation existingRecommendation = travelRecommendationService.getById(id);
+        
+        // 图片处理
+        if (travelRecommendation.getImageUrl() != null && travelRecommendation.getImageUrl().startsWith("data:image")) {
+            try {
+                String imageUrl = imageUtils.processBase64Image(travelRecommendation.getImageUrl());
+                travelRecommendation.setImageUrl(imageUrl);
+
+                // 删除旧图片
+                if (existingRecommendation != null && existingRecommendation.getImageUrl() != null) {
+                    imageUtils.deleteImage(existingRecommendation.getImageUrl());
+                }
+            } catch (Exception e) {
+                return Result.error("图片保存失败: " + e.getMessage());
+            }
+        } else if (travelRecommendation.getImageUrl() == null && existingRecommendation != null && existingRecommendation.getImageUrl() != null) {
+            // 删除原有图片
+            try {
+                String oldFileName = existingRecommendation.getImageUrl().substring("http://localhost:2025/upload/destination/".length());
+                Path oldImagePath = Paths.get("D:/Image/destination/", oldFileName);
+                if (Files.exists(oldImagePath)) {
+                    Files.delete(oldImagePath);
+                }
+            } catch (Exception e) {
+                // 文件删除失败不影响主流程
+                System.err.println("删除图片文件失败: " + e.getMessage());
+            }
+        }
+
+        travelRecommendation.setId(id);
+        int result = travelRecommendationService.update(travelRecommendation);
+        return result > 0 ? Result.success("更新成功") : Result.error("更新失败");
+    }
+
+    @DeleteMapping("/travel-recommendation/{id}")
+    @Transactional
+    public Result deleteTravelRecommendation(@PathVariable Integer id) {
+        if (!travelRecommendationService.exists(id)) {
+            return Result.error("旅游推荐不存在");
+        }
+        
+        // 获取推荐信息，包含图片路径
+        TravelRecommendation travelRecommendation = travelRecommendationService.getById(id);
+        if (travelRecommendation != null && travelRecommendation.getImageUrl() != null) {
+            try {
+                imageUtils.deleteImage(travelRecommendation.getImageUrl());
+            } catch (Exception e) {
+                // 文件删除失败不影响主流程
+                System.err.println("删除图片文件失败: " + e.getMessage());
+            }
+        }
+
+        int result = travelRecommendationService.delete(id);
+        return result > 0 ? Result.success("删除成功") : Result.error("删除失败");
+    }
+
+    @GetMapping("/travel-recommendations/count")
+    public Result countTravelRecommendations() {
+        int count = travelRecommendationService.count();
+        return Result.success(count);
+    }
+
+    @GetMapping("/travel-recommendations/count/keyword")
+    public Result countTravelRecommendationsByKeyword(@RequestParam(required = false) String keyword) {
+        int count = travelRecommendationService.countByKeyword(keyword);
+        return Result.success(count);
+    }
+
+    @GetMapping("/travel-recommendations/count/month-name/{monthName}")
+    public Result countTravelRecommendationsByMonthName(@PathVariable String monthName) {
+        int count = travelRecommendationService.countByMonthName(monthName);
+        return Result.success(count);
+    }
+
+    @GetMapping("/travel-recommendations/monthly")
+    public Result getMonthlyRecommendations() {
+        List<TravelRecommendation> travelRecommendations = travelRecommendationService.getMonthlyRecommendations();
+        return Result.success(travelRecommendations);
+    }
+
+    @GetMapping("/travel-recommendations/by-month/{monthName}")
+    public Result getRecommendationsByMonth(@PathVariable String monthName) {
+        List<TravelRecommendation> travelRecommendations = travelRecommendationService.getRecommendationsByMonth(monthName);
+        return Result.success(travelRecommendations);
+    }
+
+    @PostMapping("/travel-recommendations/batch")
+    @Transactional
+    public Result batchAddTravelRecommendations(@RequestBody List<TravelRecommendation> travelRecommendations) {
+        int result = 0;
+        for (TravelRecommendation recommendation : travelRecommendations) {
+            try {
+                result += travelRecommendationService.add(recommendation);
+            } catch (Exception e) {
+                // 记录错误日志，继续处理其他数据
+                System.err.println("添加旅游推荐失败: " + e.getMessage());
+            }
+        }
+        return result > 0 ? Result.success("批量添加成功") : Result.error("批量添加失败");
+    }
+
+    @GetMapping("/travel-recommendations/tag/{tag}")
+    public Result getTravelRecommendationsByTag(@PathVariable String tag) {
+        // 这里需要扩展Service接口来支持标签搜索
+        List<TravelRecommendation> travelRecommendations = travelRecommendationService.getAll().stream()
+                .filter(recommendation -> 
+                        recommendation.getTags() != null && 
+                        recommendation.getTags().contains(tag))
+                .toList();
+        return Result.success(travelRecommendations);
+    }
+
+    @GetMapping("/travel-recommendations/hot")
+    public Result getHotTravelRecommendations(@RequestParam(defaultValue = "5") int limit) {
+        // 这里需要扩展Service接口来支持热门推荐
+        List<TravelRecommendation> travelRecommendations = travelRecommendationService.getAll().stream()
+                .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
+                .limit(limit)
+                .toList();
+        return Result.success(travelRecommendations);
     }
 }

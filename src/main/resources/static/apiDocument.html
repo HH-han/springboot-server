@@ -462,7 +462,27 @@
                     // 综合查询接口
                     { method: 'GET', endpoint: '/region-tabs-with-destinations', title: '查询地区标签及目的地', description: '获取地区标签及其关联的旅游目的地列表', tags: ['综合查询', '关联数据'], icons: ['fa-sitemap', 'fa-link'] },
                     { method: 'GET', endpoint: '/travel-destinations-with-cities', title: '查询目的地及城市', description: '获取旅游目的地及其关联的城市列表', tags: ['综合查询', '关联数据'], icons: ['fa-sitemap', 'fa-link'] },
-                    { method: 'GET', endpoint: '/cities-with-destination-and-region', title: '查询城市及关联信息', description: '获取城市及其关联的目的地和地区信息', tags: ['综合查询', '关联数据'], icons: ['fa-sitemap', 'fa-link'] }
+                    { method: 'GET', endpoint: '/cities-with-destination-and-region', title: '查询城市及关联信息', description: '获取城市及其关联的目的地和地区信息', tags: ['综合查询', '关联数据'], icons: ['fa-sitemap', 'fa-link'] },
+                    
+                    // TravelRecommendation相关接口
+                    { method: 'GET', endpoint: '/travel-recommendation/{id}', title: '根据ID查询旅游推荐', description: '根据ID获取旅游推荐的详细信息', tags: ['旅游推荐', 'ID查询'], icons: ['fa-id-card', 'fa-info-circle'] },
+                    { method: 'GET', endpoint: '/travel-recommendations/month/{monthId}', title: '根据月份ID查询推荐', description: '根据月份ID查询该月份的旅游推荐列表', tags: ['旅游推荐', '月份查询'], icons: ['fa-calendar', 'fa-filter'] },
+                    { method: 'GET', endpoint: '/travel-recommendations/month-name/{monthName}', title: '根据月份名称查询推荐', description: '根据月份名称查询该月份的旅游推荐列表', tags: ['旅游推荐', '名称查询'], icons: ['fa-search', 'fa-filter'] },
+                    { method: 'GET', endpoint: '/travel-recommendations', title: '分页查询旅游推荐', description: '分页获取旅游推荐列表', tags: ['旅游推荐', '分页数据'], icons: ['fa-list', 'fa-database'] },
+                    { method: 'POST', endpoint: '/travel-recommendation', title: '新增旅游推荐', description: '创建新的旅游推荐，支持图片上传', tags: ['旅游推荐', '新增数据'], icons: ['fa-plus', 'fa-image'] },
+                    { method: 'PUT', endpoint: '/travel-recommendation', title: '更新旅游推荐', description: '更新旅游推荐信息', tags: ['旅游推荐', '信息更新'], icons: ['fa-edit', 'fa-sync'] },
+                    { method: 'DELETE', endpoint: '/travel-recommendation/{id}', title: '删除旅游推荐', description: '根据ID删除旅游推荐记录', tags: ['旅游推荐', '删除操作'], icons: ['fa-trash', 'fa-warning'] },
+                    { method: 'GET', endpoint: '/travel-recommendations/count', title: '统计旅游推荐总数', description: '获取旅游推荐的总数统计', tags: ['旅游推荐', '数量统计'], icons: ['fa-chart-bar', 'fa-hashtag'] },
+                    { method: 'POST', endpoint: '/travel-recommendations/batch', title: '批量新增旅游推荐', description: '批量创建旅游推荐记录', tags: ['旅游推荐', '批量操作'], icons: ['fa-clone', 'fa-database'] },
+                    { method: 'GET', endpoint: '/travel-recommendations/search/tags', title: '按标签搜索旅游推荐', description: '根据标签关键词搜索旅游推荐', tags: ['旅游推荐', '标签搜索'], icons: ['fa-search', 'fa-tags'] },
+                    { method: 'GET', endpoint: '/travel-recommendations/popular', title: '查询热门旅游推荐', description: '获取热门旅游推荐列表', tags: ['旅游推荐', '热门推荐'], icons: ['fa-fire', 'fa-star'] },
+                    { method: 'GET', endpoint: '/travel-recommendations/count/month/{monthId}', title: '根据月份统计推荐数', description: '根据月份ID统计该月份的旅游推荐数量', tags: ['旅游推荐', '月份统计'], icons: ['fa-chart-pie', 'fa-filter'] },
+                    { method: 'GET', endpoint: '/travel-recommendations/count/month-name/{monthName}', title: '根据月份名称统计推荐数', description: '根据月份名称统计该月份的旅游推荐数量', tags: ['旅游推荐', '名称统计'], icons: ['fa-chart-pie', 'fa-filter'] },
+                    { method: 'GET', endpoint: '/travel-recommendations/random', title: '随机查询旅游推荐', description: '随机获取旅游推荐列表', tags: ['旅游推荐', '随机推荐'], icons: ['fa-random', 'fa-dice'] },
+                    { method: 'GET', endpoint: '/travel-recommendations/featured', title: '查询精选旅游推荐', description: '获取精选旅游推荐列表', tags: ['旅游推荐', '精选推荐'], icons: ['fa-star', 'fa-award'] },
+                    { method: 'GET', endpoint: '/travel-recommendations/season/{season}', title: '根据季节查询推荐', description: '根据季节查询该季节的旅游推荐列表', tags: ['旅游推荐', '季节查询'], icons: ['fa-leaf', 'fa-filter'] },
+                    { method: 'GET', endpoint: '/travel-recommendations/budget/{budgetRange}', title: '根据预算查询推荐', description: '根据预算范围查询旅游推荐列表', tags: ['旅游推荐', '预算查询'], icons: ['fa-money-bill', 'fa-filter'] },
+                    { method: 'GET', endpoint: '/travel-recommendations/duration/{duration}', title: '根据时长查询推荐', description: '根据旅游时长查询推荐列表', tags: ['旅游推荐', '时长查询'], icons: ['fa-clock', 'fa-filter'] }
                 ]
             },
             'travel-carousel-controller': {

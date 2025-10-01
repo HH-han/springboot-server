@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.travel.dao.TravelRecommendationDao">
+
+    <!-- 结果映射定义 - 包含月份信息的完整旅游推荐结果 -->
+    <resultMap id="travelRecommendationResultMap" type="com.example.travel.entity.TravelRecommendation">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="image_url" property="imageUrl"/>
+        <result column="description" property="description"/>
+        <result column="tags" property="tags"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        
+        <!-- 多对一关联关系 - 月份信息 -->
+        <association property="month" javaType="com.example.travel.entity.Month" fetchType="lazy">
+            <id column="month_id" property="id"/>
+            <result column="month_name" property="monthName"/>
+            <result column="month_created_at" property="createdAt"/>
+        </association>
+    </resultMap>
+
+    <!-- 根据ID查询旅游推荐 -->
+    <select id="findById" resultMap="travelRecommendationResultMap">
+        SELECT 
+            tr.id,
+            tr.name,
+            tr.image_url,
+            tr.description,
+            tr.tags,
+            tr.created_at,
+            tr.updated_at,
+            m.id as month_id,
+            m.month_name,
+            m.created_at as month_created_at
+        FROM travel_recommendations tr
+        LEFT JOIN months m ON tr.month_id = m.id
+        WHERE tr.id = #{id}
+    </select>
+
+    <!-- 查询所有旅游推荐 -->
+    <select id="findAll" resultMap="travelRecommendationResultMap">
+        SELECT 
+            tr.id,
+            tr.name,
+            tr.image_url,
+            tr.description,
+            tr.tags,
+            tr.created_at,
+            tr.updated_at,
+            m.id as month_id,
+            m.month_name,
+            m.created_at as month_created_at
+        FROM travel_recommendations tr
+        LEFT JOIN months m ON tr.month_id = m.id
+        ORDER BY m.id, tr.id
+    </select>
+
+    <!-- 根据月份ID查询旅游推荐 -->
+    <select id="findByMonthId" resultMap="travelRecommendationResultMap">
+        SELECT 
+            tr.id,
+            tr.name,
+            tr.image_url,
+            tr.description,
+            tr.tags,
+            tr.created_at,
+            tr.updated_at,
+            m.id as month_id,
+            m.month_name,
+            m.created_at as month_created_at
+        FROM travel_recommendations tr
+        LEFT JOIN months m ON tr.month_id = m.id
+        WHERE tr.month_id = #{monthId}
+        ORDER BY tr.id
+    </select>
+
+    <!-- 根据月份名称查询旅游推荐 -->
+    <select id="findByMonthName" resultMap="travelRecommendationResultMap">
+        SELECT 
+            tr.id,
+            tr.name,
+            tr.image_url,
+            tr.description,
+            tr.tags,
+            tr.created_at,
+            tr.updated_at,
+            m.id as month_id,
+            m.month_name,
+            m.created_at as month_created_at
+        FROM travel_recommendations tr
+        LEFT JOIN months m ON tr.month_id = m.id
+        WHERE m.month_name = #{monthName}
+        ORDER BY tr.id
+    </select>
+
+    <!-- 新增旅游推荐 -->
+    <insert id="insert" parameterType="com.example.travel.entity.TravelRecommendation" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO travel_recommendations (
+            month_id, 
+            name, 
+            image_url, 
+            description, 
+            tags, 
+            created_at, 
+            updated_at
+        ) VALUES (
+            #{month.id}, 
+            #{name}, 
+            #{imageUrl}, 
+            #{description}, 
+            #{tags}, 
+            #{createdAt}, 
+            #{updatedAt}
+        )
+    </insert>
+
+    <!-- 更新旅游推荐 -->
+    <update id="update" parameterType="com.example.travel.entity.TravelRecommendation">
+        UPDATE travel_recommendations
+        SET 
+            month_id = #{month.id},
+            name = #{name},
+            image_url = #{imageUrl},
+            description = #{description},
+            tags = #{tags},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除旅游推荐 -->
+    <delete id="delete">
+        DELETE FROM travel_recommendations WHERE id = #{id}
+    </delete>
+
+    <!-- 统计旅游推荐总数 -->
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM travel_recommendations
+    </select>
+
+    <!-- 根据月份名称统计旅游推荐数量 -->
+    <select id="countByMonthName" resultType="int">
+        SELECT COUNT(*) 
+        FROM travel_recommendations tr
+        LEFT JOIN months m ON tr.month_id = m.id
+        WHERE m.month_name = #{monthName}
+    </select>
+
+    <!-- 多表连接查询：根据月份获取对应的旅游推荐数据 -->
+    <select id="getMonthlyRecommendations" resultMap="travelRecommendationResultMap">
+        SELECT 
+            tr.id,
+            tr.name,
+            tr.image_url,
+            tr.description,
+            tr.tags,
+            tr.created_at,
+            tr.updated_at,
+            m.id as month_id,
+            m.month_name,
+            m.created_at as month_created_at
+        FROM travel_recommendations tr
+        LEFT JOIN months m ON tr.month_id = m.id
+        ORDER BY m.id, tr.id
+    </select>
+
+    <!-- 根据特定月份名称查询旅游推荐（如"一月"） -->
+    <select id="getRecommendationsByMonth" resultMap="travelRecommendationResultMap">
+        SELECT 
+            tr.id,
+            tr.name,
+            tr.image_url,
+            tr.description,
+            tr.tags,
+            tr.created_at,
+            tr.updated_at,
+            m.id as month_id,
+            m.month_name,
+            m.created_at as month_created_at
+        FROM travel_recommendations tr
+        LEFT JOIN months m ON tr.month_id = m.id
+        WHERE m.month_name = #{monthName}
+        ORDER BY tr.id
+    </select>
+
+</mapper>
