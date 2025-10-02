@@ -22,5 +22,4 @@ public interface TravelCarouselDao {
     int deleteById(@Param("id") Long id);
     //根据id查询
     TravelCarousel findById(@Param("id") Long id);
-
 }

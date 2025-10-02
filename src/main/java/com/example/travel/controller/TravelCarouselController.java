@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
@@ -29,10 +30,18 @@ public class TravelCarouselController {
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) String keyword){
         List<TravelCarousel> travelcarousel=travelcarouselService.getCarousel(page, pageSize, keyword);
-        int total=travelcarouselService.countCarousel(keyword);
+        int total = travelcarouselService.countCarousel(keyword);
+        
+        // 获取所有不同的type类型
+        List<String> types = travelcarousel.stream()
+                .map(TravelCarousel::getType)
+                .distinct()
+                .collect(Collectors.toList());
+                
         Map<String ,Object> result=new HashMap<>();
         result.put("list", travelcarousel);
         result.put("total", total);
+        result.put("types", types);
         return Result.success(result);
     }
 

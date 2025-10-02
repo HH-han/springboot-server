@@ -41,7 +41,7 @@
         </javaClientGenerator>
 
         <!-- 配置需要生成的表 -->
-        <table tableName="my_post" domainObjectName="Mypost">
+        <table tableName="destination_carousel" domainObjectName="DestinationCarousel">
             <!-- 可选：主键生成策略 -->
             <generatedKey column="id" sqlStatement="MySQL" identity="true"/>
         </table>

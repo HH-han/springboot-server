@@ -13,10 +13,9 @@ import com.example.travel.utils.ImageUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -89,11 +88,7 @@ public class DestinationController {
         } else if (destination.getImage() == null && existingDestination != null && existingDestination.getImage() != null) {
             // 删除原有图片
             try {
-                String oldFileName = existingDestination.getImage().substring("http://localhost:2025/upload/destination/".length());
-                Path oldImagePath = Paths.get("D:/Image/destination/", oldFileName);
-                if (Files.exists(oldImagePath)) {
-                    Files.delete(oldImagePath);
-                }
+                imageUtils.deleteImage(existingDestination.getImage());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());
@@ -391,11 +386,7 @@ public class DestinationController {
         } else if (travelRecommendation.getImageUrl() == null && existingRecommendation != null && existingRecommendation.getImageUrl() != null) {
             // 删除原有图片
             try {
-                String oldFileName = existingRecommendation.getImageUrl().substring("http://localhost:2025/upload/destination/".length());
-                Path oldImagePath = Paths.get("D:/Image/destination/", oldFileName);
-                if (Files.exists(oldImagePath)) {
-                    Files.delete(oldImagePath);
-                }
+                imageUtils.deleteImage(existingRecommendation.getImageUrl());
             } catch (Exception e) {
                 // 文件删除失败不影响主流程
                 System.err.println("删除图片文件失败: " + e.getMessage());
@@ -494,4 +485,6 @@ public class DestinationController {
                 .toList();
         return Result.success(travelRecommendations);
     }
+
+    // ========== DestinationCarouselService接口实现 ==========
 }

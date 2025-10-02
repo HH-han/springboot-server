@@ -9,6 +9,7 @@
         <result property="image" column="image"/>
         <result property="title" column="title"/>
         <result property="location" column="location"/>
+        <result property="type" column="type"/>
         <result property="description" column="description"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
@@ -42,6 +43,7 @@
         SET image = #{image},
             title = #{title},
             location = #{location},
+            type = #{type},
             description = #{description},
             created_at = #{createdAt},
             updated_at = #{updatedAt}
@@ -49,8 +51,8 @@
     </update>
     <!-- 新增 -->
     <insert id="insertCarousel" parameterType="com.example.travel.entity.TravelCarousel">
-        INSERT INTO travel_carousel (image, title, location, description, created_at, updated_at)
-        VALUES (#{image}, #{title}, #{location}, #{description},#{createdAt},#{updatedAt})</insert>
+        INSERT INTO travel_carousel (image, title, location,type, description, created_at, updated_at)
+        VALUES (#{image}, #{title}, #{location},#{type}, #{description},#{createdAt},#{updatedAt})</insert>
 
     <select id="exists" resultType="boolean">
         SELECT COUNT(1)
@@ -61,4 +63,8 @@
     <delete id="deleteById">
         DELETE FROM `travel_carousel` WHERE id = #{id}
     </delete>
+    <!--获取type类型-->
+    <select id="getType" resultMap="travelCarouselResultMap">
+        SELECT * FROM travel_carousel WHERE type = #{type}
+    </select>
 </mapper>

@@ -15,6 +15,7 @@ public class TravelCarousel {
     private String image;
     private String title;
     private String location;
+    private String type;
     @Column(length = 5000)
     private String description;
     @CreationTimestamp
@@ -55,6 +56,14 @@ public class TravelCarousel {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getDescription() {

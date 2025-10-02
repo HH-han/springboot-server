@@ -49,4 +49,5 @@ public class TravelCarouselServiceImpl implements TravelCarouselService {
     public TravelCarousel getById(Long id) {
         return travelCarouselDao.findById(id);
     }
+
 }
