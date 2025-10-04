@@ -27,7 +27,7 @@ public class TravelCarouselController {
     @GetMapping
     public Result findAllTravelRecommend(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(defaultValue = "100") int pageSize,
             @RequestParam(required = false) String keyword){
         List<TravelCarousel> travelcarousel=travelcarouselService.getCarousel(page, pageSize, keyword);
         int total = travelcarouselService.countCarousel(keyword);
