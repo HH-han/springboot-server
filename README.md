@@ -459,15 +459,11 @@ spring.websocket.max-binary-message-size=8192
 - 后端开发: Spring Boot, MyBatis, Spring Security
 - 前端开发: Vue 3, Element Plus, Vite
 - 数据库设计: MySQL
-- 运维部署: Docker, Nginx
-
-## 许可证
-
-本项目基于MIT许可证开源。
+- 运维部署: Nginx
 
 ## 支持与反馈
 
-如有问题或建议，请提交Issue或联系开发团队。
+如有问题或建议，请提交Bolan或联系开发团队。
 
 ## 项目运行截图
 --  登录页面
